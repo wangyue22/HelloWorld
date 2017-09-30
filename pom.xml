@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.cmos</groupId>
+    <artifactId>edccommon-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.cmos</groupId>
+        <artifactId>itframe-boot</artifactId>
+        <version>1.0.2-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <module>edccommon-beans</module>
+        <module>edccommon-dao</module>
+        <module>edccommon-utils</module>
+        <module>edccommon-iservice</module>
+        <module>edccommon-service-impl</module>
+        <module>edccommon-web</module>
+    </modules>
+
+    <properties>
+        <itframe-boot-web.version>1.0.2-SNAPSHOT</itframe-boot-web.version>
+        <itframe-boot-service.version>1.0.2-SNAPSHOT</itframe-boot-service.version>
+        <itframe-boot-base.version>1.0.2-SNAPSHOT</itframe-boot-base.version>
+        <itframe-boot-dao.version>1.0.2-SNAPSHOT</itframe-boot-dao.version>
+        <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
+        <cmos.core-finalName>edccommon-core</cmos.core-finalName>
+        <cmos.control-finalName>edccommon-control</cmos.control-finalName>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>development</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <project.profile>development</project.profile>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>nexus-snapshots</id>
+                    <url>http://192.168.100.10/nexus/content/repositories/snapshots/</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+                <project.profile>production</project.profile>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <project.profile>test</project.profile>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>edccommon-utils</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>edccommon-iservice</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>edccommon-beans</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>edccommon-dao</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>itframe-boot-web</artifactId>
+                <version>${itframe-boot-web.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>itframe-boot-service</artifactId>
+                <version>${itframe-boot-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>itframe-boot-base</artifactId>
+                <version>${itframe-boot-base.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>itframe-boot-dao</artifactId>
+                <version>${itframe-boot-dao.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cmos</groupId>
+                <artifactId>cmos-onest</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <quiet>true</quiet>
+                            <files>
+                                <file>${user.dir}/config/${project.profile}.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

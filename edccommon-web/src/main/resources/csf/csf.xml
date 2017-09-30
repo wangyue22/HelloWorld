@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Csf>
+	<Category name="client" description="客户端运行引擎需要的配置">
+		<Item name="csf.retry.policy">
+			<value>RetryNTimes(0)</value>
+			<description>客户端集群策略（重试策略）：重试N次,括号中为0或负数不重试</description>
+		</Item>
+		<Item name="csf.client.serviceinfo.fetcher">
+			<value>com.cmos.csf.client.service.info.fetcher.FetchServiceInfoFromServiceRouter
+			</value>
+			<description>
+				客户端获取服务信息的方式
+				从服务路由器获取配置为
+				com.cmos.csf.client.service.info.fetcher.FetchServiceInfoFromServiceRouter
+				直连配置com.cmos.csf.client.service.info.fetcher.FetchDirectServiceInfo
+			</description>
+		</Item>
+		<Item name="csf.client.extend">
+			<value></value>
+			<description>
+				客户端扩展，可以扩展是否携带用户信息，是否根据regionid路由
+			</description>
+		</Item>
+		
+		<Item name="csf.client.log.collection.extend">
+			<value>com.cmos.csf.client.service.log.DefaultClientCollectionExtend</value>
+			<description>
+				客户端log4x埋点扩展，可以不配置
+				默认使用com.cmos.csf.client.service.log.DefaultClientCollectionExtend
+			</description>
+		</Item>
+		
+	</Category>
+	<Category name="common" description="客户端和服务端都需要的配置">
+		<Item name="csf.integrated.centers">
+			<value>@csf.centers.code@</value>
+			<description>
+				本系统（服务调用方）在csf web平台中配置的系统编码
+			</description>
+		</Item>
+
+		<Item name="zk.server.list">
+			<value>@csf.zkServer.list@</value>
+			<description>多个地址用逗号(,)隔开 </description>
+		</Item>
+	</Category>
+</Csf>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Csf>
+	<Category name="service.direct" description="服务级别直连方式，会覆盖中心级别的直连方式">
+		<Item name="calltest_post">
+			<value>http://192.168.100.75:27075/framecontrol/ws/frame/calltest
+			</value>
+			<description>
+				Item
+				name配置需要直连的服务编码serviceCode,serviceCode约束必须是以_服务类型标识结束，即xxx_get,xxx_post等等
+				value配置直连的url,restful接口地址
+			</description>
+		</Item>
+	</Category>
+</Csf>
