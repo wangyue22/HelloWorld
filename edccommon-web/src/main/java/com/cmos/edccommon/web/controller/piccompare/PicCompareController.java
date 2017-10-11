@@ -6,7 +6,7 @@
  * Copyright (c) 2016, likerui All Rights Reserved. 
  * 
  */
-package com.cmos.edccommon.web.controller.picCompare;
+package com.cmos.edccommon.web.controller.piccompare;
 
 
 
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "/co",  method = RequestMethod.GET)
-public class picCompareController {
+public class PicCompareController {
 
 	@Reference(group = "edcco")
 	private IPicCompareSV picCompareSV;
