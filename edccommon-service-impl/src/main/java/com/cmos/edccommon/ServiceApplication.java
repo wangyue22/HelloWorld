@@ -1,6 +1,9 @@
-package com.cmos.edccommon.example;
+package com.cmos.edccommon;
 
 import com.cmos.common.annotation.EnableDataSource;
+import com.cmos.common.datasource.DataSourcePasswordCrypto;
+import com.cmos.common.security.IPasswordCrypto;
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,12 +16,13 @@ import com.cmos.common.spring.ApplicationStarter;
 @EnableAspectJAutoProxy
 @EnableAutoConfiguration
 @EnableDataSource
-@ComponentScan(basePackages = {"com.cmos.edccommon.example"})
+@ComponentScan(basePackages = {"com.cmos.edccommon"})
 public class ServiceApplication {
 
 	public static void main(String[] args) throws Exception
 	{
+		IPasswordCrypto crypto = new DataSourcePasswordCrypto();
+    	System.out.println(   crypto.encrypt("A$^5S%sc0U"));
 		ApplicationStarter.startApplication(ServiceApplication.class, args);
 	}
-
 }

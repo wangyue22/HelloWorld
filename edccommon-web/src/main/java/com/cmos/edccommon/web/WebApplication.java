@@ -1,4 +1,4 @@
-package com.cmos.edccommon.example.web;
+package com.cmos.edccommon.web;
 
 import com.cmos.common.exception.autoconfig.EnableGeneralException;
 import com.cmos.common.web.config.DefaultWebMvcConfig;
@@ -16,7 +16,7 @@ import com.cmos.common.spring.ApplicationStarter;
 @EnableAspectJAutoProxy
 @EnableAutoConfiguration
 @EnableGeneralException
-@ComponentScan(basePackages = {"com.cmos.edccommon.example"})
+@ComponentScan(basePackages = {"com.cmos.edccommon"})
 @Import(DefaultWebMvcConfig.class)
 public class WebApplication {
 
