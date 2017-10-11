@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@RequestMapping(value = "/co",  method = RequestMethod.POST)
+@RequestMapping(value = "/co",  method = RequestMethod.GET)
 public class PhoneProvCodeController {
 
 	@Reference(group = "edcco")
@@ -21,7 +21,7 @@ public class PhoneProvCodeController {
 	 * @param phoneNum
 	 * @return
 	 */
-		@RequestMapping(value = "/getProvCodeByPhoneNum", method = RequestMethod.POST)
+		@RequestMapping(value = "/getProvCodeByPhoneNum", method = RequestMethod.GET)
 		public String getProvCodeByPhoneNum(@RequestParam String phoneNum ) {
 			System.out.println("****************************"+phoneNum);
 			return phoneProvCodeSV.getProvCodeByPhoneNum(phoneNum);

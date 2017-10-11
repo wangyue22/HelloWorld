@@ -17,7 +17,7 @@
     <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
   </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+ <!--  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from t_co_hlr_info
     where SCTNO_ID = #{sctnoId,jdbcType=BIGINT}
   </delete>
@@ -63,8 +63,8 @@
     VALID_TIME, PROV_CODE, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, 
     MODF_APP_SYS_ID
     from t_co_hlr_info
-  </select>
-  <select id="getProvCodeByPhoneNum" resultMap="String" parameterType="java.lang.String" >
+  </select> -->
+  <select id="getProvCodeByPhoneNum" resultType="java.lang.String" parameterType="java.lang.String" >
     select PROV_CODE from t_co_hlr_info
     where SCTNO_CODE = #{phoneNum,jdbcType=VARCHAR}
   </select>
