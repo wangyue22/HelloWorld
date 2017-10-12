@@ -15,11 +15,16 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.cmos</groupId>
-            <artifactId>itframe-boot-base</artifactId>
-        </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>com.cmos</groupId>
+			<artifactId>itframe-boot-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cmos</groupId>
+			<artifactId>cmos-onest</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
     
 </project>

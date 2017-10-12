@@ -44,7 +44,7 @@ public class PicCompareController {
 	public String getPicCompare(@RequestParam String inParam ) {
 		System.out.println("****************************"+inParam);
 		InputObject inObject=new InputObject();
-		return picCompareSV.picCompare(inObject);
+		return picCompareSV.picCompareTest(inObject);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.cmos.commons.utils;
+package com.cmos.edccommon.utils;
 
 import java.io.InputStream;
 
