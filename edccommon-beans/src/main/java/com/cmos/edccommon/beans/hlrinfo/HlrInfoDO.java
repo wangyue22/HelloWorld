@@ -1,9 +1,11 @@
-package com.cmos.edccommon.beans.phoneprovcode;
+package com.cmos.edccommon.beans.hlrinfo;
 
 import com.cmos.common.bean.GenericBean;
 import java.util.Date;
 
 public class HlrInfoDO extends GenericBean {
+	
+	private static final long serialVersionUID = 3862163719814136103L;
     private Long sctnoId;
 
     private String sctnoCode;

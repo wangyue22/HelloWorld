@@ -1,4 +1,4 @@
-package com.cmos.edccommon.beans.phoneprovcode;
+package com.cmos.edccommon.beans.hlrinfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import com.cmos.common.domain.UserResult;
  * 统一出参数据类型  
  * 
  */
-public class PhoneProvCodeOutputObject extends GenericBean implements UserResult,Serializable  {
+public class HlrInfoDTO extends GenericBean implements UserResult {
 	private static final long serialVersionUID = 3862163719814136111L;
 	private String returnCode="0000";
 	private String returnMessage="success";

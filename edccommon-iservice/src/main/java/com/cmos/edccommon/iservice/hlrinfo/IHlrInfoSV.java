@@ -1,4 +1,4 @@
-package com.cmos.edccommon.iservice.phoneprovcode;
+package com.cmos.edccommon.iservice.hlrinfo;
 /**
  * 根据手机号得到对应的省端编码
  *
@@ -6,7 +6,7 @@ package com.cmos.edccommon.iservice.phoneprovcode;
  *
  */
 
-public interface IPhoneProvCodeSV {
+public interface IHlrInfoSV {
 
    
     /**
