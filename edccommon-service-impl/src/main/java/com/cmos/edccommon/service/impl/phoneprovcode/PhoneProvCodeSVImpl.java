@@ -15,8 +15,9 @@ public  class PhoneProvCodeSVImpl implements  IPhoneProvCodeSV {
 	@Autowired
 	private HlrInfoDODAO hlrInfoDoDao;
 	@Override
-	public String getProvCodeByPhoneNum(String phoneNum) {
-		String provCode=hlrInfoDoDao.getProvCodeByPhoneNum(phoneNum);
+	public String getProvCodeByPhoneNum(String phoneNum) throws Exception{
+		String provCode=null;
+		provCode=hlrInfoDoDao.getProvCodeByPhoneNum(phoneNum);
 		return provCode;
 	}
 }

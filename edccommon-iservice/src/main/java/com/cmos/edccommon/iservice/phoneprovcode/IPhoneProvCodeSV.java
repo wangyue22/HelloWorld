@@ -14,7 +14,8 @@ public interface IPhoneProvCodeSV {
      * 
      * @param param
      * @return
+     * @throws Exception 
      * @date 2017-10-10 17:00:00
      */
-  public  String getProvCodeByPhoneNum(String phoneNum);
+  public  String getProvCodeByPhoneNum(String phoneNum) throws Exception;
 }
