@@ -5,7 +5,7 @@
     <id column="CMPR_ID" property="cmprId" jdbcType="BIGINT" />
     <result column="REQST_SRC_CODE" property="reqstSrcCode" jdbcType="VARCHAR" />
     <result column="BIZ_TYPE_CODE" property="bizTypeCode" jdbcType="VARCHAR" />
-    <result column="WHNTWK_UNIQ_BIZ_SWFTNO" property="whntwkUniqBizSwftno" jdbcType="VARCHAR" />
+    <result column="SWFTNO" property="swftno" jdbcType="VARCHAR" />
     <result column="IDNO" property="idno" jdbcType="VARCHAR" />
     <result column="RSP_CODE" property="rspCode" jdbcType="VARCHAR" />
     <result column="RSP_INFO_CNTT" property="rspInfoCntt" jdbcType="VARCHAR" />
@@ -20,7 +20,7 @@
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    CMPR_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, WHNTWK_UNIQ_BIZ_SWFTNO, IDNO, RSP_CODE, RSP_INFO_CNTT, 
+    CMPR_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, SWFTNO, IDNO, RSP_CODE, RSP_INFO_CNTT, 
     CMPR_RSLT, CMPR_SCORE, BACKTO_MSG_CNTT, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, 
     MODF_TIME, MODF_APP_SYS_ID
   </sql>
@@ -33,13 +33,13 @@
 
   <insert id="insert" parameterType="com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO" >
     insert t_co_pic_compare_info_${splitName} (CMPR_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, 
-      WHNTWK_UNIQ_BIZ_SWFTNO, IDNO, RSP_CODE, 
+      SWFTNO, IDNO, RSP_CODE, 
       RSP_INFO_CNTT, CMPR_RSLT, CMPR_SCORE, 
       BACKTO_MSG_CNTT, CRT_USER_ID, CRT_TIME, 
       CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, 
       MODF_APP_SYS_ID)
     values (#{cmprId,jdbcType=BIGINT}, #{reqstSrcCode,jdbcType=VARCHAR}, #{bizTypeCode,jdbcType=VARCHAR}, 
-      #{whntwkUniqBizSwftno,jdbcType=VARCHAR}, #{idno,jdbcType=VARCHAR}, #{rspCode,jdbcType=VARCHAR}, 
+      #{swftno,jdbcType=VARCHAR}, #{idno,jdbcType=VARCHAR}, #{rspCode,jdbcType=VARCHAR}, 
       #{rspInfoCntt,jdbcType=VARCHAR}, #{cmprRslt,jdbcType=VARCHAR}, #{cmprScore,jdbcType=VARCHAR}, 
       #{backtoMsgCntt,jdbcType=VARCHAR}, #{crtUserId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
       #{crtAppSysId,jdbcType=VARCHAR}, #{modfUserId,jdbcType=VARCHAR}, #{modfTime,jdbcType=TIMESTAMP}, 
@@ -57,8 +57,8 @@
       <if test="bizTypeCode != null" >
         BIZ_TYPE_CODE,
       </if>
-      <if test="whntwkUniqBizSwftno != null" >
-        WHNTWK_UNIQ_BIZ_SWFTNO,
+      <if test="swftno != null" >
+        SWFTNO,
       </if>
       <if test="idno != null" >
         IDNO,
@@ -107,8 +107,8 @@
       <if test="bizTypeCode != null" >
         #{bizTypeCode,jdbcType=VARCHAR},
       </if>
-      <if test="whntwkUniqBizSwftno != null" >
-        #{whntwkUniqBizSwftno,jdbcType=VARCHAR},
+      <if test="swftno != null" >
+        #{swftno,jdbcType=VARCHAR},
       </if>
       <if test="idno != null" >
         #{idno,jdbcType=VARCHAR},

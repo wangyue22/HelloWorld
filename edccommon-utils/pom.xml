@@ -16,15 +16,20 @@
     <packaging>jar</packaging>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.cmos</groupId>
-			<artifactId>itframe-boot-base</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.cmos</groupId>
-			<artifactId>cmos-onest</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
+	<dependency>
+		<groupId>com.cmos</groupId>
+		<artifactId>itframe-boot-base</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>commons-httpclient</groupId>
+		<artifactId>commons-httpclient</artifactId>
+		<version>3.0.1</version>
+	</dependency>
+	<dependency>
+		<groupId>com.cmos</groupId>
+		<artifactId>cmos-onest</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+</dependencies>
     
 </project>

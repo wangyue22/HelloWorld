@@ -5,6 +5,9 @@ import java.util.Date;
 import com.cmos.common.bean.GenericBean;
 
 public class CoPicCompareInfoDO extends GenericBean {
+	
+	private static final long serialVersionUID = -966363633114254070L;
+
 	/**
 	 * 分表 YYYYMM
 	 */
@@ -27,7 +30,7 @@ public class CoPicCompareInfoDO extends GenericBean {
     /**
      * 全网唯一业务流水号
      */
-    private String whntwkUniqBizSwftno;
+    private String swftno;
 
     /**
      * 身份证号
@@ -113,12 +116,12 @@ public class CoPicCompareInfoDO extends GenericBean {
         this.bizTypeCode = bizTypeCode == null ? null : bizTypeCode.trim();
     }
 
-    public String getWhntwkUniqBizSwftno() {
-        return whntwkUniqBizSwftno;
+    public String getswftno() {
+        return swftno;
     }
 
-    public void setWhntwkUniqBizSwftno(String whntwkUniqBizSwftno) {
-        this.whntwkUniqBizSwftno = whntwkUniqBizSwftno == null ? null : whntwkUniqBizSwftno.trim();
+    public void setswftno(String swftno) {
+        this.swftno = swftno == null ? null : swftno.trim();
     }
 
     public String getIdno() {
