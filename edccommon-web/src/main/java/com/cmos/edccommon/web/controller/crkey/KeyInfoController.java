@@ -1,15 +1,11 @@
 package com.cmos.edccommon.web.controller.crkey;
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.cmos.common.bean.JsonFormatException;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.common.OutputObject;
 import com.cmos.edccommon.beans.crkey.CoKeyDO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
-import com.cmos.edccommon.beans.hlrinfo.HlrInfoDTO;
 import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
-import com.cmos.edccommon.iservice.hlrinfo.IHlrInfoSV;
 import com.cmos.edccommon.utils.CoConstants;
 import com.github.pagehelper.StringUtil;
 
@@ -19,8 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 获取秘钥
+ * 
+ * @author xdx
+ *
+ */
 @RestController
-@RequestMapping(value = "/co",  method = RequestMethod.GET)
+@RequestMapping(value = "/co")
 public class KeyInfoController {
     Logger log=LoggerFactory.getActionLog(KeyInfoController.class);
 	@Reference(group = "edcco")
@@ -33,14 +35,10 @@ public class KeyInfoController {
 	 * @return
 	 * @throws GeneralException 
 	 */
-		@RequestMapping(value = "/getDesKey", method = RequestMethod.GET)
+		@RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
 		public CoKeyDO getDesKey(@RequestParam String reqstSrcCode ) throws GeneralException{
-//			OutputObject outParam = new OutputObject();
 			CoKeyDO outParam = new CoKeyDO();
 			if(StringUtil.isEmpty(reqstSrcCode)){
-//				outParam.setReturnCode("2999");
-//				outParam.setReturnMessage("参数异常");
-//				return outParam;
 				throw new GeneralException("2999","参数异常");
 			}
 			KeyInfoDTO param= new KeyInfoDTO();
@@ -50,10 +48,6 @@ public class KeyInfoController {
 			try{
 				outParam=keyInfoSV.getKey(param);
 			}catch(Exception e){
-//				outParam.setReturnCode("9999");
-//				outParam.setReturnMessage("调用手机号获取省份通用能力发生异常");
-//				log.error("getDesKey方法异常", e);
-//				return outParam;
 				log.error("getDesKey方法异常", e);
 				throw new GeneralException("9999","系统异常",e);
 			}
@@ -68,24 +62,16 @@ public class KeyInfoController {
 	 * @return
 	 * @throws GeneralException 
 	 */
-		@RequestMapping(value = "/getKey", method = RequestMethod.GET)
+		@RequestMapping(value = "/getKey", method = RequestMethod.POST)
 		public CoKeyDO getKey(@RequestBody KeyInfoDTO inParam ) throws GeneralException{
-//			OutputObject outParam = new OutputObject();
 			CoKeyDO outParam = new CoKeyDO();
 	
 			if(inParam==null||StringUtil.isEmpty(inParam.getReqstSrcCode())){
-//				outParam.setReturnCode("2999");
-//				outParam.setReturnMessage("参数异常");
-//				return outParam;
 				throw new GeneralException("2999","参数异常");
 			}
 			try{
 				outParam=keyInfoSV.getKey(inParam);
 			}catch(Exception e){
-//				outParam.setReturnCode("9999");
-//				outParam.setReturnMessage("调用手机号获取省份通用能力发生异常");
-//				log.error("通用能力getKey方法异常", e);
-//				return outParam;
 				log.error("getDesKey方法异常", e);
 				throw new GeneralException("9999","系统异常",e);
 			}

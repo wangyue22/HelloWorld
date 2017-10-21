@@ -3,7 +3,11 @@ package com.cmos.edccommon.beans.crkey;
 import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
-
+/**
+ * 秘钥数据表
+ * @author xdx
+ *
+ */
 public class CoKeyDO extends GenericBean {
 	private static final long serialVersionUID = 90716934787134967L;
 

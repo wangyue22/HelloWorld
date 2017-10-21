@@ -16,7 +16,7 @@ import com.cmos.common.spring.ApplicationStarter;
 @EnableAspectJAutoProxy
 @EnableAutoConfiguration
 @EnableGeneralException
-@ComponentScan(basePackages = {"com.cmos.edccommon"})
+@ComponentScan(basePackages = {"com.cmos.edccommon","com.cmos.cache"})
 @Import(DefaultWebMvcConfig.class)
 public class WebApplication {
 
@@ -25,3 +25,6 @@ public class WebApplication {
 	}
 
 }
+
+
+

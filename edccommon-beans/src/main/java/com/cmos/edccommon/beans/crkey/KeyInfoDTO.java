@@ -5,7 +5,7 @@ import com.cmos.common.bean.GenericBean;
 import com.cmos.common.domain.UserResult;
 
 /**
- * 统一出参数据类型  
+ * 统一入参数据类型  
  * 
  */
 public class KeyInfoDTO extends GenericBean implements UserResult {

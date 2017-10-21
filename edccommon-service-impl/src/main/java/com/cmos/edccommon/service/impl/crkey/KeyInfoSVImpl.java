@@ -1,22 +1,20 @@
 package com.cmos.edccommon.service.impl.crkey;
+
+
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.cmos.cache.ttl.annotation.CacheTTL;
-import com.cmos.edccommon.beans.common.OutputObject;
+import com.cmos.core.logger.Logger;
+import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.crkey.CoKeyDO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
 import com.cmos.edccommon.dao.crkey.CoKeyDAO;
-import com.cmos.edccommon.dao.hlrinfo.HlrInfoDODAO;
 import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
-import com.cmos.edccommon.iservice.hlrinfo.IHlrInfoSV;
-import com.cmos.edccommon.utils.BsStaticDataUtil;
-import com.cmos.edccommon.utils.CoConstants;
+
 /**
  * 根据请求源编码，秘钥类型，和省编码获取秘钥
  * @author xdx
@@ -27,23 +25,24 @@ public  class KeyInfoSVImpl implements  IKeyInfoSV {
 	@Autowired
 	private CoKeyDAO keyDAO;
 	
+    Logger logger = LoggerFactory.getActionLog(KeyInfoSVImpl.class);
+
 	/**
 	 * 通过开关配置，选择是否优先从redis获取秘钥
 	 */
 	public CoKeyDO getKey(KeyInfoDTO inParam) {
-		String cacheFlag = "true";//BsStaticDataUtil.getCodeValue("EDCCO", "GET_KEY_FROM_CACHE_CONF", "JVM");
+		String cacheFlag = "false";//BsStaticDataUtil.getCodeValue("EDCCO", "GET_KEY_FROM_CACHE_CONF", "JVM");
 		if("true".equalsIgnoreCase(cacheFlag)){
 			String reqstSrcCode=inParam.getReqstSrcCode();
 			String crkeyTypeCd=inParam.getCrkeyTypeCd();
 			String bizTypeCd=inParam.getBizTypeCd();	
 			CoKeyDO result = getKeyFromcache(reqstSrcCode,crkeyTypeCd,bizTypeCd);	
-			System.out.println(result.getCrkey()+"|"+result);
-		
+			logger.debug("key="+result.getCrkey());
 			return result;
 		}
 		
 		CoKeyDO result = keyDAO.selectKey(inParam);
-		System.out.println(result.getCrkey()+"|"+result);
+		logger.debug(result.getCrkey()+"|"+result.getReqstSrcCode());
 		return result;
 	}
 	
@@ -63,7 +62,7 @@ public  class KeyInfoSVImpl implements  IKeyInfoSV {
 		param.setCrkeyTypeCd(crkeyTypeCd);
 		param.setBizTypeCd(bizTypeCd);
 		CoKeyDO result = keyDAO.selectKey(param);
-		System.out.println("数据库取值");
+		logger.debug("数据库取值");
 		return result;
 	}
 	

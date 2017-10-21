@@ -147,8 +147,4 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 		this.bothCompFlag = bothCompFlag;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 }

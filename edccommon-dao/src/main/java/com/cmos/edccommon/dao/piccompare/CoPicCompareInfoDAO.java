@@ -5,9 +5,4 @@ import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
 public interface CoPicCompareInfoDAO {
 
     int insert(CoPicCompareInfoDO record);
-
-    int insertSelective(CoPicCompareInfoDO record);
-
-    CoPicCompareInfoDO selectByPrimaryKey(Long cmprId);
-
 }
