@@ -37,12 +37,16 @@ public  class KeyInfoSVImpl implements  IKeyInfoSV {
 			String crkeyTypeCd=inParam.getCrkeyTypeCd();
 			String bizTypeCd=inParam.getBizTypeCd();	
 			CoKeyDO result = getKeyFromcache(reqstSrcCode,crkeyTypeCd,bizTypeCd);	
-			logger.debug("key="+result.getCrkey());
+			if (result != null) {
+				logger.debug("key=" + result.getCrkey());
+			}
 			return result;
 		}
 		
 		CoKeyDO result = keyDAO.selectKey(inParam);
-		logger.debug(result.getCrkey()+"|"+result.getReqstSrcCode());
+		if (result != null) {
+			logger.debug("key=" + result.getCrkey());
+		}
 		return result;
 	}
 	

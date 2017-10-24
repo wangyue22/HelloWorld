@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cmos.edccommon.dao.facelive.CoFaceLiveInfoDOMapper">
+
+  <insert id="insert" parameterType="com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO">
+    insert into t_co_face_live_info_${splitName} (DETCTN_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, 
+      SWFTNO, RSP_CODE, RSP_INFO_CNTT, 
+      IDNTIF_FACE_CNT, IDNTIF_SCORE, BACKTO_MSG_CNTT, 
+      CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, 
+      MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID
+      )
+    values (#{detctnId,jdbcType=BIGINT}, #{reqstSrcCode,jdbcType=VARCHAR}, #{bizTypeCode,jdbcType=VARCHAR}, 
+      #{swftno,jdbcType=VARCHAR}, #{rspCode,jdbcType=VARCHAR}, #{rspInfoCntt,jdbcType=VARCHAR}, 
+      #{idntifFaceCnt,jdbcType=VARCHAR}, #{idntifScore,jdbcType=VARCHAR}, #{backtoMsgCntt,jdbcType=VARCHAR}, 
+      #{crtUserId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{crtAppSysId,jdbcType=VARCHAR}, 
+      #{modfUserId,jdbcType=VARCHAR}, #{modfTime,jdbcType=TIMESTAMP}, #{modfAppSysId,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

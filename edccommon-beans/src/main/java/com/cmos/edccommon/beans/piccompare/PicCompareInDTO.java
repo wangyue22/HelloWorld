@@ -30,7 +30,7 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 	/**
 	 * 头像照片or手持证件人像照片  图片路径
 	 */
-	private String hndhldCredPhotoPath;
+	private String photoPath;
 	
 	/**
 	 * 标准图片路径
@@ -40,7 +40,7 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 	/**
 	 *  人像照片是头像照片，还是手持证件人像照片  t:头像 r:手持人像 
 	 */
-	private String hndhldCredPhotoType;
+	private String photoType;
 	
 	/**
 	 * 图片比对分值区间
@@ -79,11 +79,11 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 	}
 
 	public String getHndhldCredPhotoPath() {
-		return hndhldCredPhotoPath;
+		return photoPath;
 	}
 
-	public void setHndhldCredPhotoPath(String hndhldCredPhotoPath) {
-		this.hndhldCredPhotoPath = hndhldCredPhotoPath;
+	public void setHndhldCredPhotoPath(String photoPath) {
+		this.photoPath = photoPath;
 	}
 
 	public String getPicTPath() {
@@ -94,12 +94,12 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 		this.picTPath = picTPath;
 	}
 
-	public String getHndhldCredPhotoType() {
-		return hndhldCredPhotoType;
+	public String getPhotoType() {
+		return photoType;
 	}
 
-	public void setHndhldCredPhotoType(String hndhldCredPhotoType) {
-		this.hndhldCredPhotoType = hndhldCredPhotoType;
+	public void setPhotoType(String PhotoType) {
+		this.photoType = PhotoType;
 	}
 
 	public String getConfidenceScore() {

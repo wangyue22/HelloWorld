@@ -17,6 +17,7 @@ import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -41,21 +42,21 @@ public class PicCompareController {
 	
 	@RequestMapping(value = "/picdoublecompare", method = RequestMethod.POST)
 	public OutputObject getPicCompare(@RequestBody PicDoubleCompareInDTO inParam ) {
-		System.out.println("****************************"+inParam);
+		log.info("****************************"+inParam);
 	
 		return picDoubleCompare(inParam);
 	}
 	
 	@RequestMapping(value = "/picCheck", method = RequestMethod.POST)
 	public OutputObject getPicCheck(@RequestBody PicCompareInDTO inParam ) {
-		System.out.println("****************************"+inParam);
+		log.info("****************************"+inParam);
 	
 		return picCheck(inParam);
 	}
 	
 	@RequestMapping(value = "/picCompare", method = RequestMethod.POST)
 	public OutputObject getPicCompare(@RequestBody PicCompareInDTO inParam ) {
-		System.out.println("****************************"+inParam);
+		log.info("****************************"+inParam);
 	
 		return picCompare(inParam);
 	}
@@ -74,7 +75,7 @@ public class PicCompareController {
 		String bizTypeCode = inParam.getBizTypeCode();
 		String picRPath = inParam.getHndhldCredPhotoPath();
 		String picTPath = inParam.getPicTPath();
-		String picRType = inParam.getHndhldCredPhotoType();
+		String picRType = inParam.getPhotoType();
 		String picTType = inParam.getPicTType();
 		
 		InputStream picR = null;
@@ -99,7 +100,7 @@ public class PicCompareController {
 			log.error("人像比对服务下载人像图片异常",e);
 		}
 
-		if (StringUtil.isNotEmpty(picRStr)) {
+		if (StringUtil.isEmpty(picRStr)) {
 			rtnMap.put("compareResult", "false");
 			out.setReturnMessage("人像照片下载异常");
 			log.error("人像照片下载异常");
@@ -117,7 +118,7 @@ public class PicCompareController {
 			picTStr = null;
 			log.error("人像比对服务下载标准图片异常", e);
 		}
-		if (StringUtil.isNotEmpty(picRStr)) {
+		if (StringUtil.isEmpty(picRStr)) {
 			rtnMap.put("compareResult", "false");
 			out.setReturnMessage("标准照片下载异常");
 			return out;
@@ -174,7 +175,7 @@ public class PicCompareController {
 
 		String picRPath = inParam.getHndhldCredPhotoPath();
 		String picTPath = inParam.getPicTPath();
-		String picRType = inParam.getHndhldCredPhotoType();
+		String picRType = inParam.getPhotoType();
 		String picTType = inParam.getPicTType();
 		String confidenceScore = inParam.getConfidenceScore();
 		Map<String, String> rtnMap = new HashMap<String, String>();
@@ -283,7 +284,7 @@ public class PicCompareController {
 		String reqstSrcCode = inParam.getReqstSrcCode();
 		String bizTypeCode = inParam.getBizTypeCode();
 
-		String picRPath = inParam.getHndhldCredPhotoPath();
+		String picRPath = inParam.getPhotoPath();
 		String picTPath = inParam.getPicStoinPath();
 		String picRType = inParam.getHndhldCredPhotoType();
 		String picTGPath = inParam.getGztAvtrPath();
@@ -484,7 +485,7 @@ public class PicCompareController {
 
 		String reqJson = JsonUtil.convertObject2Json(reqJsonMap);
 		String svUrl = BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "PIC_CHECK_URL", "JVM");
-
+		
 		String timeOutConf = BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "PIC_CHECK_TIMEOUT", "JVM");
 		int timeOut = Integer.parseInt(timeOutConf);
 		try {
@@ -672,7 +673,7 @@ public class PicCompareController {
 	 */
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String,Object> compareResult) throws MsgException, JsonFormatException{
 		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult);
-		MsgProducerClient.getRocketMQProducer().send("SMSNotice", Msg);
+		MsgProducerClient.getRocketMQProducer().send("EDCCO_PICCOMPARE", Msg);
 	}
 
 }

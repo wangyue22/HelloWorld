@@ -30,7 +30,7 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 	/**
 	 * 头像照片or手持证件人像照片  图片路径
 	 */
-	private String hndhldCredPhotoPath;
+	private String photoPath;
 	
 	/**
 	 * 芯片图片路径
@@ -91,12 +91,12 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 		this.bizTypeCode = bizTypeCode;
 	}
 
-	public String getHndhldCredPhotoPath() {
-		return hndhldCredPhotoPath;
+	public String getPhotoPath() {
+		return photoPath;
 	}
 
-	public void setHndhldCredPhotoPath(String hndhldCredPhotoPath) {
-		this.hndhldCredPhotoPath = hndhldCredPhotoPath;
+	public void setPhotoPath(String photoPath) {
+		this.photoPath = photoPath;
 	}
 
 	public String getPicStoinPath() {
