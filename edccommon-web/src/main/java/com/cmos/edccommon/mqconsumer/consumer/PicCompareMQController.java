@@ -1,9 +1,5 @@
-package com.cmos.edccommon.web.mqconsumer;
+package com.cmos.edccommon.mqconsumer.consumer;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.consumer.client.MsgConsumerClient;
@@ -18,8 +14,7 @@ import com.cmos.msg.exception.MsgException;
  * @author xdx
  *
  */
-@RestController
-@RequestMapping(value = "/co")
+
 public class PicCompareMQController {
 	
 	@Reference(group = "edcco")
@@ -27,9 +22,9 @@ public class PicCompareMQController {
 	
 	private Logger log = LoggerFactory.getActionLog(PicCompareMQController.class);
 	
-	@RequestMapping(value = "/picCompareMQ", method = RequestMethod.POST)
-	public void picCompareMQ(@RequestParam String inParam) throws MsgException {
-		log.info(inParam);
+
+	public void picCompareMQ() throws MsgException {
+		//对指定主题进行消费
 		MsgConsumerClient.getRocketMQConsumer().subscribe("EDCCO_PICCOMPARE", msgConsumerSV);
 	}
 }
