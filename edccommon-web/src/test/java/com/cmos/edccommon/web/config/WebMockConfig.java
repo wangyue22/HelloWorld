@@ -15,7 +15,7 @@ import com.cmos.common.web.upload.config.StorageConfig;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.cmos.edccommon.web")
+@ComponentScan(basePackages = {"com.cmos.edccommon.web","com.cmos.cache"})
 @Import({StorageConfig.class,CachingConfig.class})
 public class WebMockConfig extends WebMvcConfigurerAdapter {
     @Override

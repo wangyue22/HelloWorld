@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cmos.edccommon.dao.ServiceSwitchDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.ServiceSwitchDO" >
+    <id column="SWTCH_ID" property="swtchId" jdbcType="BIGINT" />
+    <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
+    <result column="SWTCH_TYPE_CD" property="swtchTypeCd" jdbcType="VARCHAR" />
+    <result column="SWTCH_NM" property="swtchNm" jdbcType="VARCHAR" />
+    <result column="SWTCH_DESC" property="swtchDesc" jdbcType="VARCHAR" />
+    <result column="SWTCH_KEY" property="swtchKey" jdbcType="VARCHAR" />
+    <result column="SWTCH_VAL" property="swtchVal" jdbcType="VARCHAR" />
+    <result column="CRT_USER_ID" property="crtUserId" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_APP_SYS_ID" property="crtAppSysId" jdbcType="VARCHAR" />
+    <result column="MODF_USER_ID" property="modfUserId" jdbcType="VARCHAR" />
+    <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
+    <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
+    <result column="CACHE_TYPE_CD" property="cacheTypeCd" jdbcType="VARCHAR" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SWTCH_ID, BIZ_SYS_CODE, SWTCH_TYPE_CD, SWTCH_NM, SWTCH_DESC, SWTCH_KEY, SWTCH_VAL,
+    CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,
+    CACHE_TYPE_CD, VALID_FLAG
+  </sql>
+  <select id="slectByType" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_op_service_switch
+    where 1=1
+    <if test="CACHE_TYPE_CD != null and CACHE_TYPE_CD != ''" >
+      and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="getServiceSwitchByKey" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select
+    <include refid="Base_Column_List" />
+    from t_op_service_switch
+    where 1=1
+    <if test="swtchKey != null and swtchKey != ''" >
+      and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.ServiceSwitchDO" >
+    insert into t_op_service_switch
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="swtchId != null" >
+        SWTCH_ID,
+      </if>
+      <if test="bizSysCode != null" >
+        BIZ_SYS_CODE,
+      </if>
+      <if test="swtchTypeCd != null" >
+        SWTCH_TYPE_CD,
+      </if>
+      <if test="swtchNm != null" >
+        SWTCH_NM,
+      </if>
+      <if test="swtchDesc != null" >
+        SWTCH_DESC,
+      </if>
+      <if test="swtchKey != null" >
+        SWTCH_KEY,
+      </if>
+      <if test="swtchVal != null" >
+        SWTCH_VAL,
+      </if>
+      <if test="crtUserId != null" >
+        CRT_USER_ID,
+      </if>
+      <if test="crtTime != null" >
+        CRT_TIME,
+      </if>
+      <if test="crtAppSysId != null" >
+        CRT_APP_SYS_ID,
+      </if>
+      <if test="modfUserId != null" >
+        MODF_USER_ID,
+      </if>
+      <if test="modfTime != null" >
+        MODF_TIME,
+      </if>
+      <if test="modfAppSysId != null" >
+        MODF_APP_SYS_ID,
+      </if>
+      <if test="cacheTypeCd != null" >
+        CACHE_TYPE_CD,
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="swtchId != null" >
+        #{swtchId,jdbcType=BIGINT},
+      </if>
+      <if test="bizSysCode != null" >
+        #{bizSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchTypeCd != null" >
+        #{swtchTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchNm != null" >
+        #{swtchNm,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchDesc != null" >
+        #{swtchDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchKey != null" >
+        #{swtchKey,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchVal != null" >
+        #{swtchVal,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUserId != null" >
+        #{crtUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtAppSysId != null" >
+        #{crtAppSysId,jdbcType=VARCHAR},
+      </if>
+      <if test="modfUserId != null" >
+        #{modfUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="modfTime != null" >
+        #{modfTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modfAppSysId != null" >
+        #{modfAppSysId,jdbcType=VARCHAR},
+      </if>
+      <if test="cacheTypeCd != null" >
+        #{cacheTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="validFlag != null" >
+        #{validFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cmos.edccommon.beans.ServiceSwitchDO" >
+    update t_op_service_switch
+    <set >
+      <if test="bizSysCode != null" >
+        BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchTypeCd != null" >
+        SWTCH_TYPE_CD = #{swtchTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchNm != null" >
+        SWTCH_NM = #{swtchNm,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchDesc != null" >
+        SWTCH_DESC = #{swtchDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchKey != null" >
+        SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR},
+      </if>
+      <if test="swtchVal != null" >
+        SWTCH_VAL = #{swtchVal,jdbcType=VARCHAR},
+      </if>
+      <if test="crtUserId != null" >
+        CRT_USER_ID = #{crtUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="crtTime != null" >
+        CRT_TIME = #{crtTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crtAppSysId != null" >
+        CRT_APP_SYS_ID = #{crtAppSysId,jdbcType=VARCHAR},
+      </if>
+      <if test="modfUserId != null" >
+        MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="modfTime != null" >
+        MODF_TIME = #{modfTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modfAppSysId != null" >
+        MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR},
+      </if>
+      <if test="cacheTypeCd != null" >
+        CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="validFlag != null" >
+        VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SWTCH_ID = #{swtchId,jdbcType=BIGINT}
+  </update>
+</mapper>
