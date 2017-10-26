@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.cmos.consumer.client.MsgConsumerClient;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
@@ -48,10 +49,13 @@ public class PicCompareSVImpl implements IPicCompareSV {
 		dao.insert(resultBean);
 	}
 
+	/**
+	 * MQ消费进程
+	 */
 	@Override
 	public void process(MsgFMessage msg) throws MsgException {
 		String msgContent = (String) msg.getMsg();
-		log.info("**************************MQ消费进程开始执行"+msgContent);
+		log.info("**************************MQ消费进程开始执行"+msg);
 		CoPicCompareInfoDO logBean = (CoPicCompareInfoDO) JsonUtil.convertJson2Object(msgContent,CoPicCompareInfoDO.class);
 		savePicCompareLog(logBean);
 	}

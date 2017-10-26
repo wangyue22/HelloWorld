@@ -21,8 +21,6 @@ public class ServiceApplication {
 
 	public static void main(String[] args) throws Exception
 	{
-		IPasswordCrypto crypto = new DataSourcePasswordCrypto();
-    	System.out.println(   crypto.encrypt("dev_edcsms@123$"));
 		ApplicationStarter.startApplication(ServiceApplication.class, args);
 	}
 }

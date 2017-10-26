@@ -9,7 +9,6 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
-import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
 import com.cmos.edccommon.dao.facelive.CoFaceLiveInfoDAO;
 import com.cmos.edccommon.iservice.facelive.IFaceLiveSV;
 import com.cmos.edccommon.utils.JsonUtil;
@@ -59,5 +58,4 @@ public class FaceLiveSVImpl implements IFaceLiveSV {
 		CoFaceLiveInfoDO logBean = (CoFaceLiveInfoDO) JsonUtil.convertJson2Object(msgContent,CoFaceLiveInfoDO.class);
 		saveFaceLiveLog(logBean);
 	}
-
 }
