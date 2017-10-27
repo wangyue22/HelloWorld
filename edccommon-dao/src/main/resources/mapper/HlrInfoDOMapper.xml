@@ -5,4 +5,8 @@
     select PROV_CODE from t_co_hlr_info
     where SCTNO_CODE = #{phoneNum,jdbcType=VARCHAR}
   </select>
+  <select id="getHlrTypeByPhoneNum" resultType="java.lang.String" parameterType="java.lang.String" >
+    select SCTNO_TYPE_CD from t_co_hlr_info
+    where SCTNO_CODE = #{phoneNum,jdbcType=VARCHAR}
+  </select>
 </mapper>
