@@ -25,7 +25,7 @@ public class HlrInfoController {
 	private IHlrInfoSV hlrInfoSV;
 
 	/**
-	 * http://localhost:18080/co/getProvCodeByPhoneNum?phoneNum=1529305
+	 * http://localhost:18080/getProvCodeByPhoneNum?phoneNum=1529305
 	 * 根据电话号码返回该电话号码对应的省端编码
 	 * 
 	 * @param:phoneNum
