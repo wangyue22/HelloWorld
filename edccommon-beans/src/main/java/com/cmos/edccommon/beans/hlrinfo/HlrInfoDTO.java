@@ -1,20 +1,15 @@
 package com.cmos.edccommon.beans.hlrinfo;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
 import com.cmos.common.bean.GenericBean;
 import com.cmos.common.domain.UserResult;
-
-
-
 /**
- * 统一出参数据类型  
+ * 根据手机号得到省编码以及手机所属运营商统一返回对象
  * 
+ * @author: zhaohu
+ *
+ * @created: 2017年10月27日
  */
 public class HlrInfoDTO extends GenericBean implements UserResult {
 	private static final long serialVersionUID = 3862163719814136111L;
