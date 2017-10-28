@@ -6,6 +6,8 @@ import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.hlrinfo.HlrInfoDTO;
 import com.cmos.edccommon.iservice.hlrinfo.IHlrInfoSV;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,11 +41,15 @@ public class HlrInfoController {
 		try {
 			provCode = hlrInfoSV.getProvCodeByPhoneNum(phoneNum);
 			log.info("省端编码provCode:" + provCode);
+			if(StringUtils.isBlank(provCode)){
+				hlrInfoDTO.setReturnCode("2999");
+				hlrInfoDTO.setReturnMessage("调用手机号获取省份返回值为空");
+				log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
+			}
 		} catch (Exception e) {
 			hlrInfoDTO.setReturnCode("9999");
 			hlrInfoDTO.setReturnMessage("调用手机号获取省份通用能力发生异常");
 			log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
-			return hlrInfoDTO;
 		}
 		hlrInfoDTO.getBean().put("provCode", provCode);
 		log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
@@ -64,11 +70,15 @@ public class HlrInfoController {
 		try {
 			hlrType = hlrInfoSV.getHlrTypeByPhoneNum(phoneNum);
 			log.info("手机所属hlrType:" + hlrType);
+			if(StringUtils.isBlank(hlrType)){
+				hlrInfoDTO.setReturnCode("2999");
+				hlrInfoDTO.setReturnMessage("调用手机号获取运营商返回值为空");
+				log.info("getHlrTypeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
+			}
 		} catch (Exception e) {
 			hlrInfoDTO.setReturnCode("9999");
 			hlrInfoDTO.setReturnMessage("调用手机号获取所属运营商通用能力发生异常");
-			log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
-			return hlrInfoDTO;
+			log.info("getHlrTypeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
 		}
 		hlrInfoDTO.getBean().put("hlrType", hlrType);
 		log.info("getHlrTypeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
