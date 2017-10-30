@@ -1,9 +1,9 @@
-package com.cmos.edccommon.web.controller;
+package com.cmos.edccommon.web.controller.serviceswitch;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.common.exception.GeneralException;
-import com.cmos.edccommon.beans.ServiceSwitchDO;
-import com.cmos.edccommon.iservice.IServiceSwitchSV;
+import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
+import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 import com.cmos.edccommon.web.serviceSwitch.CacheFatctoryUtil;
 import com.cmos.edccommon.web.serviceSwitch.JVMCacheDataUtil;
 import com.cmos.edccommon.web.serviceSwitch.RedisCacheDataUtil;

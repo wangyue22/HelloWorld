@@ -5,7 +5,7 @@ import com.cmos.common.annotation.EnableResponseWrapper;
 import com.cmos.common.exception.autoconfig.EnableGeneralException;
 import com.cmos.common.web.config.DefaultWebMvcConfig;
 import com.cmos.common.web.http.ServletContainerCustomizer;
-import com.cmos.edccommon.web.controller.ServiceSwitchController;
+import com.cmos.edccommon.web.controller.serviceswitch.ServiceSwitchController;
 import com.cmos.edccommon.web.intercepter.PrivateParamInterceptor;
 
 

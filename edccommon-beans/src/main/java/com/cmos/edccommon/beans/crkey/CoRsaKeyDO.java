@@ -4,11 +4,11 @@ import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 /**
- * 秘钥数据表
+ * RSA秘钥数据表
  * @author xdx
  *
  */
-public class CoKeyDO extends GenericBean {
+public class CoRsaKeyDO extends GenericBean {
 	private static final long serialVersionUID = 90716934787134967L;
 
 	/**
@@ -35,14 +35,6 @@ public class CoKeyDO extends GenericBean {
      */
     private String prtkey;
     /**
-     * 密钥
-     */
-    private String crkey;
-    /**
-     * 密钥类型代码
-     */
-    private String crkeyTypeCd;
-    /**
      * 业务类型代码
      */
     private String bizTypeCd;
@@ -50,18 +42,31 @@ public class CoKeyDO extends GenericBean {
      * 有效标志
      */
     private String validFlag;
-
+    /**
+     * 创建用户id
+     */
     private String crtUserId;
-
+    /**
+     * 创建时间
+     */
     private Date crtTime;
-
+    /**
+     * 创建系统id
+     */
     private String crtAppSysId;
-
+    /**
+     * 修改用户名
+     */
     private String modfUserId;
-
+    /**
+     * 修改时间
+     */
     private Date modfTime;
-
+    /**
+     * 修改系统
+     */
     private String modfAppSysId;
+
 
     public Long getCrkeyId() {
         return crkeyId;
@@ -101,22 +106,6 @@ public class CoKeyDO extends GenericBean {
 
     public void setPrtkey(String prtkey) {
         this.prtkey = prtkey == null ? null : prtkey.trim();
-    }
-
-    public String getCrkey() {
-        return crkey;
-    }
-
-    public void setCrkey(String crkey) {
-        this.crkey = crkey == null ? null : crkey.trim();
-    }
-
-    public String getCrkeyTypeCd() {
-        return crkeyTypeCd;
-    }
-
-    public void setCrkeyTypeCd(String crkeyTypeCd) {
-        this.crkeyTypeCd = crkeyTypeCd == null ? null : crkeyTypeCd.trim();
     }
 
     public String getBizTypeCd() {

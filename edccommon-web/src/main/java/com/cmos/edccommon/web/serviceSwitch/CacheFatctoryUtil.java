@@ -4,8 +4,8 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.ServiceSwitchDO;
-import com.cmos.edccommon.iservice.IServiceSwitchSV;
+import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
+import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 import com.cmos.edccommon.utils.StringUtil;
 
 import org.aspectj.lang.annotation.Aspect;

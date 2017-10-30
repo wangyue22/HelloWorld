@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cmos.edccommon.dao.facelive.CoFaceLiveInfoDOMapper">
 
+<!-- 保存静默活体日志 -->
   <insert id="insert" parameterType="com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO">
     insert into t_co_face_live_info_${splitName} (DETCTN_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, 
       SWFTNO, RSP_CODE, RSP_INFO_CNTT, 

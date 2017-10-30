@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cmos.edccommon.dao.ServiceSwitchDAO" >
-  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.ServiceSwitchDO" >
+<mapper namespace="com.cmos.edccommon.dao.serviceswitch.ServiceSwitchDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO" >
     <id column="SWTCH_ID" property="swtchId" jdbcType="BIGINT" />
     <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
     <result column="SWTCH_TYPE_CD" property="swtchTypeCd" jdbcType="VARCHAR" />
@@ -23,6 +23,7 @@
     CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,
     CACHE_TYPE_CD, VALID_FLAG
   </sql>
+  <!--  根据类型返回所有开关 -->
   <select id="slectByType" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
@@ -32,6 +33,7 @@
       and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
     </if>
   </select>
+   <!--  查询开关 -->
   <select id="getServiceSwitchByKey" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
@@ -41,7 +43,8 @@
       and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
     </if>
   </select>
-  <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.ServiceSwitchDO" >
+  <!--  添加开关 -->
+  <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO" >
     insert into t_op_service_switch
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="swtchId != null" >
@@ -138,7 +141,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cmos.edccommon.beans.ServiceSwitchDO" >
+<!--   更新开关 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO" >
     update t_op_service_switch
     <set >
       <if test="bizSysCode != null" >

@@ -3,18 +3,19 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.crkey.CoKeyDO;
+import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
 import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
 import com.cmos.edccommon.utils.CoConstants;
 import com.github.pagehelper.StringUtil;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.cmos.edccommon.web.serviceSwitch.CacheFatctoryUtil;
 /**
  * 获取秘钥
  * 
@@ -28,6 +29,9 @@ public class KeyInfoController {
 	@Reference(group = "edcco")
 	private IKeyInfoSV keyInfoSV;
 	
+	@Autowired
+	private CacheFatctoryUtil cacheFatctoryUtil;
+	
 	/**
 	 * http://localhost:18080/co/getDesKey?reqstSrcCode=371
 	 * 获取默认的DES加密秘钥
@@ -36,8 +40,8 @@ public class KeyInfoController {
 	 * @throws GeneralException 
 	 */
 		@RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
-		public CoKeyDO getDesKey(@RequestParam String reqstSrcCode ) throws GeneralException{
-			CoKeyDO outParam = new CoKeyDO();
+		public CoRsaKeyDO getDesKey(@RequestParam String reqstSrcCode ) throws GeneralException{
+			CoRsaKeyDO outParam = new CoRsaKeyDO();
 			if(StringUtil.isEmpty(reqstSrcCode)){
 				throw new GeneralException("2999","参数异常");
 			}
@@ -63,8 +67,8 @@ public class KeyInfoController {
 	 * @throws GeneralException 
 	 */
 		@RequestMapping(value = "/getKey", method = RequestMethod.POST)
-		public CoKeyDO getKey(@RequestBody KeyInfoDTO inParam ) throws GeneralException{
-			CoKeyDO outParam = new CoKeyDO();
+		public CoRsaKeyDO getKey(@RequestBody KeyInfoDTO inParam ) throws GeneralException{
+			CoRsaKeyDO outParam = new CoRsaKeyDO();
 	
 			if(inParam==null||StringUtil.isEmpty(inParam.getReqstSrcCode())){
 				throw new GeneralException("2999","参数异常");
@@ -78,6 +82,5 @@ public class KeyInfoController {
 
 			return outParam;
 		}
-		
 		
 }

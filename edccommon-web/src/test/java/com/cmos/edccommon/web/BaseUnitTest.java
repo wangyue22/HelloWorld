@@ -20,6 +20,10 @@ import com.cmos.edccommon.web.config.WebMockConfig;
 @WebAppConfiguration
 @ContextConfiguration(classes = WebMockConfig.class, initializers = {DubboRegistryInitializer.class,
     DefaultApplicationContextInitializer.class, MockAppContextIntializer.class})
+/**
+ * 单元测试 基类
+ * @author xdx
+ */
 public class BaseUnitTest {
     @Autowired
     protected WebApplicationContext context;

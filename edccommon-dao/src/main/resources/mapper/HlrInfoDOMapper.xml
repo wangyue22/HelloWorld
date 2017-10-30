@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cmos.edccommon.dao.hlrinfo.HlrInfoDODAO" >
+<!--   根据手机号检索省编码 -->
   <select id="getProvCodeByPhoneNum" resultType="java.lang.String" parameterType="java.lang.String" >
     select PROV_CODE from t_co_hlr_info
     where SCTNO_CODE = #{phoneNum,jdbcType=VARCHAR}
   </select>
+  <!-- 根据手机号检索号码类型 -->
   <select id="getHlrTypeByPhoneNum" resultType="java.lang.String" parameterType="java.lang.String" >
     select SCTNO_TYPE_CD from t_co_hlr_info
     where SCTNO_CODE = #{phoneNum,jdbcType=VARCHAR}

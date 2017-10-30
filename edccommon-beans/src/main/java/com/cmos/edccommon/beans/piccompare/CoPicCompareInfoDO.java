@@ -4,6 +4,10 @@ import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 
+/**
+ * 人像比对，人像双照比对存表
+ *
+ */
 public class CoPicCompareInfoDO extends GenericBean {
 	
 	private static final long serialVersionUID = -966363633114254070L;
@@ -11,7 +15,7 @@ public class CoPicCompareInfoDO extends GenericBean {
 	/**
 	 * 分表 YYYYMM
 	 */
-	private String splitName = "201709";
+	private String splitName;
 	
 	/**
     * 对比ID 唯一主键
@@ -33,10 +37,21 @@ public class CoPicCompareInfoDO extends GenericBean {
     private String swftno;
 
     /**
-     * 身份证号
+     * 人像图片路径
      */
-    private String idno;
-    
+    private String photoPath;
+    /**
+     * 标准图片路径
+     */
+    private String picTPath;
+    /**
+     * 人像图片类型  r人像 t头像
+     */
+    private String photoType;
+    /**
+     * 标准图片类型  g国政通，x芯片头像
+     */
+    private String picTType;   
     /**
      * 响应编码
      */
@@ -57,6 +72,10 @@ public class CoPicCompareInfoDO extends GenericBean {
      */
     private String cmprScore;
 
+    /**
+     * 其他分值
+     */
+    private String otherScore;
     /**
      * 返回报文内容
      */
@@ -116,20 +135,12 @@ public class CoPicCompareInfoDO extends GenericBean {
         this.bizTypeCode = bizTypeCode == null ? null : bizTypeCode.trim();
     }
 
-    public String getswftno() {
+    public String getSwftno() {
         return swftno;
     }
 
-    public void setswftno(String swftno) {
+    public void setSwftno(String swftno) {
         this.swftno = swftno == null ? null : swftno.trim();
-    }
-
-    public String getIdno() {
-        return idno;
-    }
-
-    public void setIdno(String idno) {
-        this.idno = idno == null ? null : idno.trim();
     }
 
     public String getRspCode() {
@@ -225,6 +236,48 @@ public class CoPicCompareInfoDO extends GenericBean {
 	}
 
 	public void setSplitName(String splitName) {
-		this.splitName = splitName;
+		this.splitName = splitName == null ? null : splitName.trim();
 	}
+	
+	
+	   public String getPhotoPath() {
+	        return photoPath;
+	    }
+
+	    public void setPhotoPath(String photoPath) {
+	        this.photoPath = photoPath == null ? null : photoPath.trim();
+	    }
+
+	    public String getPicTPath() {
+	        return picTPath;
+	    }
+
+	    public void setPicTPath(String picTPath) {
+	        this.picTPath = picTPath == null ? null : picTPath.trim();
+	    }
+
+	    public String getPhotoType() {
+	        return photoType;
+	    }
+
+	    public void setPhotoType(String photoType) {
+	        this.photoType = photoType == null ? null : photoType.trim();
+	    }
+
+	    public String getPicTType() {
+	        return picTType;
+	    }
+
+	    public void setPicTType(String picTType) {
+	        this.picTType = picTType == null ? null : picTType.trim();
+	    }
+
+	    public String getOtherScore() {
+	        return otherScore;
+	    }
+
+	    public void setOtherScore(String otherScore) {
+	        this.otherScore = otherScore == null ? null : otherScore.trim();
+	    }
+	
 }

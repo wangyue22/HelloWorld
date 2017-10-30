@@ -2,7 +2,11 @@ package com.cmos.edccommon.beans.facelive;
 
 import com.cmos.common.bean.GenericBean;
 import java.util.Date;
-
+/**
+ * 静默活体
+ * @author xdx
+ *
+ */
 public class CoFaceLiveInfoDO extends GenericBean {
 
 	private static final long serialVersionUID = -2173816809435877349L;
@@ -47,19 +51,29 @@ public class CoFaceLiveInfoDO extends GenericBean {
      * 静默活体服务器返回报文内容
      */
     private String backtoMsgCntt;
-
+    /**
+     * 创建用户id
+     */
     private String crtUserId;
     /**
      * 创建时间
      */
     private Date crtTime;
-
+    /**
+     * 创建系统id
+     */
     private String crtAppSysId;
-    
+    /**
+     * 修改用户名
+     */
     private String modfUserId;
-
+    /**
+     * 修改时间
+     */
     private Date modfTime;
-
+    /**
+     * 修改系统
+     */
     private String modfAppSysId;
 
     public Long getDetctnId() {

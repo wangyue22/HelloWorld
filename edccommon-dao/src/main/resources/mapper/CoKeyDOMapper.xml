@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cmos.edccommon.dao.crkey.CoKeyDAO" >
-  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.crkey.CoKeyDO" >
+<mapper namespace="com.cmos.edccommon.dao.crkey.CoRsaKeyDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.crkey.CoRsaKeyDO" >
     <id column="CRKEY_ID" property="crkeyId" jdbcType="BIGINT" />
     <result column="REQST_SRC_CODE" property="reqstSrcCode" jdbcType="VARCHAR" />
     <result column="REQST_SRC_NM" property="reqstSrcNm" jdbcType="VARCHAR" />
     <result column="PBKEY" property="pbkey" jdbcType="VARCHAR" />
     <result column="PRTKEY" property="prtkey" jdbcType="VARCHAR" />
-    <result column="CRKEY" property="crkey" jdbcType="VARCHAR" />
-    <result column="CRKEY_TYPE_CD" property="crkeyTypeCd" jdbcType="VARCHAR" />
     <result column="BIZ_TYPE_CD" property="bizTypeCd" jdbcType="VARCHAR" />
     <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
     <result column="CRT_USER_ID" property="crtUserId" jdbcType="VARCHAR" />
@@ -19,41 +17,22 @@
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, PBKEY, PRTKEY, CRKEY, CRKEY_TYPE_CD, BIZ_TYPE_CD, 
+    CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, PBKEY, PRTKEY, BIZ_TYPE_CD, 
     VALID_FLAG, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID
   </sql>
+  <!--  检索rsa秘钥 -->
 	<select id="selectKey" resultMap="BaseResultMap"
 		parameterType="com.cmos.edccommon.beans.crkey.KeyInfoDTO">
 		select
 		<include refid="Base_Column_List" />
-		from t_op_key
-		where REQST_SRC_CODE=#{reqstSrcCode, jdbcType=VARCHAR}
-		 AND 
-		CRKEY_TYPE_CD=#{crkeyTypeCd,jdbcType=VARCHAR} AND 
+		from t_co_rsa_key
+		where REQST_SRC_CODE=#{reqstSrcCode, jdbcType=VARCHAR} AND 
 		BIZ_TYPE_CD=#{bizTypeCd,jdbcType=VARCHAR} AND 
 		VALID_FLAG = '1'
 	</select>
-  
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from t_op_key
-    where CRKEY_ID = #{crkeyId,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.cmos.edccommon.beans.crkey.CoKeyDO" >
-    insert into t_op_key (CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, 
-      PBKEY, PRTKEY, CRKEY, 
-      CRKEY_TYPE_CD, BIZ_TYPE_CD, VALID_FLAG, 
-      CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, 
-      MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID
-      )
-    values (#{crkeyId,jdbcType=BIGINT}, #{reqstSrcCode,jdbcType=VARCHAR},  
-      #{pbkey,jdbcType=VARCHAR}, #{prtkey,jdbcType=VARCHAR}, #{crkey,jdbcType=VARCHAR}, 
-      #{crkeyTypeCd,jdbcType=VARCHAR}, #{bizTypeCd,jdbcType=VARCHAR}, #{validFlag,jdbcType=VARCHAR}, 
-      #{crtUserId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, #{crtAppSysId,jdbcType=VARCHAR}, 
-      #{modfUserId,jdbcType=VARCHAR}, #{modfTime,jdbcType=TIMESTAMP}, #{modfAppSysId,jdbcType=VARCHAR}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.crkey.CoKeyDO" >
-    insert into t_op_key
+<!--  新增rsa秘钥表 -->
+  <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.crkey.CoRsaKeyDO" >
+    insert into t_co_rsa_key
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="crkeyId != null" >
         CRKEY_ID,
@@ -69,12 +48,6 @@
       </if>
       <if test="prtkey != null" >
         PRTKEY,
-      </if>
-      <if test="crkey != null" >
-        CRKEY,
-      </if>
-      <if test="crkeyTypeCd != null" >
-        CRKEY_TYPE_CD,
       </if>
       <if test="bizTypeCd != null" >
         BIZ_TYPE_CD,
@@ -117,12 +90,6 @@
       <if test="prtkey != null" >
         #{prtkey,jdbcType=VARCHAR},
       </if>
-      <if test="crkey != null" >
-        #{crkey,jdbcType=VARCHAR},
-      </if>
-      <if test="crkeyTypeCd != null" >
-        #{crkeyTypeCd,jdbcType=VARCHAR},
-      </if>
       <if test="bizTypeCd != null" >
         #{bizTypeCd,jdbcType=VARCHAR},
       </if>
@@ -149,8 +116,9 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.cmos.edccommon.beans.crkey.CoKeyDO" >
-    update t_op_key
+	<!--  更新rsa秘钥表 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.cmos.edccommon.beans.crkey.CoRsaKeyDO" >
+    update t_co_rsa_key
     <set >
       <if test="reqstSrcCode != null" >
         REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
@@ -163,12 +131,6 @@
       </if>
       <if test="prtkey != null" >
         PRTKEY = #{prtkey,jdbcType=VARCHAR},
-      </if>
-      <if test="crkey != null" >
-        CRKEY = #{crkey,jdbcType=VARCHAR},
-      </if>
-      <if test="crkeyTypeCd != null" >
-        CRKEY_TYPE_CD = #{crkeyTypeCd,jdbcType=VARCHAR},
       </if>
       <if test="bizTypeCd != null" >
         BIZ_TYPE_CD = #{bizTypeCd,jdbcType=VARCHAR},
@@ -197,22 +159,5 @@
     </set>
     where CRKEY_ID = #{crkeyId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.cmos.edccommon.beans.crkey.CoKeyDO" >
-    update t_op_key
-    set REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
-      REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR},
-      PBKEY = #{pbkey,jdbcType=VARCHAR},
-      PRTKEY = #{prtkey,jdbcType=VARCHAR},
-      CRKEY = #{crkey,jdbcType=VARCHAR},
-      CRKEY_TYPE_CD = #{crkeyTypeCd,jdbcType=VARCHAR},
-      BIZ_TYPE_CD = #{bizTypeCd,jdbcType=VARCHAR},
-      VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
-      CRT_USER_ID = #{crtUserId,jdbcType=VARCHAR},
-      CRT_TIME = #{crtTime,jdbcType=TIMESTAMP},
-      CRT_APP_SYS_ID = #{crtAppSysId,jdbcType=VARCHAR},
-      MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
-      MODF_TIME = #{modfTime,jdbcType=TIMESTAMP},
-      MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR}
-    where CRKEY_ID = #{crkeyId,jdbcType=BIGINT}
-  </update>
+ 
 </mapper>

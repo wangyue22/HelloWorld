@@ -1,30 +1,26 @@
-package com.cmos.edccommon.beans.hlrinfo;
+package com.cmos.edccommon.beans.common;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.cmos.common.bean.GenericBean;
 import com.cmos.common.domain.UserResult;
+
+
+
 /**
- * 根据手机号得到省编码以及手机所属运营商统一返回对象
+ * 统一出参数据类型  
  * 
- * @author: zhaohu
- *
- * @created: 2017年10月27日
  */
-public class HlrInfoDTO extends GenericBean implements UserResult {
-	private static final long serialVersionUID = 3862163719814136111L;
-	/**
-	 * 返回码
-	 */
-	private String returnCode="0000";
-	/**
-	 * 返回信息
-	 */
-	private String returnMessage="success";
-	/**
-	 * 返回体
-	 */
-	private Map<String, String> bean=new HashMap<String,String>();
+public class EdcCoOutDTO extends GenericBean implements UserResult {
+	private static final long serialVersionUID = -5298399887946833718L;
+
+	private String returnCode;//返回编码 
+
+	private String returnMessage;//返回信息
+	
+	private Map<String, String> bean=new HashMap<String,String>();//返回报文体
+	
 	public String getReturnCode() {
 		return returnCode;
 	}

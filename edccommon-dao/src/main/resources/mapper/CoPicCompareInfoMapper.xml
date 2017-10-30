@@ -6,11 +6,15 @@
     <result column="REQST_SRC_CODE" property="reqstSrcCode" jdbcType="VARCHAR" />
     <result column="BIZ_TYPE_CODE" property="bizTypeCode" jdbcType="VARCHAR" />
     <result column="SWFTNO" property="swftno" jdbcType="VARCHAR" />
-    <result column="IDNO" property="idno" jdbcType="VARCHAR" />
+    <result column="PHOTO_PATH" jdbcType="VARCHAR" property="photoPath" />
+    <result column="PIC_T_PATH" jdbcType="VARCHAR" property="picTPath" />
+    <result column="PHOTO_TYPE" jdbcType="VARCHAR" property="photoType" />
+    <result column="PIC_T_TYPE" jdbcType="VARCHAR" property="picTType" />
     <result column="RSP_CODE" property="rspCode" jdbcType="VARCHAR" />
     <result column="RSP_INFO_CNTT" property="rspInfoCntt" jdbcType="VARCHAR" />
     <result column="CMPR_RSLT" property="cmprRslt" jdbcType="VARCHAR" />
     <result column="CMPR_SCORE" property="cmprScore" jdbcType="VARCHAR" />
+    <result column="OTHER_SCORE" jdbcType="VARCHAR" property="otherScore" />
     <result column="BACKTO_MSG_CNTT" property="backtoMsgCntt" jdbcType="VARCHAR" />
     <result column="CRT_USER_ID" property="crtUserId" jdbcType="VARCHAR" />
     <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
@@ -19,134 +23,21 @@
     <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
   </resultMap>
-  <sql id="Base_Column_List" >
-    CMPR_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, SWFTNO, IDNO, RSP_CODE, RSP_INFO_CNTT, 
-    CMPR_RSLT, CMPR_SCORE, BACKTO_MSG_CNTT, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, 
-    MODF_TIME, MODF_APP_SYS_ID
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO" >
-    select 
-    <include refid="Base_Column_List" />
-    from t_co_pic_compare_info_${splitName}
-    where CMPR_ID = #{cmprId,jdbcType=BIGINT}
-  </select>
-
-  <insert id="insert" parameterType="com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO" >
-    insert t_co_pic_compare_info_${splitName} (CMPR_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, 
-      SWFTNO, IDNO, RSP_CODE, 
+<!--   新增人像比对日志记录 -->
+  <insert id="insert" parameterType="com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO">
+    insert into t_co_pic_compare_info_${splitName} (CMPR_ID, REQST_SRC_CODE, BIZ_TYPE_CODE, 
+      SWFTNO, PHOTO_PATH, PIC_T_PATH, 
+      PHOTO_TYPE, PIC_T_TYPE, RSP_CODE, 
       RSP_INFO_CNTT, CMPR_RSLT, CMPR_SCORE, 
-      BACKTO_MSG_CNTT, CRT_USER_ID, CRT_TIME, 
-      CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, 
-      MODF_APP_SYS_ID)
+      OTHER_SCORE, BACKTO_MSG_CNTT, CRT_USER_ID, 
+      CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, 
+      MODF_TIME, MODF_APP_SYS_ID)
     values (#{cmprId,jdbcType=BIGINT}, #{reqstSrcCode,jdbcType=VARCHAR}, #{bizTypeCode,jdbcType=VARCHAR}, 
-      #{swftno,jdbcType=VARCHAR}, #{idno,jdbcType=VARCHAR}, #{rspCode,jdbcType=VARCHAR}, 
+      #{swftno,jdbcType=VARCHAR}, #{photoPath,jdbcType=VARCHAR}, #{picTPath,jdbcType=VARCHAR}, 
+      #{photoType,jdbcType=VARCHAR}, #{picTType,jdbcType=VARCHAR}, #{rspCode,jdbcType=VARCHAR}, 
       #{rspInfoCntt,jdbcType=VARCHAR}, #{cmprRslt,jdbcType=VARCHAR}, #{cmprScore,jdbcType=VARCHAR}, 
-      #{backtoMsgCntt,jdbcType=VARCHAR}, #{crtUserId,jdbcType=VARCHAR}, #{crtTime,jdbcType=TIMESTAMP}, 
-      #{crtAppSysId,jdbcType=VARCHAR}, #{modfUserId,jdbcType=VARCHAR}, #{modfTime,jdbcType=TIMESTAMP}, 
-      #{modfAppSysId,jdbcType=VARCHAR})
+      #{otherScore,jdbcType=VARCHAR}, #{backtoMsgCntt,jdbcType=VARCHAR}, #{crtUserId,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtAppSysId,jdbcType=VARCHAR}, #{modfUserId,jdbcType=VARCHAR}, 
+      #{modfTime,jdbcType=TIMESTAMP}, #{modfAppSysId,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO" >
-    insert into t_co_pic_compare_info_${splitName}
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="cmprId != null" >
-        CMPR_ID,
-      </if>
-      <if test="reqstSrcCode != null" >
-        REQST_SRC_CODE,
-      </if>
-      <if test="bizTypeCode != null" >
-        BIZ_TYPE_CODE,
-      </if>
-      <if test="swftno != null" >
-        SWFTNO,
-      </if>
-      <if test="idno != null" >
-        IDNO,
-      </if>
-      <if test="rspCode != null" >
-        RSP_CODE,
-      </if>
-      <if test="rspInfoCntt != null" >
-        RSP_INFO_CNTT,
-      </if>
-      <if test="cmprRslt != null" >
-        CMPR_RSLT,
-      </if>
-      <if test="cmprScore != null" >
-        CMPR_SCORE,
-      </if>
-      <if test="backtoMsgCntt != null" >
-        BACKTO_MSG_CNTT,
-      </if>
-      <if test="crtUserId != null" >
-        CRT_USER_ID,
-      </if>
-      <if test="crtTime != null" >
-        CRT_TIME,
-      </if>
-      <if test="crtAppSysId != null" >
-        CRT_APP_SYS_ID,
-      </if>
-      <if test="modfUserId != null" >
-        MODF_USER_ID,
-      </if>
-      <if test="modfTime != null" >
-        MODF_TIME,
-      </if>
-      <if test="modfAppSysId != null" >
-        MODF_APP_SYS_ID,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="cmprId != null" >
-        #{cmprId,jdbcType=BIGINT},
-      </if>
-      <if test="reqstSrcCode != null" >
-        #{reqstSrcCode,jdbcType=VARCHAR},
-      </if>
-      <if test="bizTypeCode != null" >
-        #{bizTypeCode,jdbcType=VARCHAR},
-      </if>
-      <if test="swftno != null" >
-        #{swftno,jdbcType=VARCHAR},
-      </if>
-      <if test="idno != null" >
-        #{idno,jdbcType=VARCHAR},
-      </if>
-      <if test="rspCode != null" >
-        #{rspCode,jdbcType=VARCHAR},
-      </if>
-      <if test="rspInfoCntt != null" >
-        #{rspInfoCntt,jdbcType=VARCHAR},
-      </if>
-      <if test="cmprRslt != null" >
-        #{cmprRslt,jdbcType=VARCHAR},
-      </if>
-      <if test="cmprScore != null" >
-        #{cmprScore,jdbcType=VARCHAR},
-      </if>
-      <if test="backtoMsgCntt != null" >
-        #{backtoMsgCntt,jdbcType=VARCHAR},
-      </if>
-      <if test="crtUserId != null" >
-        #{crtUserId,jdbcType=VARCHAR},
-      </if>
-      <if test="crtTime != null" >
-        #{crtTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="crtAppSysId != null" >
-        #{crtAppSysId,jdbcType=VARCHAR},
-      </if>
-      <if test="modfUserId != null" >
-        #{modfUserId,jdbcType=VARCHAR},
-      </if>
-      <if test="modfTime != null" >
-        #{modfTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modfAppSysId != null" >
-        #{modfAppSysId,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  
 </mapper>

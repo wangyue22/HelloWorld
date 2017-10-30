@@ -1,9 +1,9 @@
-package com.cmos.edccommon.service.impl;
+package com.cmos.edccommon.service.impl.serviceswitch;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.cmos.edccommon.beans.ServiceSwitchDO;
-import com.cmos.edccommon.dao.ServiceSwitchDAO;
-import com.cmos.edccommon.iservice.IServiceSwitchSV;
+import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
+import com.cmos.edccommon.dao.serviceswitch.ServiceSwitchDAO;
+import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,6 +1,6 @@
 package com.cmos.edccommon.iservice.crkey;
 
-import com.cmos.edccommon.beans.crkey.CoKeyDO;
+import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
 
 /**
@@ -18,5 +18,5 @@ public interface IKeyInfoSV {
      * @throws Exception 
      * @date 2017-10-17 17:00:00
      */
-  public  CoKeyDO getKey(KeyInfoDTO inParam);
+  public  CoRsaKeyDO getKey(KeyInfoDTO inParam);
 }

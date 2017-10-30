@@ -4,7 +4,7 @@ import com.cmos.common.bean.JsonFormatException;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.common.OutputObject;
+import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
 import com.cmos.edccommon.beans.facelive.FaceLiveInDTO;
 import com.cmos.edccommon.utils.Base64;
@@ -17,7 +17,6 @@ import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -32,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 /**
- * @author Administrator
- *
+ * 静默活体服务
+ * @author xdx
  */
 @RestController
 @RequestMapping(value = "/co")
@@ -41,7 +40,7 @@ public class FaceLiveController {
 	private Logger log=LoggerFactory.getActionLog(FaceLiveController.class);
 	
 	@RequestMapping(value = "/facelive", method = RequestMethod.POST)
-	public OutputObject getFaceLive(@RequestBody FaceLiveInDTO inParam ) throws GeneralException {
+	public EdcCoOutDTO getFaceLive(@RequestBody FaceLiveInDTO inParam ) throws GeneralException {
 		log.info("****************************"+inParam.toString());
 	
 		return faceLive(inParam);
@@ -54,8 +53,8 @@ public class FaceLiveController {
 	 * @throws GeneralException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public OutputObject faceLive(FaceLiveInDTO inParam) throws GeneralException {
-		OutputObject out = new OutputObject();
+	public EdcCoOutDTO faceLive(FaceLiveInDTO inParam) throws GeneralException {
+		EdcCoOutDTO out = new EdcCoOutDTO();
 		out.setReturnCode("0000");//默认调用成功
 		out.setReturnCode("success");//默认调用成功
 		

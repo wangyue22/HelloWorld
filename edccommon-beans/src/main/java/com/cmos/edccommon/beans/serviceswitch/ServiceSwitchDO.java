@@ -1,39 +1,61 @@
-package com.cmos.edccommon.beans;
+package com.cmos.edccommon.beans.serviceswitch;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class serviceSwitch implements Serializable {
-   
-	private static final long serialVersionUID = 1819442235693036139L;
+import com.cmos.common.bean.GenericBean;
 
-	private Long swtchId;
+/**
+ * 开关缓存配置
+ *
+ */
+public class ServiceSwitchDO extends GenericBean{
+    private static final long serialVersionUID = 7181946962324445621L;
+    private Long swtchId;//开关ID
 
-    private String bizSysCode;
+    private String bizSysCode;//业务系统编码
 
-    private String swtchTypeCd;
+    private String swtchTypeCd;//开关类型编码
 
-    private String swtchKey;
+    private String swtchNm;//开关名称
 
-    private String swtchVal;
+    private String swtchDesc;//开关描述
 
-    private String swtchDesc;
+    private String swtchKey;//开关关键字
 
-    private String pushType;
+    private String swtchVal;//开关取值
 
-    private String validFlag;
-
+    /**
+     * 创建用户id
+     */
     private String crtUserId;
-
+    /**
+     * 创建时间
+     */
     private Date crtTime;
-
+    /**
+     * 创建系统id
+     */
     private String crtAppSysId;
-
+    /**
+     * 修改用户名
+     */
     private String modfUserId;
-
+    /**
+     * 修改时间
+     */
     private Date modfTime;
-
+    /**
+     * 修改系统
+     */
     private String modfAppSysId;
+    /**
+     * 开关缓存类型 1jvm 2redis
+     */
+    private String cacheTypeCd;
+    /**
+     * 开关有效标志位 1 有效 
+     */
+    private String validFlag;
 
     public Long getSwtchId() {
         return swtchId;
@@ -59,6 +81,22 @@ public class serviceSwitch implements Serializable {
         this.swtchTypeCd = swtchTypeCd == null ? null : swtchTypeCd.trim();
     }
 
+    public String getSwtchNm() {
+        return swtchNm;
+    }
+
+    public void setSwtchNm(String swtchNm) {
+        this.swtchNm = swtchNm == null ? null : swtchNm.trim();
+    }
+
+    public String getSwtchDesc() {
+        return swtchDesc;
+    }
+
+    public void setSwtchDesc(String swtchDesc) {
+        this.swtchDesc = swtchDesc == null ? null : swtchDesc.trim();
+    }
+
     public String getSwtchKey() {
         return swtchKey;
     }
@@ -73,30 +111,6 @@ public class serviceSwitch implements Serializable {
 
     public void setSwtchVal(String swtchVal) {
         this.swtchVal = swtchVal == null ? null : swtchVal.trim();
-    }
-
-    public String getSwtchDesc() {
-        return swtchDesc;
-    }
-
-    public void setSwtchDesc(String swtchDesc) {
-        this.swtchDesc = swtchDesc == null ? null : swtchDesc.trim();
-    }
-
-    public String getPushType() {
-        return pushType;
-    }
-
-    public void setPushType(String pushType) {
-        this.pushType = pushType == null ? null : pushType.trim();
-    }
-
-    public String getValidFlag() {
-        return validFlag;
-    }
-
-    public void setValidFlag(String validFlag) {
-        this.validFlag = validFlag == null ? null : validFlag.trim();
     }
 
     public String getCrtUserId() {
@@ -145,5 +159,21 @@ public class serviceSwitch implements Serializable {
 
     public void setModfAppSysId(String modfAppSysId) {
         this.modfAppSysId = modfAppSysId == null ? null : modfAppSysId.trim();
+    }
+
+    public String getCacheTypeCd() {
+        return cacheTypeCd;
+    }
+
+    public void setCacheTypeCd(String cacheTypeCd) {
+        this.cacheTypeCd = cacheTypeCd == null ? null : cacheTypeCd.trim();
+    }
+
+    public String getValidFlag() {
+        return validFlag;
+    }
+
+    public void setValidFlag(String validFlag) {
+        this.validFlag = validFlag == null ? null : validFlag.trim();
     }
 }

@@ -28,7 +28,7 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 	private String bizTypeCode;
 	
 	/**
-	 * 头像照片or手持证件人像照片  图片路径
+	 * 头像照片or手持证件人像照片  图片路径 
 	 */
 	private String photoPath;
 	
@@ -45,7 +45,7 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 	/**
 	 *  人像照片是头像照片，还是手持证件人像照片  t:头像 r:手持人像 
 	 */
-	private String hndhldCredPhotoType;
+	private String photoType;
 	
 	/**
 	 * 芯片图片比对分值区间
@@ -115,12 +115,12 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 		this.gztAvtrPath = gztAvtrPath;
 	}
 
-	public String getHndhldCredPhotoType() {
-		return hndhldCredPhotoType;
+	public String getPhotoType() {
+		return photoType;
 	}
 
-	public void setHndhldCredPhotoType(String hndhldCredPhotoType) {
-		this.hndhldCredPhotoType = hndhldCredPhotoType;
+	public void setPhotoType(String photoType) {
+		this.photoType = photoType;
 	}
 
 	public String getPicStoinScore() {

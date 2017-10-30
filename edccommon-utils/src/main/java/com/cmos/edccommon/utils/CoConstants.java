@@ -19,4 +19,23 @@ public final class CoConstants {
 		String DEFAULT="DEFAULT";
     }
    
+    //存放人像比对图片类型
+    public interface PIC_TYPE{
+    	/**
+    	 * 国政通头像
+    	 */
+		String PIC_GZT="g";
+		/**
+    	 * 芯片头像
+    	 */
+		String PIC_STOIN="x";
+		/**
+    	 * 手持证件照人像
+    	 */
+		String PHOTO_R="r";
+		/**
+    	 * 非手持证件照人像
+    	 */
+		String PHOTO_T="t";
+    }
 }

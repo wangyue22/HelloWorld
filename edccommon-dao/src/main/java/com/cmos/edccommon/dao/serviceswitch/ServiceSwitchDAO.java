@@ -1,9 +1,10 @@
-package com.cmos.edccommon.dao;
+package com.cmos.edccommon.dao.serviceswitch;
 
 import java.util.List;
 import java.util.Map;
 
-import com.cmos.edccommon.beans.ServiceSwitchDO;
+import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
+
 
 public interface ServiceSwitchDAO {
     List<ServiceSwitchDO> slectByType(Map<String, Object> input);

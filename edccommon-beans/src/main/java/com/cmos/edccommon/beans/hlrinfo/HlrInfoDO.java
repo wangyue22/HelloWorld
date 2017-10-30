@@ -2,37 +2,53 @@ package com.cmos.edccommon.beans.hlrinfo;
 
 import com.cmos.common.bean.GenericBean;
 import java.util.Date;
-
+/**
+ * 根据手机号获取省份
+ *
+ */
 public class HlrInfoDO extends GenericBean {
 	
 	private static final long serialVersionUID = 3862163719814136103L;
-    private Long sctnoId;
+    private Long sctnoId;//号段ID
 
-    private String sctnoCode;
+    private String sctnoCode;//号段编码
 
-    private String sctnoTypeCd;
+    private String sctnoTypeCd;//号段类型代码
 
-    private String regnCode;
+    private String regnCode;//地区编码
 
-    private String hlrBelgCityCode;
+    private String hlrBelgCityCode;//HLR所属城市编码
 
-    private String brudrctCode;
+    private String brudrctCode;//局向编码
 
-    private Date validTime;
+    private Date validTime;//有效时间
 
-    private String provCode;
-
+    private String provCode;//省份编码
+    /**
+     * 创建用户id
+     */
     private String crtUserId;
-
+    /**
+     * 创建时间
+     */
     private Date crtTime;
-
+    /**
+     * 创建系统id
+     */
     private String crtAppSysId;
-
+    /**
+     * 修改用户名
+     */
     private String modfUserId;
-
+    /**
+     * 修改时间
+     */
     private Date modfTime;
-
+    /**
+     * 修改系统
+     */
     private String modfAppSysId;
+
 
     public Long getSctnoId() {
         return sctnoId;

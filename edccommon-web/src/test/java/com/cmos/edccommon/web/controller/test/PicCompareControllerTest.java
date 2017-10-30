@@ -39,7 +39,7 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picDoubleCompareInfo.setPicStoinPath("aFTP://123.jpg");
     	picDoubleCompareInfo.setGztAvtrScore("0-50|80-100");
     	picDoubleCompareInfo.setPicStoinScore("0-50|80-100");
-    	picDoubleCompareInfo.setHndhldCredPhotoType("r");
+    	picDoubleCompareInfo.setPhotoType("r");
         logger.info("入参："+JsonUtil.convertObject2Json(picDoubleCompareInfo));
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.post("/co/picdoublecompare").accept("application/json")
@@ -114,11 +114,11 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picDoubleCompareInfo.setPicStoinPath("aFTP://123.jpg");
     	picDoubleCompareInfo.setGztAvtrScore("0-50|80-100");
     	picDoubleCompareInfo.setPicStoinScore("0-50|80-100");
-    	picDoubleCompareInfo.setHndhldCredPhotoType("r");
+    	picDoubleCompareInfo.setPhotoType("r");
         logger.info("入参："+JsonUtil.convertObject2Json(picDoubleCompareInfo));
         MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/co/mqTest").accept("application/json")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE).content("aaa"))
+                MockMvcRequestBuilders.post("/co/picdoublecompare").accept("application/json")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(picDoubleCompareInfo)))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         logger.info(""+result);
     }
