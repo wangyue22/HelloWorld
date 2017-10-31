@@ -51,7 +51,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${cmos.core-finalName}-1.0.0-SNAPSHOT</finalName>
+		<finalName>${cmos.core-finalName}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
