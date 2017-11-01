@@ -18,13 +18,6 @@ public class KeyInfoDTO extends GenericBean implements UserResult {
 	private String reqstSrcCode;
 	
 	/**
-	 * 密钥类型 
-	 * 例如：DES ，AES ，RSA
-	 * 不传或为空，则为默认DES秘钥
-	 */	
-	private String crkeyTypeCd;
-	
-	/**
 	 * 业务类型代码 
 	 * 例如：KSJ 写卡时的卡数据秘钥
 	 * 不传或为空，则为默认秘钥
@@ -39,13 +32,6 @@ public class KeyInfoDTO extends GenericBean implements UserResult {
 		this.reqstSrcCode = reqstSrcCode;
 	}
 
-	public String getCrkeyTypeCd() {
-		return crkeyTypeCd;
-	}
-
-	public void setCrkeyTypeCd(String crkeyTypeCd) {
-		this.crkeyTypeCd = crkeyTypeCd;
-	}
 
 	public String getBizTypeCd() {
 		return bizTypeCd;

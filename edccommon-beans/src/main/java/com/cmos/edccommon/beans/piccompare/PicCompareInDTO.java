@@ -53,6 +53,12 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 	 * x是芯片
 	 */
 	private String picTType;
+	
+	/**
+	 * 人像图片解密秘钥
+	 */
+	private String crkey;
+	
 
 	public String getReqstSrcCode() {
 		return reqstSrcCode;
@@ -78,11 +84,11 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 		this.bizTypeCode = bizTypeCode;
 	}
 
-	public String getHndhldCredPhotoPath() {
+	public String getPhotoPath() {
 		return photoPath;
 	}
 
-	public void setHndhldCredPhotoPath(String photoPath) {
+	public void setPhotoPath(String photoPath) {
 		this.photoPath = photoPath;
 	}
 
@@ -106,7 +112,7 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 		return confidenceScore;
 	}
 
-	public void setConfidenceScore(String picScore) {
+	public void setConfidenceScore(String confidenceScore) {
 		this.confidenceScore = confidenceScore;
 	}
 
@@ -114,8 +120,16 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 		return picTType;
 	}
 
-	public void setPicType(String picType) {
+	public void setPicTType(String picTType) {
 		this.picTType = picTType;
+	}
+
+	public String getCrkey() {
+		return crkey;
+	}
+
+	public void setCrkey(String crkey) {
+		this.crkey = crkey;
 	}
 
 }

@@ -56,7 +56,12 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 	 * 国政通图片比对分值区间
 	 */
 	private String gztAvtrScore;
-
+	
+	/**
+	 * 人像图片解密秘钥
+	 */
+	private String crkey;
+	
 	/**
 	 *  双照比对规则类型，
 	 *  1 当取值为true时，要求人像图片和国政通，以及人像图片和芯片，两次都比对成功，才返回比对成功，否则比对失败
@@ -145,6 +150,14 @@ public class PicDoubleCompareInDTO extends GenericBean implements UserResult {
 
 	public void setBothCompFlag(String bothCompFlag) {
 		this.bothCompFlag = bothCompFlag;
+	}
+
+	public String getCrkey() {
+		return crkey;
+	}
+
+	public void setCrkey(String crkey) {
+		this.crkey = crkey;
 	}
 
 }

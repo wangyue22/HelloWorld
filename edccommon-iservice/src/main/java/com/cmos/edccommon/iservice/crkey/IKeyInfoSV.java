@@ -18,5 +18,5 @@ public interface IKeyInfoSV {
      * @throws Exception 
      * @date 2017-10-17 17:00:00
      */
-  public  CoRsaKeyDO getKey(KeyInfoDTO inParam);
+  public  CoRsaKeyDO getRsaKey(KeyInfoDTO inParam);
 }

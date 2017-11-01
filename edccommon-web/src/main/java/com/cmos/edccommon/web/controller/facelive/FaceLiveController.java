@@ -91,6 +91,7 @@ public class FaceLiveController {
 		} catch (Exception e) {
 			picRStr = null;
 			log.error("人像比对服务下载人像图片异常", e);
+		} finally {
 			if (null != picR) {
 				try {
 					picR.close();

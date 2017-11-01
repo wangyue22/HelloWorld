@@ -33,54 +33,34 @@ public class KeyInfoController {
 	private CacheFatctoryUtil cacheFatctoryUtil;
 	
 	/**
-	 * http://localhost:18080/co/getDesKey?reqstSrcCode=371
-	 * 获取默认的DES加密秘钥
-	 * @param reqstSrcCode
-	 * @return
-	 * @throws GeneralException 
-	 */
-		@RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
-		public CoRsaKeyDO getDesKey(@RequestParam String reqstSrcCode ) throws GeneralException{
-			CoRsaKeyDO outParam = new CoRsaKeyDO();
-			if(StringUtil.isEmpty(reqstSrcCode)){
-				throw new GeneralException("2999","参数异常");
-			}
-			KeyInfoDTO param= new KeyInfoDTO();
-			param.setReqstSrcCode(reqstSrcCode);
-			param.setCrkeyTypeCd(CoConstants.CR_KEY_TYPE.DES);
-			param.setBizTypeCd(CoConstants.BIZ_TYPE.DEFAULT);
-			try{
-				outParam=keyInfoSV.getKey(param);
-			}catch(Exception e){
-				log.error("getDesKey方法异常", e);
-				throw new GeneralException("9999","系统异常",e);
-			}
-			return outParam;
-		}
-		
-		
-	/**
-	 * http://localhost:18080/co/getKey?reqstSrcCode=371
+	 * http://localhost:18080/co/getRsaKey?reqstSrcCode=371
 	 * 获取加密秘钥 需要区分业务类型和秘钥类型时
 	 * @param inParam
 	 * @return
 	 * @throws GeneralException 
 	 */
-		@RequestMapping(value = "/getKey", method = RequestMethod.POST)
-		public CoRsaKeyDO getKey(@RequestBody KeyInfoDTO inParam ) throws GeneralException{
-			CoRsaKeyDO outParam = new CoRsaKeyDO();
-	
-			if(inParam==null||StringUtil.isEmpty(inParam.getReqstSrcCode())){
-				throw new GeneralException("2999","参数异常");
-			}
-			try{
-				outParam=keyInfoSV.getKey(inParam);
-			}catch(Exception e){
-				log.error("getDesKey方法异常", e);
-				throw new GeneralException("9999","系统异常",e);
-			}
+		@RequestMapping(value = "/getRsaKey", method = RequestMethod.POST)
+	public CoRsaKeyDO getRsaKey(@RequestBody KeyInfoDTO inParam) throws GeneralException {
+		CoRsaKeyDO outParam = new CoRsaKeyDO();
 
-			return outParam;
+		if (inParam == null || StringUtil.isEmpty(inParam.getReqstSrcCode())) {
+			throw new GeneralException("2999", "参数异常");
 		}
+		String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
+		String bizTypeCd = inParam.getBizTypeCd();// 业务类型
+		if (StringUtil.isEmpty(reqstSrcCode)) {
+			throw new GeneralException("2999", "参数异常");
+		}
+		try {
+			String cacheKey = reqstSrcCode + "_" + bizTypeCd;
+//			cacheFatctoryUtil.getJVMString(cacheKey);
+			outParam = keyInfoSV.getRsaKey(inParam);
+		} catch (Exception e) {
+			log.error("getDesKey方法异常", e);
+			throw new GeneralException("9999", "系统异常", e);
+		}
+
+		return outParam;
+	}
 		
 }

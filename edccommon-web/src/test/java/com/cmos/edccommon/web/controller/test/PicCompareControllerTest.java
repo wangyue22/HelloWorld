@@ -60,9 +60,10 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picCompareInfo.setBizTypeCode("DEFAULT");
 
     	picCompareInfo.setPhotoType("r");
-    	picCompareInfo.setHndhldCredPhotoPath("aFTP://123.jpg");
+    	picCompareInfo.setPhotoPath("aFTP://123.jpg");
     	picCompareInfo.setPicTPath("aFTP://123.jpg");
-    	picCompareInfo.setPicType("g");
+    	picCompareInfo.setPicTType("g");
+    	picCompareInfo.setCrkey("1234");
     	picCompareInfo.setConfidenceScore("0-50|80-100");
 
         logger.info("入参："+JsonUtil.convertObject2Json(picCompareInfo));
@@ -85,9 +86,10 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picCompareInfo.setBizTypeCode("DEFAULT");
 
     	picCompareInfo.setPhotoType("r");
-    	picCompareInfo.setHndhldCredPhotoPath("aFTP://123.jpg");
+    	picCompareInfo.setPhotoPath("aFTP://123.jpg");
     	picCompareInfo.setPicTPath("aFTP://123.jpg");
-    	picCompareInfo.setPicType("g");
+    	picCompareInfo.setPicTType("g");
+    	picCompareInfo.setCrkey("1234");
     	picCompareInfo.setConfidenceScore("0-50|80-100");
 
         logger.info("入参："+JsonUtil.convertObject2Json(picCompareInfo));

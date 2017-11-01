@@ -42,17 +42,16 @@ public class KeyInfoControllerTest extends BaseUnitTest {
     
     @Test
     /**
-     * http://localhost:18080/co/getKey
+     * http://localhost:18080/co/getRsaKey
      * @throws Exception
      */
-    public void getKeyTest() throws Exception{
+    public void getRsaKeyTest() throws Exception{
     	KeyInfoDTO keyInfoDTO = new KeyInfoDTO();
     	keyInfoDTO.setReqstSrcCode("371");
     	keyInfoDTO.setBizTypeCd("DEFAULT");
-    	keyInfoDTO.setCrkeyTypeCd("des");
         logger.info("入参："+JsonUtil.convertObject2Json(keyInfoDTO));
         MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/co/getKey").accept("application/json")
+                MockMvcRequestBuilders.post("/co/getRsaKey").accept("application/json")
                         .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(keyInfoDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         logger.info(""+result);
