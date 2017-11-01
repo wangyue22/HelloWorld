@@ -81,7 +81,11 @@
     <include refid="Base_Column_List" />
     from t_op_reality_account
     where 1=1
-    and CACHE_TYPE_CD = #{cacheTypeCd}
-    and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+    <if test="cacheTypeCd!=null and cacheTypeCd!=''">
+      and CACHE_TYPE_CD = #{cacheTypeCd}
+    </if>
+    <if test="cacheDataTypeCd!=null and cacheDataTypeCd!=''">
+      and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+    </if>
   </select>
 </mapper>
