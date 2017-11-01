@@ -2,7 +2,7 @@ package com.cmos.edccommon.service.impl.crkey;
 
 
 
-import com.cmos.edcopms.beans.TOpRnfsCfgDO;
+import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
