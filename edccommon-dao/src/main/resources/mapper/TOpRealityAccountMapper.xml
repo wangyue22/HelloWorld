@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cmos.edccommon.dao.realityAccount.TOpRealityAccountDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO" >
+    <id column="REAL_ACCT_ID" property="realAcctId" jdbcType="BIGINT" />
+    <result column="REQST_SRC_CODE" property="reqstSrcCode" jdbcType="VARCHAR" />
+    <result column="REQST_SRC_NM" property="reqstSrcNm" jdbcType="VARCHAR" />
+    <result column="USER_NM" property="userNm" jdbcType="VARCHAR" />
+    <result column="PW" property="pw" jdbcType="VARCHAR" />
+    <result column="AES_KEY" property="aesKey" jdbcType="VARCHAR" />
+    <result column="DES_KEY" property="desKey" jdbcType="VARCHAR" />
+    <result column="INTF_PRIV_CODE" property="intfPrivCode" jdbcType="VARCHAR" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+    <result column="CACHE_TYPE_CD" property="cacheTypeCd" jdbcType="VARCHAR" />
+    <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
+    <result column="CRT_USER_ID" property="crtUserId" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_APP_SYS_ID" property="crtAppSysId" jdbcType="VARCHAR" />
+    <result column="MODF_USER_ID" property="modfUserId" jdbcType="VARCHAR" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_APP_SYS_ID" property="modifyAppSysId" jdbcType="VARCHAR" />
+    <result column="CACHE_DATA_TYPE_CD" property="cacheDataTypeCd" jdbcType="VARCHAR" />
+    <result column="PUSH_ALERT_FLAG" property="pushAlertFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, USER_NM, PW, AES_KEY, DES_KEY, INTF_PRIV_CODE,
+    VALID_FLAG, CACHE_TYPE_CD, BIZ_SYS_CODE, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID,
+    MODIFY_TIME, MODIFY_APP_SYS_ID,CACHE_DATA_TYPE_CD,PUSH_ALERT_FLAG
+  </sql>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_op_reality_account
+    where REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO" >
+    insert into t_op_reality_account (REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, 
+      USER_NM, PW, AES_KEY, 
+      DES_KEY, INTF_PRIV_CODE, VALID_FLAG, 
+      CACHE_TYPE_CD, BIZ_SYS_CODE, CRT_USER_ID, 
+      CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, 
+      MODIFY_TIME, MODIFY_APP_SYS_ID, CACHE_DATA_TYPE_CD, 
+      PUSH_ALERT_FLAG)
+    values (#{realAcctId,jdbcType=BIGINT}, #{reqstSrcCode,jdbcType=VARCHAR}, #{reqstSrcNm,jdbcType=VARCHAR}, 
+      #{userNm,jdbcType=VARCHAR}, #{pw,jdbcType=VARCHAR}, #{aesKey,jdbcType=VARCHAR}, 
+      #{desKey,jdbcType=VARCHAR}, #{intfPrivCode,jdbcType=VARCHAR}, #{validFlag,jdbcType=VARCHAR}, 
+      #{cacheTypeCd,jdbcType=VARCHAR}, #{bizSysCode,jdbcType=VARCHAR}, #{crtUserId,jdbcType=VARCHAR}, 
+      #{crtTime,jdbcType=TIMESTAMP}, #{crtAppSysId,jdbcType=VARCHAR}, #{modfUserId,jdbcType=VARCHAR}, 
+      #{modifyTime,jdbcType=TIMESTAMP}, #{modifyAppSysId,jdbcType=VARCHAR}, #{cacheDataTypeCd,jdbcType=VARCHAR}, 
+      #{pushAlertFlag,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO" >
+    update t_op_reality_account
+    set REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
+      REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR},
+      USER_NM = #{userNm,jdbcType=VARCHAR},
+      PW = #{pw,jdbcType=VARCHAR},
+      AES_KEY = #{aesKey,jdbcType=VARCHAR},
+      DES_KEY = #{desKey,jdbcType=VARCHAR},
+      INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR},
+      VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+      CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
+      BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR},
+      CRT_USER_ID = #{crtUserId,jdbcType=VARCHAR},
+      CRT_TIME = #{crtTime,jdbcType=TIMESTAMP},
+      CRT_APP_SYS_ID = #{crtAppSysId,jdbcType=VARCHAR},
+      MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
+      MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      MODIFY_APP_SYS_ID = #{modifyAppSysId,jdbcType=VARCHAR},
+      CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR},
+      PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+    where REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, USER_NM, PW, AES_KEY, DES_KEY, 
+    INTF_PRIV_CODE, VALID_FLAG, CACHE_TYPE_CD, BIZ_SYS_CODE, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, 
+    MODF_USER_ID, MODIFY_TIME, MODIFY_APP_SYS_ID, CACHE_DATA_TYPE_CD, PUSH_ALERT_FLAG
+    from t_op_reality_account
+    where REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
+  </select>
+  <select id="getRealityAccountByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_op_reality_account
+    where 1=1
+    and CACHE_TYPE_CD = #{cacheTypeCd}
+    and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+  </select>
+</mapper>

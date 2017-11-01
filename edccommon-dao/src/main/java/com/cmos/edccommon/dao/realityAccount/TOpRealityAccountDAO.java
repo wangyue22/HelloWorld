@@ -12,7 +12,7 @@ public interface TOpRealityAccountDAO {
     /**
      * 根据缓存类型和数据类型查询实名账户信息
      * @param cacheTypeCd
-     * @param dataType
+     * @param cacheDataTypeCd
      * @return
      */
     List<TOpRealityAccountDO> getRealityAccountByType(@Param(value = "cacheTypeCd") String cacheTypeCd, @Param(value = "cacheDataTypeCd") String cacheDataTypeCd);

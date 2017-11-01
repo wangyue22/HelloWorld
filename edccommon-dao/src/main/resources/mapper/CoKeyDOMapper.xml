@@ -15,10 +15,12 @@
     <result column="MODF_USER_ID" property="modfUserId" jdbcType="VARCHAR" />
     <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
+    <result column="CACHE_DATA_TYPE_CD" property="cacheDataTypeCd" jdbcType="VARCHAR" />
+    <result column="PUSH_ALERT_FLAG" property="pushAlertFlag" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, PBKEY, PRTKEY, BIZ_TYPE_CD, 
-    VALID_FLAG, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID
+    VALID_FLAG, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,CACHE_DATA_TYPE_CD,PUSH_ALERT_FLAG
   </sql>
   <!--  检索rsa秘钥 -->
 	<select id="selectKey" resultMap="BaseResultMap"
@@ -159,5 +161,13 @@
     </set>
     where CRKEY_ID = #{crkeyId,jdbcType=BIGINT}
   </update>
+  <select id="getKeyByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_op_rsa_key
+    where 1=1
+    and CACHE_TYPE_CD = #{cacheTypeCd}
+    and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+  </select>
  
 </mapper>
