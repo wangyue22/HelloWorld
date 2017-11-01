@@ -12,7 +12,7 @@ public interface ITOpRnfsCfgSV {
      * 缓存list数据获取
      * @return
      */
-    List<TOpRnfsCfgDO> getRnfsGrpNmByrnfsGrpNm(String cacheTypeCd, String cacheDataTypeCd);
+    List getRnfsGrpNmByrnfsGrpNm(String cacheTypeCd, String cacheDataTypeCd);
 
     /**
      * 缓存map 数据获取
