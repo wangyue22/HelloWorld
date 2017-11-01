@@ -113,6 +113,22 @@
                 <artifactId>cmos-onest</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+             <dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk15on</artifactId>
+				<version>1.51</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.8</version>
+			</dependency>
+            
         </dependencies>
     </dependencyManagement>
 

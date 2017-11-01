@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
  * 字符串工具类
  */
 public final class StringUtil {
-	
+
     /**
      * Private Constructor
      **/
@@ -71,6 +71,26 @@ public final class StringUtil {
      */
     public static boolean isEmpty(String param) {
         return param == null || "".equals(param.trim());
+    }
+
+    /**
+     * 判断字符串是否为非null && 非空字符串 && 非null字符串
+     *
+     * @param param
+     * @return
+     */
+    public static boolean isNotBlank(String param) {
+        return param != null && !"".equals(param.trim()) && !"null".equals(param.trim().toLowerCase());
+    }
+
+    /**
+     * 判断字符串是否为null || 空字符串 || null字符串
+     *
+     * @param param
+     * @return
+     */
+    public static boolean isBlank(String param) {
+        return param == null || "".equals(param.trim()) || "null".equals(param.trim().toLowerCase());
     }
 
     /**
@@ -251,5 +271,5 @@ public final class StringUtil {
         String ISO_8858_1 = "ISO-8859-1";
         String GB2312 = "GB2312";
     }
-   
+
 }
