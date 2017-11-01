@@ -24,7 +24,7 @@ import com.cmos.edccommon.utils.HttpMultiPartUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.FileUpDownConstants;
-import com.cmos.edccommon.web.serviceSwitch.CacheFatctoryUtil;
+import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.onest.ONestUtil;
 public class FileUpDownUtil {
 
@@ -59,11 +59,18 @@ public class FileUpDownUtil {
     }
 
 
-    // 上传国政通头像
+    /**
+     * 上传国政通头像
+     * @param path
+     * @param base64Str
+     * @param doubleWriteFlag
+     * @return
+     * @throws GeneralException
+     */
     public static Map<String,String> uploadGztPic(String path, String base64Str, boolean doubleWriteFlag) throws GeneralException {
         Map<String,String> resMap = new HashMap<String,String>();
         // 获取onest开关，onest是否开放优先使用
-        String onestSwitch = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_ONEST_SWITCH");
+        String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
         String onestUploadResult = FileUpDownConstants.GztFile.ONEST_NOT_UPLOAD;
         byte[] inputByte = Base64.decode(base64Str);
         if ("true".equals(onestSwitch)) {
@@ -83,16 +90,22 @@ public class FileUpDownUtil {
         return resMap;
     }
 
-
+    /**
+     * 使用rnfs上传国政通头像
+     * @param path
+     * @param inputByte
+     * @return
+     * @throws GeneralException
+     */
     public static String uploadGztFileByRnfs(String path, byte[] inputByte) throws GeneralException {
         long begin = System.currentTimeMillis();
         // 如果是rnfs，则根据路径获取文件服务器地址并上传
         Map<String, String> map = getGztRnfsServerNameByPath(path);
         String rnfsServerName = map.get("rnfsServerName");
-        // TODO 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
-        Map<String, String> serverInfoMap = cacheUtil.getMapCacheData(null);
-        String ipPort = serverInfoMap.get("IP_PORT");
-        String rootPath = serverInfoMap.get("ROOT_PATH");
+        // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
+        Map serverInfoMap = cacheUtil.getJVMMap(rnfsServerName);
+        String ipPort = (String)serverInfoMap.get("IP_PORT");
+        String rootPath = (String)serverInfoMap.get("ROOT_PATH");
         String remotePath = rootPath + "/" + path;
         if (!remotePath.startsWith("/")) {
             remotePath = "/" + remotePath;
@@ -109,6 +122,14 @@ public class FileUpDownUtil {
         }
     }
 
+    /**
+     * 使用rnfs方式上传文件
+     * @param inputByte
+     * @param ipPort
+     * @param remotePath
+     * @return
+     * @throws GeneralException
+     */
     private static String uploadByRnfs(byte[] inputByte, String ipPort, String remotePath) throws GeneralException {
         Map<String, byte[]> fileMap = new HashMap<String, byte[]>();
         fileMap.put(remotePath, inputByte);
@@ -118,7 +139,7 @@ public class FileUpDownUtil {
         }
         String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.UPLOAD, FileUpDownConstants.RNFS_URL_PARAM);
         logger.info("upload urlStr=" + urlStr + "  remotePathAndName=" + remotePath);
-        String timeOut = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_RNFS_TIME_OUT");
+        String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
         if (timeOut != null && timeOut.trim().length() > 0) {
             HttpMultiPartUtil.setConnection_timeout(timeOut);
             HttpMultiPartUtil.setSo_timeout(timeOut);
@@ -139,7 +160,13 @@ public class FileUpDownUtil {
         return resStr;
     }
 
-
+    /**
+     * 使用onest方式上传文件
+     * @param bucketName
+     * @param path
+     * @param inputByte
+     * @return
+     */
     public static String uploadByOnest(String bucketName, String path, byte[] inputByte) {
         String onestUploadResult;
         // 如果是onest，上传后返回上传主机，onest方式上传返回onest，rnfs上传返回主机别名
@@ -181,15 +208,15 @@ public class FileUpDownUtil {
         // 将斜杠替换为下划线
         switchStr = switchStr.replace("/", "_");// 41_10_81
         // 先全匹配获取rnfs主机别名
-        String rnfsServerName = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_SERVER_" + switchStr);
+        String rnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_ + switchStr);
         // 如果获取到的地址为空，并且switchStr仍然包含下划线，（包含下划线意味着仍然有下一层级）
         while (StringUtil.isBlank(rnfsServerName) && switchStr.contains("_")) {
             switchStr = switchStr.substring(0, switchStr.lastIndexOf("_"));
-            rnfsServerName = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_SERVER_" + switchStr);
+            rnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_ + switchStr);
         }
         if(StringUtil.isNotBlank(rnfsServerName)){
             // 如果匹配到的rnfs主机名不为空，则还要取上一次配置的主机名
-            lastServerName = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_LAST_SERVER_" + switchStr);
+            lastServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_LAST_SERVER_ + switchStr);
         }else{
             rnfsServerName = "DEFAULT";
         }
@@ -203,10 +230,15 @@ public class FileUpDownUtil {
 
 
 
-    // 下载国政通头像
+    /**
+     * 下载国政通头像
+     * @param path
+     * @return
+     * @throws GeneralException
+     */
     public static byte[] dowdloadGztPic(String path) throws GeneralException {
         // 获取onest开关，onest是否开放优先使用
-        String onestSwitch = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_ONEST_SWITCH");
+        String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
         // 根据路径下载图片
         byte[] inputByte = null;
         if ("true".equals(onestSwitch)) {
@@ -221,13 +253,18 @@ public class FileUpDownUtil {
         }
         if(inputByte == null){
             // 如果仍然下载失败，使用default节点下载
-            // TODO 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
             String rnfsServerName = "DEFAULT";
             inputByte = downByRnfs(path, rnfsServerName);
         }
         return inputByte;
     }
 
+    /**
+     * 使用onest方式下载文件
+     * @param bucketName
+     * @param path
+     * @return
+     */
     public static byte[] downloadByOnest(String bucketName, String path){
         InputStream result;
         byte[] resultByte = null;
@@ -242,12 +279,19 @@ public class FileUpDownUtil {
         return resultByte;
     }
 
+    /**
+     * 使用rnfs方式下载文件
+     * @param path
+     * @param serverName
+     * @return
+     * @throws GeneralException
+     */
     private static byte[] downByRnfs(String path , String serverName) throws GeneralException {
-        // TODO 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
-        Map<String, String> serverInfoMap = cacheUtil.getMapCacheData(null);
+        // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
+        Map serverInfoMap = cacheUtil.getJVMMap(serverName);
 
-        String ipPort = serverInfoMap.get("IP_PORT");
-        String rootPath = serverInfoMap.get("ROOT_PATH");
+        String ipPort = (String)serverInfoMap.get("IP_PORT");
+        String rootPath = (String)serverInfoMap.get("ROOT_PATH");
         String remotePath = rootPath + "/" + path;
         if (!remotePath.startsWith("/")) {
             remotePath = "/" + remotePath;
@@ -267,7 +311,7 @@ public class FileUpDownUtil {
             Map<String, String> textMap = new HashMap<String, String>();
             textMap.put("filePath", remotePath);
             urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, FileUpDownConstants.RNFS_URL_PARAM);
-            String timeOut = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_RNFS_TIME_OUT");
+            String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
             if (timeOut != null && timeOut.trim().length() > 0) {
                 HttpMultiPartUtil.setConnection_timeout(timeOut);
                 HttpMultiPartUtil.setSo_timeout(timeOut);
@@ -284,7 +328,12 @@ public class FileUpDownUtil {
         }
     }
 
-
+    /**
+     * 将输入流转换为byte数组
+     * @param result
+     * @return
+     * @throws IOException
+     */
     private static byte[] toByteArray(InputStream result) throws IOException {
         byte[] resultByte;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -296,9 +345,6 @@ public class FileUpDownUtil {
         resultByte =baos.toByteArray();
         return resultByte;
     }
-
-
-
 
 
     // --------------------------------------------------业务图片上传下载start----------------------------------------------------------------------
@@ -314,7 +360,7 @@ public class FileUpDownUtil {
      */
     public static String uploadBusiFileStr(String fileType, String relativePath, String fileName, String content)
             throws GeneralException {
-        String onestFlag = cacheUtil.getJVMString(CacheConsts.JVM.ONEST_UPDOWN_FILE_FALG);
+        String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
         if ("true".equals(onestFlag)) {
             // 拼装全路径
             String path = relativePath + fileName;
@@ -352,7 +398,7 @@ public class FileUpDownUtil {
     public static String uploadBusiFileByte(String fileType, String relativePath, String fileName, byte[] inputByte)
             throws GeneralException {
 
-        String onestFlag = cacheUtil.getJVMString(CacheConsts.JVM.ONEST_UPDOWN_FILE_FALG);
+        String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
         if ("true".equals(onestFlag)) {
             // 拼装全路径
             String path = relativePath + fileName;
@@ -387,9 +433,9 @@ public class FileUpDownUtil {
     public static String downloadBusiFileStr(String remotePathAndName) throws GeneralException {
 
         // 判断是否使用onest下载
-        if (remotePathAndName.startsWith(CacheConsts.JVM.ONEST_UPDOWN_FILE_FALG)) {
+        if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             byte[] file = downloadBusiByOnest(busiBucketName,
-                remotePathAndName.replaceAll(CacheConsts.JVM.ONEST_UPDOWN_FILE_FALG, "").trim());
+                remotePathAndName.replaceAll(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG, "").trim());
             try {
                 return new String(file, FileUpDownConstants.FILE_CHAR_SET);
             } catch (Exception e) {
@@ -411,10 +457,10 @@ public class FileUpDownUtil {
      */
     public static byte[] downloadBusiFileByte(String remotePathAndName) throws GeneralException {
         // 判断是否使用onest下载
-        if (remotePathAndName.startsWith(CacheConsts.JVM.ONEST_UPDOWN_FILE_FALG)) {
+        if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             try {
                 return downloadBusiByOnest(busiBucketName,
-                    remotePathAndName.replaceAll(CacheConsts.JVM.ONEST_UPDOWN_FILE_FALG, "").trim());
+                    remotePathAndName.replaceAll(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG, "").trim());
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
             }
@@ -582,7 +628,7 @@ public class FileUpDownUtil {
             // }
             // String urlParam = BaseDataCodeActionNew.getCodeValue("RNFS_URL_PARAM", "RNFS_URL_PARAM");
             String urlStr;
-            String urlParam = cacheUtil.getJVMString(CacheConsts.JVM.RNFS_USERNAME_PWD);
+            String urlParam = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_USERNAME_PWD);
             if (StringUtil.isBlank(urlParam)) {
                 throw new GeneralException("2999", "RNFS_URL_PARAM配置数据为空！");
             }
@@ -595,7 +641,7 @@ public class FileUpDownUtil {
                 logger.info("download timeOut=" + timeOut);
             } else {
                 // String _timeOut = BaseDataCodeActionNew.getCodeValue("RNFS_TIMEOUT", "HTTP_TIMEOUT");
-                String _timeOut = cacheUtil.getJVMString(CacheConsts.JVM.RNFS_TIME_OUT);
+                String _timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_TIME_OUT);
                 if (_timeOut != null && _timeOut.trim().length() > 0) {
                     HttpMultiPartUtil.setConnection_timeout(_timeOut);
                     HttpMultiPartUtil.setSo_timeout(_timeOut);
@@ -623,9 +669,8 @@ public class FileUpDownUtil {
         try {
             if (downLoadPath != null && downLoadPath.trim().length() > 0) {
 
-                Map<String, String> ftpMap = new HashMap<String, String>();
-                // Map<Stirng, String> ftpMap = cacheUtil
-                // .getJVMString(CacheConsts.JVM.FTP_CFG_PREFIX + downLoadPath.substring(downLoadPath.indexOf("/")));
+                Map<String, String> ftpMap = cacheUtil.getJVMMap(
+                    CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX + downLoadPath.substring(0, downLoadPath.indexOf("/")));
                 return ftpMap;
             }
         } catch (Exception e) {
@@ -756,12 +801,12 @@ public class FileUpDownUtil {
         }
 
         // 获取分组cfg配置，用于轮询
-        List<Map<String, String>> uploadList = new ArrayList<Map<String, String>>();
-        // List<Map<String, String>> uploadList =cacheUtil.getJVMString(CacheConsts.JVM.GROUP_RNFS_CFG_PREFIX+fileType);
+        List<Map<String, String>> uploadList = cacheUtil
+            .getJVMList(CacheConsts.UPDOWN_JVM.GROUP_RNFS_CFG_PREFIX + fileType);
 
-        /* if (uploadList == null) {
-         * throw new GeneralException("2999", "没有可用的服务组列表，fileType=" + fileType);
-         * } */
+        if (uploadList == null) {
+            throw new GeneralException("2999", "没有可用的服务组列表，fileType=" + fileType);
+        }
         if (maxEnabled >= uploadList.size()) {// 避免 如果不小心配置成全不可用，则程序一直循环
             throw new GeneralException("2999", maxEnabled + "请检查配置，现在配置服务全不可用");
         }
@@ -796,7 +841,7 @@ public class FileUpDownUtil {
         Map<String, byte[]> fileMap = new HashMap<String, byte[]>();
         fileMap.put(remotePathAndName, inputByte);
         // BaseDataCodeActionNew.getCodeValue("RNFS_URL_PARAM", "RNFS_URL_PARAM");
-        String urlParam = cacheUtil.getJVMString(CacheConsts.JVM.RNFS_USERNAME_PWD);
+        String urlParam = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_USERNAME_PWD);
         if (StringUtil.isBlank(urlParam)) {
             throw new GeneralException("2999", "RNFS_URL_PARAM配置数据为空！");
         }
@@ -811,7 +856,7 @@ public class FileUpDownUtil {
             logger.info("upload timeOut=" + timeOut);
         } else {
             // BaseDataCodeActionNew.getCodeValue("RNFS_TIMEOUT", "HTTP_TIMEOUT");
-            String _timeOut = cacheUtil.getJVMString(CacheConsts.JVM.RNFS_TIME_OUT);
+            String _timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_TIME_OUT);
             if (_timeOut != null && _timeOut.trim().length() > 0) {
                 HttpMultiPartUtil.setConnection_timeout(_timeOut);
                 HttpMultiPartUtil.setSo_timeout(_timeOut);
