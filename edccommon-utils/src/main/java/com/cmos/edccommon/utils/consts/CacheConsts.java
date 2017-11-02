@@ -38,20 +38,22 @@ public class CacheConsts {
         /**国政通图片上传下载分省路由配置，该省份上一次配置的rnfs主机，key=ACMS_SWITCH:GZT_FILE_LAST_SERVER_${身份证前6位，2位2位以下划线分割，如：41_10}，value=rnfs主机别名*/
         String GZT_FILE_LAST_SERVER_ = CACHE_SWITCH_PREFIX + "GZT_FILE_LAST_SERVER_";
 
+
         /** rnfs_cfg分组上传配置信息 */
-        String GROUP_RNFS_CFG_PREFIX = CACHE_RNFSCFG_PREFIX + "GROUP_";
+        String GROUP_RNFS_CFG_PREFIX = CACHE_RNFSCFG_PREFIX;
 
         /** rnfs_cfg 根据url前缀获取ftp配置 例如：aFtp */
         String FTP_CFG_PREFIX = CACHE_RNFSCFG_PREFIX;
 
         /** rnfs_cfg分组上传配置信息 */
-        String RNFS_USERNAME_PWD = CACHE_RNFSCFG_PREFIX + "RNFS_USERNAME_PASSWORD";
+        String RNFS_USERNAME_PWD = CACHE_SWITCH_PREFIX + "RNFS_USERNAME_PASSWORD";
 
         /** rnfs_cfg分组上传配置信息 */
-        String RNFS_TIME_OUT = CACHE_RNFSCFG_PREFIX + "RNFS_TIME_OUT";
+        String RNFS_TIME_OUT = CACHE_SWITCH_PREFIX + "RNFS_TIME_OUT";
 
         /** 业务图片上传 区分使用onest 或者 rnfs/ftp */
         String ONEST_UPDOWN_FILE_FALG = CACHE_SWITCH_PREFIX + "IS_ONEST_UPDOWN";
+
     }
 
     /**
