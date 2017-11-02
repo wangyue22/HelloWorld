@@ -191,7 +191,7 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
             }
             returnMap.put(key1, returnList);
         }	
-        return null;
+        return returnMap;
 	}
 
 	@Override
