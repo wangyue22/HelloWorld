@@ -122,27 +122,27 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         Map<String, Map<String, String>> returnMap = new HashMap<String, Map<String, String>>(); 
         List<TOpRnfsCfgDO> rnfsList = opRnfsCfgSV.getRnfsGrpNmByType(cacheTypeCd, cacheDataTypeCd);
         for(int i=0;i<rnfsList.size();i++){
-        	String key2 = "";
-        	rnfsData.put("RNFS_GRP_NM", rnfsList.get(i).getRnfsGrpNm());        	
-        	rnfsData.put("ROOT_PATH", rnfsList.get(i).getRootPath()); 
-        	rnfsData.put("RNFS_ADDR_PRTNUM", rnfsList.get(i).getRnfsAddrPrtnum());
-        	rnfsData.put("UPLOAD_DWNLD_MODE_CD", rnfsList.get(i).getUploadDwnldModeCd());
-        	rnfsData.put("FTP_PRTNUM", rnfsList.get(i).getFtpPrtnum());
-        	rnfsData.put("FTP_USER_NM", rnfsList.get(i).getFtpUserNm());
-        	rnfsData.put("FTP_USER_PW", rnfsList.get(i).getFtpUserPw());
-        	rnfsData.put("FTP_ALS", rnfsList.get(i).getFtpAls());
-        	returnMap.put(key2, rnfsData);	
+        	String key = rnfsList.get(i).getAlsCacheKeyVal();
+            rnfsData.put("rnfsGrpNm", rnfsList.get(i).getRnfsGrpNm());            
+            rnfsData.put("rootPath", rnfsList.get(i).getRootPath()); 
+            rnfsData.put("rnfsAddrPrtnum", rnfsList.get(i).getRnfsAddrPrtnum());
+            rnfsData.put("uploadDwnldModeCd", rnfsList.get(i).getUploadDwnldModeCd());
+            rnfsData.put("ftpPrtnum", rnfsList.get(i).getFtpPrtnum());
+            rnfsData.put("ftpUserNm", rnfsList.get(i).getFtpUserNm());
+            rnfsData.put("ftpUserPw", rnfsList.get(i).getFtpUserPw());
+            rnfsData.put("ftpAls", rnfsList.get(i).getFtpAls());
+        	returnMap.put(key, rnfsData);	
         }     
         
         //获取实名账户表的初始化数据
-        Map<String, String> realityData = new HashMap<String, String>();
+//        Map<String, String> realityData = new HashMap<String, String>();
 //        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
 //        for(int i=0;i<realityAccountList.size();i++){
-//        	String key = "";
-//        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
-//        	realityData.put("PW", realityAccountList.get(i).getPw());
-//        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
-//        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
+//        	String key = realityAccountList.get(i).getCacheKeyVal();
+//        	realityData.put("userNm", realityAccountList.get(i).getUserNm());
+//        	realityData.put("pw", realityAccountList.get(i).getPw());
+//        	realityData.put("aesKey", realityAccountList.get(i).getAesKey());
+//        	realityData.put("desKey", realityAccountList.get(i).getDesKey());
 //        	returnMap.put(key, realityData);
 //        }
 
@@ -150,9 +150,9 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         Map<String, String> coRsaKeyData = new HashMap<String, String>();
         List<CoRsaKeyDO> coRsaKeylist = keyInfoSV.getKeyByType(cacheTypeCd, cacheDataTypeCd);
         for(int i=0;i<coRsaKeylist.size();i++){
-        	String key = "";
-        	coRsaKeyData.put("PBKEY", coRsaKeylist.get(i).getPbkey());
-        	coRsaKeyData.put("PRTKEY", coRsaKeylist.get(i).getPrtkey());
+        	String key = coRsaKeylist.get(i).getCacheKeyVal();
+        	coRsaKeyData.put("pbkey", coRsaKeylist.get(i).getPbkey());
+        	coRsaKeyData.put("prtkey", coRsaKeylist.get(i).getPrtkey());
         	returnMap.put(key, coRsaKeyData);
         }
 		return returnMap;
@@ -168,26 +168,26 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
 	public Map<String, List> getJvmListCacheDate() {
         String cacheTypeCd = "";
         String cacheDataTypeCd = "";
-    	String key1 = "";
+    	String key = "";
         Map returnMap = new HashMap<String, List>();
         List returnList = new ArrayList();
         List<List<TOpRnfsCfgDO>> rnfsList = opRnfsCfgSV.getRnfsGrpNmByrnfsGrpNm(cacheTypeCd, cacheDataTypeCd);
         for(int i=0;i<rnfsList.size();i++){
         	List<TOpRnfsCfgDO> rnfsData = rnfsList.get(i);        	
             for(int j=0;j<rnfsData.size();j++){
-            	
+            	key = rnfsData.get(j).getGrpCacheKeyVal();
                 Map<String, String> rnfsDataMap = new HashMap<String, String>(); 
-                rnfsDataMap.put("RNFS_GRP_NM", rnfsData.get(j).getRnfsGrpNm());        	
-                rnfsDataMap.put("ROOT_PATH", rnfsData.get(j).getRootPath()); 
-                rnfsDataMap.put("RNFS_ADDR_PRTNUM", rnfsData.get(j).getRnfsAddrPrtnum());
-                rnfsDataMap.put("UPLOAD_DWNLD_MODE_CD", rnfsData.get(j).getUploadDwnldModeCd());
-                rnfsDataMap.put("FTP_PRTNUM", rnfsData.get(j).getFtpPrtnum());
-                rnfsDataMap.put("FTP_USER_NM", rnfsData.get(j).getFtpUserNm());
-                rnfsDataMap.put("FTP_USER_PW", rnfsData.get(j).getFtpUserPw());
-                rnfsDataMap.put("FTP_ALS", rnfsData.get(j).getFtpAls());
+                rnfsDataMap.put("rnfsGrpNm", rnfsData.get(j).getRnfsGrpNm());         
+			    rnfsDataMap.put("rootPath", rnfsData.get(j).getRootPath()); 
+			    rnfsDataMap.put("rnfsAddrPrtnum", rnfsData.get(j).getRnfsAddrPrtnum());
+			    rnfsDataMap.put("uploadDwnldModeCd", rnfsData.get(j).getUploadDwnldModeCd());
+			    rnfsDataMap.put("ftpPrtnum", rnfsData.get(j).getFtpPrtnum());
+			    rnfsDataMap.put("ftpUserNm", rnfsData.get(j).getFtpUserNm());
+			    rnfsDataMap.put("ftpUserPw", rnfsData.get(j).getFtpUserPw());
+			    rnfsDataMap.put("ftpAls", rnfsData.get(j).getFtpAls());
                 returnList.add(rnfsDataMap);
             }
-            returnMap.put(key1, returnList);
+            returnMap.put(key, returnList);
         }	
         return returnMap;
 	}
