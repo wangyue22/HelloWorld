@@ -26,6 +26,7 @@ public class ConsumerMsgRun implements CommandLineRunner{
 	
 	@Reference(group = "edcco")
 	private IFaceLiveSV msgFaceLiveSV;
+
 	
 	private Logger log=LoggerFactory.getActionLog(ConsumerMsgRun.class);
 	@Override
