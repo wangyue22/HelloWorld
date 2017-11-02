@@ -23,6 +23,7 @@
         <module>edccommon-iservice</module>
         <module>edccommon-service-impl</module>
         <module>edccommon-web</module>
+        <module>edccommon-mqconsumer</module>
     </modules>
 
     <properties>
