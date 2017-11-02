@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by guozong on 2017/10/31.
  */
-@Service(group = "edccommon")
+@Service(group = "edcco")
 public class TOpRnfsCfgSVImpl implements ITOpRnfsCfgSV {
 
     @Autowired
