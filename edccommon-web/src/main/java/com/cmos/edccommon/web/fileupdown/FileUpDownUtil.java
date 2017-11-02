@@ -26,6 +26,7 @@ import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.FileUpDownConstants;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.onest.ONestUtil;
+
 public class FileUpDownUtil {
 
     @Autowired
@@ -218,7 +219,7 @@ public class FileUpDownUtil {
             // 如果匹配到的rnfs主机名不为空，则还要取上一次配置的主机名
             lastServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_LAST_SERVER_ + switchStr);
         }else{
-            rnfsServerName = "DEFAULT";
+            rnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_DEFAULT);
         }
         serverMap.put("rnfsServerName", rnfsServerName);
         serverMap.put("lastServerName", lastServerName);
@@ -435,7 +436,7 @@ public class FileUpDownUtil {
         // 判断是否使用onest下载
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             byte[] file = downloadBusiByOnest(busiBucketName,
-                remotePathAndName.replaceAll(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG, "").trim());
+                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX, "").trim());
             try {
                 return new String(file, FileUpDownConstants.FILE_CHAR_SET);
             } catch (Exception e) {
@@ -460,7 +461,7 @@ public class FileUpDownUtil {
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             try {
                 return downloadBusiByOnest(busiBucketName,
-                    remotePathAndName.replaceAll(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG, "").trim());
+                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX, "").trim());
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
             }
@@ -802,7 +803,7 @@ public class FileUpDownUtil {
 
         // 获取分组cfg配置，用于轮询
         List<Map<String, String>> uploadList = cacheUtil
-            .getJVMList(CacheConsts.UPDOWN_JVM.GROUP_RNFS_CFG_PREFIX + fileType);
+                .getJVMList(CacheConsts.UPDOWN_JVM.GROUP_RNFS_CFG_PREFIX + fileType);
 
         if (uploadList == null) {
             throw new GeneralException("2999", "没有可用的服务组列表，fileType=" + fileType);

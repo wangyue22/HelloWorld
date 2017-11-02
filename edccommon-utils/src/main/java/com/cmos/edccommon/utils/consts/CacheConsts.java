@@ -32,6 +32,9 @@ public class CacheConsts {
         /**国政通图片上传下载分省路由配置，key=ACMS_SWITCH:GZT_FILE_SERVER_${身份证前6位，2位2位以下划线分割，如：41_10}，value=rnfs主机别名*/
         String GZT_FILE_SERVER_ = CACHE_SWITCH_PREFIX + "GZT_FILE_SERVER_";
 
+        /**国政通图片上传下载默认rnfs主机配置*/
+        String GZT_FILE_SERVER_DEFAULT = CACHE_SWITCH_PREFIX + "GZT_FILE_SERVER_DEFAULT";
+
         /**国政通图片上传下载分省路由配置，该省份上一次配置的rnfs主机，key=ACMS_SWITCH:GZT_FILE_LAST_SERVER_${身份证前6位，2位2位以下划线分割，如：41_10}，value=rnfs主机别名*/
         String GZT_FILE_LAST_SERVER_ = CACHE_SWITCH_PREFIX + "GZT_FILE_LAST_SERVER_";
 
@@ -49,7 +52,6 @@ public class CacheConsts {
 
         /** 业务图片上传 区分使用onest 或者 rnfs/ftp */
         String ONEST_UPDOWN_FILE_FALG = CACHE_SWITCH_PREFIX + "IS_ONEST_UPDOWN";
-
     }
 
     /**

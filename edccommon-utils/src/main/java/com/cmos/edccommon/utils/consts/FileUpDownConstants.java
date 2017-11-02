@@ -95,6 +95,4 @@ public class FileUpDownConstants {
      * onest上传下载 url固定前缀
      */
     public static final String ONEST_URL_PREFIX = "oNest";
-
-
 }
