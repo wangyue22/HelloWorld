@@ -29,36 +29,18 @@ import com.cmos.onest.ONestUtil;
 
 public class FileUpDownUtil {
 
-    @Autowired
-    private static  Environment env;
-
-    private static  Logger logger = LoggerFactory.getActionLog(FileUpDownUtil.class);
 
     @Autowired
-    private static CacheFatctoryUtil cacheUtil;
+    private Environment env;
 
-    private static Integer maxEnabled = 0;
+    private static final Logger logger = LoggerFactory.getActionLog(FileUpDownUtil.class);
 
-    private static Integer pos = 0;
-    /**
-     * 国政通图片onest桶名
-     */
-    public static String gztBucketName;
+    @Autowired
+    private CacheFatctoryUtil cacheUtil;
 
-    /**
-     * 业务图片onest桶名
-     */
-    public static String busiBucketName;
+    private Integer maxEnabled = 0;
 
-    static{
-        initBucketName();
-    }
-
-    private static void initBucketName(){
-        gztBucketName = env.getProperty("onest.gztfile.bucketname");
-        busiBucketName = env.getProperty("onest.busifile.bucketname");
-    }
-
+    private Integer pos = 0;
 
     /**
      * 上传国政通头像
@@ -68,14 +50,15 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    public static Map<String,String> uploadGztPic(String path, String base64Str, boolean doubleWriteFlag) throws GeneralException {
+    public Map<String, String> uploadGztPic(String path, String base64Str, boolean doubleWriteFlag)
+            throws GeneralException {
         Map<String,String> resMap = new HashMap<String,String>();
         // 获取onest开关，onest是否开放优先使用
         String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
         String onestUploadResult = FileUpDownConstants.GztFile.ONEST_NOT_UPLOAD;
         byte[] inputByte = Base64.decode(base64Str);
         if ("true".equals(onestSwitch)) {
-            onestUploadResult = uploadByOnest(gztBucketName, path, inputByte);
+            onestUploadResult = uploadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path, inputByte);
             resMap.put("uploadType", FileUpDownConstants.GztFile.ONEST);
         }
         if ("false".equals(onestSwitch) || FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED.equals(onestUploadResult) || doubleWriteFlag) {
@@ -92,21 +75,50 @@ public class FileUpDownUtil {
     }
 
     /**
+     * 下载国政通头像
+     * @param path
+     * @return
+     * @throws GeneralException
+     */
+    public byte[] dowdloadGztPic(String path) throws GeneralException {
+        // 获取onest开关，onest是否开放优先使用
+        String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
+        // 根据路径下载图片
+        byte[] inputByte = null;
+        if ("true".equals(onestSwitch)) {
+            inputByte = downloadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path);
+        }
+        if ("false".equals(onestSwitch) || inputByte == null) {
+            // 如果onest未开启，或者如果下载失败，使用rnfs下载
+            // 如果是rnfs，则根据路径获取文件服务器地址并上传
+            Map<String, String> map = getGztRnfsServerNameByPath(path);
+            String rnfsServerName = map.get("rnfsServerName");
+            inputByte = downGztFileByRnfs(path, rnfsServerName);
+        }
+        if (inputByte == null) {
+            // 如果仍然下载失败，使用default节点下载
+            String rnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_DEFAULT);
+            inputByte = downGztFileByRnfs(path, rnfsServerName);
+        }
+        return inputByte;
+    }
+
+    /**
      * 使用rnfs上传国政通头像
      * @param path
      * @param inputByte
      * @return
      * @throws GeneralException
      */
-    public static String uploadGztFileByRnfs(String path, byte[] inputByte) throws GeneralException {
+    public String uploadGztFileByRnfs(String path, byte[] inputByte) throws GeneralException {
         long begin = System.currentTimeMillis();
         // 如果是rnfs，则根据路径获取文件服务器地址并上传
         Map<String, String> map = getGztRnfsServerNameByPath(path);
         String rnfsServerName = map.get("rnfsServerName");
         // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
         Map serverInfoMap = cacheUtil.getJVMMap(rnfsServerName);
-        String ipPort = (String)serverInfoMap.get("IP_PORT");
-        String rootPath = (String)serverInfoMap.get("ROOT_PATH");
+        String ipPort = (String)serverInfoMap.get("rnfsAddrPrtnum");
+        String rootPath = (String)serverInfoMap.get("rootPath");
         String remotePath = rootPath + "/" + path;
         if (!remotePath.startsWith("/")) {
             remotePath = "/" + remotePath;
@@ -124,51 +136,13 @@ public class FileUpDownUtil {
     }
 
     /**
-     * 使用rnfs方式上传文件
-     * @param inputByte
-     * @param ipPort
-     * @param remotePath
-     * @return
-     * @throws GeneralException
-     */
-    private static String uploadByRnfs(byte[] inputByte, String ipPort, String remotePath) throws GeneralException {
-        Map<String, byte[]> fileMap = new HashMap<String, byte[]>();
-        fileMap.put(remotePath, inputByte);
-
-        if (StringUtil.isBlank(ipPort)) {
-            throw new GeneralException("2999", "上传时未找到可用的服务，remotePathAndName=" + remotePath);
-        }
-        String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.UPLOAD, FileUpDownConstants.RNFS_URL_PARAM);
-        logger.info("upload urlStr=" + urlStr + "  remotePathAndName=" + remotePath);
-        String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
-        if (timeOut != null && timeOut.trim().length() > 0) {
-            HttpMultiPartUtil.setConnection_timeout(timeOut);
-            HttpMultiPartUtil.setSo_timeout(timeOut);
-            logger.info("upload timeOut=" + timeOut);
-        } else {
-            HttpMultiPartUtil.setConnection_timeout(FileUpDownConstants.RNFS_TIME_OUT);
-            HttpMultiPartUtil.setSo_timeout(FileUpDownConstants.RNFS_TIME_OUT);
-            logger.info("upload timeOut=" + FileUpDownConstants.RNFS_TIME_OUT);
-        }
-        String resStr = null;
-        byte[] res = HttpMultiPartUtil.upDownPost(urlStr, null, fileMap);
-        if (res != null) {
-            resStr = new String(res);
-            logger.error("upload res:" + resStr);
-        } else {
-            logger.error("upload res:is null; remotePath="+remotePath);
-        }
-        return resStr;
-    }
-
-    /**
      * 使用onest方式上传文件
      * @param bucketName
      * @param path
      * @param inputByte
      * @return
      */
-    public static String uploadByOnest(String bucketName, String path, byte[] inputByte) {
+    public String uploadGztFileByOnest(String bucketName, String path, byte[] inputByte) {
         String onestUploadResult;
         // 如果是onest，上传后返回上传主机，onest方式上传返回onest，rnfs上传返回主机别名
         InputStream in = null;
@@ -198,14 +172,14 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    private static Map<String,String> getGztRnfsServerNameByPath(String path) throws GeneralException {
+    private Map<String, String> getGztRnfsServerNameByPath(String path) throws GeneralException {
         Map<String,String> serverMap = new HashMap<String,String>();
         String lastServerName = "";
         // 分省获取文件服务器规则：
         // 根据路径解析，由于路径中有身份证前6位分成的3级目录，先截取出这3级目录
         // 然后由3级到1级逐级匹配
         // 先截取路径中的第9到16位，得到3级目录如： 41/10/81
-        String switchStr = path.substring(FileUpDownConstants.GztFile.START_SUB, FileUpDownConstants.GztFile.END_SUB);
+        String switchStr = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
         // 将斜杠替换为下划线
         switchStr = switchStr.replace("/", "_");// 41_10_81
         // 先全匹配获取rnfs主机别名
@@ -226,39 +200,45 @@ public class FileUpDownUtil {
         return serverMap;
     }
 
-
-
-
-
-
     /**
-     * 下载国政通头像
-     * @param path
+     * 使用rnfs方式上传文件
+     * @param inputByte
+     * @param ipPort
+     * @param remotePath
      * @return
      * @throws GeneralException
      */
-    public static byte[] dowdloadGztPic(String path) throws GeneralException {
-        // 获取onest开关，onest是否开放优先使用
-        String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
-        // 根据路径下载图片
-        byte[] inputByte = null;
-        if ("true".equals(onestSwitch)) {
-            inputByte = downloadByOnest(gztBucketName, path);
+    private String uploadByRnfs(byte[] inputByte, String ipPort, String remotePath) throws GeneralException {
+        Map<String, byte[]> fileMap = new HashMap<String, byte[]>();
+        fileMap.put(remotePath, inputByte);
+
+        if (StringUtil.isBlank(ipPort)) {
+            throw new GeneralException("2999", "上传时未找到可用的服务，remotePathAndName=" + remotePath);
         }
-        if ("false".equals(onestSwitch) || inputByte==null) {
-            // 如果onest未开启，或者如果下载失败，使用rnfs下载
-            // 如果是rnfs，则根据路径获取文件服务器地址并上传
-            Map<String, String> map = getGztRnfsServerNameByPath(path);
-            String rnfsServerName = map.get("rnfsServerName");
-            inputByte = downByRnfs(path, rnfsServerName);
+        String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.UPLOAD,
+            FileUpDownConstants.RNFS_URL_PARAM);
+        logger.info("upload urlStr=" + urlStr + "  remotePathAndName=" + remotePath);
+        String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
+        if (timeOut != null && timeOut.trim().length() > 0) {
+            HttpMultiPartUtil.setConnection_timeout(timeOut);
+            HttpMultiPartUtil.setSo_timeout(timeOut);
+            logger.info("upload timeOut=" + timeOut);
+        } else {
+            HttpMultiPartUtil.setConnection_timeout(FileUpDownConstants.RNFS_TIME_OUT);
+            HttpMultiPartUtil.setSo_timeout(FileUpDownConstants.RNFS_TIME_OUT);
+            logger.info("upload timeOut=" + FileUpDownConstants.RNFS_TIME_OUT);
         }
-        if(inputByte == null){
-            // 如果仍然下载失败，使用default节点下载
-            String rnfsServerName = "DEFAULT";
-            inputByte = downByRnfs(path, rnfsServerName);
+        String resStr = null;
+        byte[] res = HttpMultiPartUtil.upDownPost(urlStr, null, fileMap);
+        if (res != null) {
+            resStr = new String(res);
+            logger.error("upload res:" + resStr);
+        } else {
+            logger.error("upload res:is null; remotePath=" + remotePath);
         }
-        return inputByte;
+        return resStr;
     }
+
 
     /**
      * 使用onest方式下载文件
@@ -266,7 +246,7 @@ public class FileUpDownUtil {
      * @param path
      * @return
      */
-    public static byte[] downloadByOnest(String bucketName, String path){
+    private byte[] downloadGztFileByOnest(String bucketName, String path) {
         InputStream result;
         byte[] resultByte = null;
         try {
@@ -287,12 +267,12 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    private static byte[] downByRnfs(String path , String serverName) throws GeneralException {
+    private byte[] downGztFileByRnfs(String path, String serverName) throws GeneralException {
         // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
         Map serverInfoMap = cacheUtil.getJVMMap(serverName);
 
-        String ipPort = (String)serverInfoMap.get("IP_PORT");
-        String rootPath = (String)serverInfoMap.get("ROOT_PATH");
+        String ipPort = (String)serverInfoMap.get("rnfsAddrPrtnum");
+        String rootPath = (String)serverInfoMap.get("rootPath");
         String remotePath = rootPath + "/" + path;
         if (!remotePath.startsWith("/")) {
             remotePath = "/" + remotePath;
@@ -335,7 +315,7 @@ public class FileUpDownUtil {
      * @return
      * @throws IOException
      */
-    private static byte[] toByteArray(InputStream result) throws IOException {
+    private byte[] toByteArray(InputStream result) throws IOException {
         byte[] resultByte;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] data = new byte[1024];
@@ -359,22 +339,25 @@ public class FileUpDownUtil {
      * @return 文件记录url 例：aFtp/10085file/371/1008520171031144100098765_Z.jpg
      *
      */
-    public static String uploadBusiFileStr(String fileType, String relativePath, String fileName, String content)
+    public String uploadBusiFileStr(String fileType, String relativePath, String fileName, String content)
             throws GeneralException {
         String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
         if ("true".equals(onestFlag)) {
             // 拼装全路径
-            String path = relativePath + fileName;
-            path.replaceAll("//", "/");
-            if (!path.startsWith("/")) {
-                path = "/" + path;
+
+            if (!relativePath.startsWith("/")) {
+                relativePath = "/" + relativePath;
             }
-            if (!path.endsWith("/")) {
-                path = path + "/";
+            if (!relativePath.endsWith("/")) {
+                relativePath = relativePath + "/";
             }
 
+            String path = relativePath + fileName;
+            path.replaceAll("//", "/");
+
             try {
-                return uploadBusiByOnest(busiBucketName, path, content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
+                return uploadBusiByOnest(env.getProperty("onest.gztfile.bucketname"), path,
+                    content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
             } catch (Exception e) {
                 logger.error("onest upload getBytes error:", e);
             }
@@ -396,22 +379,24 @@ public class FileUpDownUtil {
      * @return 文件记录url 例：aFtp/10085file/371/1008520171031144100098765_Z.jpg
      * @throws GeneralException
      */
-    public static String uploadBusiFileByte(String fileType, String relativePath, String fileName, byte[] inputByte)
+    public String uploadBusiFileByte(String fileType, String relativePath, String fileName, byte[] inputByte)
             throws GeneralException {
 
         String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
         if ("true".equals(onestFlag)) {
             // 拼装全路径
+            if (!relativePath.startsWith("/")) {
+                relativePath = "/" + relativePath;
+            }
+            if (!relativePath.endsWith("/")) {
+                relativePath = relativePath + "/";
+            }
+
             String path = relativePath + fileName;
             path.replaceAll("//", "/");
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-            if (!path.endsWith("/")) {
-                path = path + "/";
-            }
+
             try {
-                return uploadBusiByOnest(busiBucketName, path, inputByte);
+                return uploadBusiByOnest(env.getProperty("onest.busifile.bucketname"), path, inputByte);
             } catch (Exception e) {
                 logger.error("onest upload getBytes error:", e);
             }
@@ -431,11 +416,11 @@ public class FileUpDownUtil {
      * @return
      * @throws BusiException
      */
-    public static String downloadBusiFileStr(String remotePathAndName) throws GeneralException {
+    public String downloadBusiFileStr(String remotePathAndName) throws GeneralException {
 
         // 判断是否使用onest下载
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
-            byte[] file = downloadBusiByOnest(busiBucketName,
+            byte[] file = downloadBusiByOnest(env.getProperty("onest.busifile.bucketname"),
                 remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX, "").trim());
             try {
                 return new String(file, FileUpDownConstants.FILE_CHAR_SET);
@@ -456,11 +441,11 @@ public class FileUpDownUtil {
      * @return
      * @throws BusiException
      */
-    public static byte[] downloadBusiFileByte(String remotePathAndName) throws GeneralException {
+    public byte[] downloadBusiFileByte(String remotePathAndName) throws GeneralException {
         // 判断是否使用onest下载
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             try {
-                return downloadBusiByOnest(busiBucketName,
+                return downloadBusiByOnest(env.getProperty("onest.busifile.bucketname"),
                     remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX, "").trim());
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
@@ -471,218 +456,8 @@ public class FileUpDownUtil {
         }
     }
 
-    public static String uploadBusiByOnest(String bucketName, String path, byte[] inputByte) {
-        String uploadUrl;
-        InputStream in = null;
-        in = new ByteArrayInputStream(inputByte);
-        try {
-            ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
-            uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + path;
-            return uploadUrl;
-        } catch (Exception e) {
-            logger.error("ONEST上传异常 onest error:", e);
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (Exception e2) {
-                logger.error("close inputstream error:", e2);
-            }
-        }
-        return null;
-    }
-
-    public static byte[] downloadBusiByOnest(String bucketName, String path) {
-        InputStream result;
-        byte[] resultByte = null;
-        try {
-            result = ONestUtil.download(bucketName, path);
-            if (result != null) {
-                resultByte = toByteArray(result);
-            }
-        } catch (Exception e) {
-            logger.error("downloadByOnest error:", e);
-        }
-        return resultByte;
-    }
-
     /**
-     * 文件下载方法
-     * @param remotePathAndName
-     * 文件全路径
-     * @param timeOut
-     * 超时时间
-     * @return
-     * @throws BusiException
-     */
-    public static String downloadBusiStr(String remotePathAndName, String timeOut) throws GeneralException {
-        byte[] file = downloadBusiByte(remotePathAndName, timeOut);
-        if (file != null) {
-            try {
-                return new String(file, FileUpDownConstants.FILE_CHAR_SET);
-            } catch (Exception e) {
-                throw new GeneralException("9999", e);
-            }
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * 文件下载方法
-     * @param remotePathAndName
-     * 文件全路径
-     * @param timeOut
-     * 超时时间
-     * @return
-     * @throws BusiException
-     */
-    public static byte[] downloadBusiByte(String remotePathAndName, String timeOut) throws GeneralException {
-        long begin = System.currentTimeMillis();
-        byte[] ret = null;
-        // 如果存在ftp路径则替换ftp路径
-        if (StringUtil.isBlank(remotePathAndName)) {
-            logger.info("downloadHttp: url is not null |remotePathAndName:" + remotePathAndName);
-            throw new NullPointerException("urlStr is null remotePathAndName:" + remotePathAndName);
-        }
-        String newFileFullPath = remotePathAndName;
-        logger.info("http_download_path:" + newFileFullPath);
-        Map<String, String> ftpMap = getDownLoadCfg(newFileFullPath);
-        if (ftpMap == null) {
-            throw new GeneralException("2999", "根据下载路径未找到可用的下载服务，remotePathAndName=" + newFileFullPath);
-        }
-        if (FileUpDownConstants.UPDOWN_RNFS.equalsIgnoreCase(ftpMap.get("uploadDwnldModeCd"))) {
-            // 如果路径中包含FTP则替换路径
-            if (newFileFullPath.startsWith(ftpMap.get("ftpAls"))) {
-                String rootPath = ftpMap.get("rootPath");
-                if (!rootPath.endsWith("/")) {
-                    rootPath = rootPath + "/";
-                }
-                newFileFullPath = newFileFullPath.replaceAll(ftpMap.get("ftpAls"), rootPath);
-                newFileFullPath = newFileFullPath.replaceAll("//", "/");// 将两个斜杠替换为一个
-            }
-            String ipPort = ftpMap.get("rnfsAddrPrtnum");
-            ret = downBusiByRnfs(ipPort, timeOut, newFileFullPath);
-            long end = System.currentTimeMillis();
-            logger.error(String.format("DOWNLOAD_RNFS PATH=%s time=%s", newFileFullPath, String.valueOf(end - begin)));
-        } else if (FileUpDownConstants.UPDOWN_FTP.equalsIgnoreCase(ftpMap.get("uploadDwnldModeCd"))) {
-            ret = downBusiByFtp(ftpMap, newFileFullPath);
-            long end = System.currentTimeMillis();
-            logger.error(String.format("DOWNLOAD_FTP PATH=%s time=%s", newFileFullPath, String.valueOf(end - begin)));
-        }
-        return ret;
-
-    }
-
-    private static byte[] downBusiByFtp(Map<String, String> ftpMap, String remotePathAndName) throws GeneralException {
-        FTPClient client = null;
-        InputStream input = null;
-        try {
-            String ftpPathAndName = remotePathAndName;
-            if (remotePathAndName.startsWith(ftpMap.get("ftpAls"))) {
-                ftpPathAndName = ftpPathAndName.replaceAll(ftpMap.get("ftpAls"), "");
-            } else {
-                ftpPathAndName = ftpPathAndName.replaceAll(ftpMap.get("rootPath"), "");
-            }
-            if (!ftpPathAndName.startsWith("/")) {
-                ftpPathAndName = "/" + ftpPathAndName;
-            }
-            // 获取ftp客户连接工具
-            client = getFtpClient(ftpMap);
-            input = client.retrieveFileStream(ftpPathAndName);
-            if (input != null) {
-                return IOUtils.toByteArray(input);
-            } else {
-                logger.error("FTP file name=" + remotePathAndName + " is not exist");
-                return null;
-            }
-        } catch (Exception e) {
-            throw new GeneralException("9999", e.getMessage() + " remotePathAndName=" + remotePathAndName, e);
-        } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                    if (client != null) {
-                        client.completePendingCommand();
-                    }
-                }
-            } catch (Exception e2) {
-                logger.error(e2.getMessage(), e2);
-            }
-            closeFtp(client);
-        }
-    }
-
-    private static byte[] downBusiByRnfs(String ipPort, String timeOut, String newFileFullPath)
-            throws GeneralException {
-        if (StringUtil.isBlank(ipPort)) {
-            throw new GeneralException("2999", "根据下载路径未找到相应下载节点ip，remotePathAndName=" + newFileFullPath);
-        }
-        try {
-            // String isNginx = BaseDataCodeActionNew.getCodeValue("RNFS_DOWN_LOAD", "NGINX");
-            // String urlStr;
-            // if ("true".equalsIgnoreCase(isNginx)) {
-            // urlStr = "http://" + ipPort + newFileFullPath;
-            // logger.info(String.format("nginx下载url=%s,filePath=%s", urlStr, newFileFullPath));
-            // return HttpMultiPartUtil.upDownPost(urlStr, null, null);
-            // }
-            // String urlParam = BaseDataCodeActionNew.getCodeValue("RNFS_URL_PARAM", "RNFS_URL_PARAM");
-            String urlStr;
-            String urlParam = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_USERNAME_PWD);
-            if (StringUtil.isBlank(urlParam)) {
-                throw new GeneralException("2999", "RNFS_URL_PARAM配置数据为空！");
-            }
-            Map<String, String> textMap = new HashMap<String, String>();
-            textMap.put("filePath", newFileFullPath);
-            urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, urlParam);
-            if (timeOut != null && timeOut.trim().length() > 0) {
-                HttpMultiPartUtil.setConnection_timeout(timeOut);
-                HttpMultiPartUtil.setSo_timeout(timeOut);
-                logger.info("download timeOut=" + timeOut);
-            } else {
-                // String _timeOut = BaseDataCodeActionNew.getCodeValue("RNFS_TIMEOUT", "HTTP_TIMEOUT");
-                String _timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_TIME_OUT);
-                if (_timeOut != null && _timeOut.trim().length() > 0) {
-                    HttpMultiPartUtil.setConnection_timeout(_timeOut);
-                    HttpMultiPartUtil.setSo_timeout(_timeOut);
-                    logger.info("download timeOut=" + _timeOut);
-                }
-            }
-            logger.info(String.format("下载url=%s,filePath=%s", urlStr, newFileFullPath));
-            return HttpMultiPartUtil.upDownPost(urlStr, textMap, null);
-        } catch (GeneralException e) {
-            throw new GeneralException("2999", e.getMessage() + "downByRnfs error，remotePathAndName=" + newFileFullPath,
-                e);
-        } catch (Exception e) {
-            throw new GeneralException("9999", e.getMessage() + "downByRnfs error，remotePathAndName=" + newFileFullPath,
-                e);
-        }
-    }
-
-    /**
-     * 根据下载文件路径获取文件服务配置
-     * @param downLoadPath
-     * @return
-     * @throws GeneralException
-     */
-    private static Map<String, String> getDownLoadCfg(String downLoadPath) throws GeneralException {
-        try {
-            if (downLoadPath != null && downLoadPath.trim().length() > 0) {
-
-                Map<String, String> ftpMap = cacheUtil.getJVMMap(
-                    CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX + downLoadPath.substring(0, downLoadPath.indexOf("/")));
-                return ftpMap;
-            }
-        } catch (Exception e) {
-            throw new GeneralException("9999", "获取下载节点ip端口号异常 downLoadPath=" + downLoadPath, e);
-
-        }
-        return null;
-    }
-
-    /**
-     * 文件上传方法
+     * 有超时时间参数的文件上传方法
      * @param fileType P图片,W无纸化,V视频
      * @param filePath
      * @param fileName
@@ -691,8 +466,8 @@ public class FileUpDownUtil {
      * @return 文件全路径
      * @throws BusiException
      */
-    public static String uploadBusiStr(String fileType, String relativePath, String fileName, String inputStr,
-        String timeOut) throws GeneralException {
+    public String uploadBusiStr(String fileType, String relativePath, String fileName, String inputStr, String timeOut)
+            throws GeneralException {
         if (StringUtil.isNotBlank(inputStr)) {
             try {
                 return uploadBusiByte(fileType, relativePath, fileName,
@@ -707,7 +482,7 @@ public class FileUpDownUtil {
     }
 
     /**
-     * 文件上传方法（采用轮询方式）
+     * 有超时时间参数的文件上传方法（采用轮询方式）
      * @param fileType P图片,W无纸化,V视频
      * @param filePath
      * @param fileName
@@ -715,8 +490,7 @@ public class FileUpDownUtil {
      * @param timeOut 超时时间
      * @return 文件全路径
      */
-    public static String uploadBusiByte(String fileType, String filePath, String fileName, byte[] inputByte,
-        String timeOut) {
+    public String uploadBusiByte(String fileType, String filePath, String fileName, byte[] inputByte, String timeOut) {
         String remotePath = filePath;
         long begin = System.currentTimeMillis();
         try {
@@ -792,10 +566,220 @@ public class FileUpDownUtil {
     }
 
     /**
+     * 有超时时间参数的文件下载方法
+     * @param remotePathAndName
+     * 文件全路径
+     * @param timeOut
+     * 超时时间
+     * @return
+     * @throws BusiException
+     */
+    public String downloadBusiStr(String remotePathAndName, String timeOut) throws GeneralException {
+        byte[] file = downloadBusiByte(remotePathAndName, timeOut);
+        if (file != null) {
+            try {
+                return new String(file, FileUpDownConstants.FILE_CHAR_SET);
+            } catch (Exception e) {
+                throw new GeneralException("9999", e);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 有超时时间参数的文件下载方法
+     * @param remotePathAndName
+     * 文件全路径
+     * @param timeOut
+     * 超时时间
+     * @return
+     * @throws BusiException
+     */
+    public byte[] downloadBusiByte(String remotePathAndName, String timeOut) throws GeneralException {
+        long begin = System.currentTimeMillis();
+        byte[] ret = null;
+        // 如果存在ftp路径则替换ftp路径
+        if (StringUtil.isBlank(remotePathAndName)) {
+            logger.info("downloadHttp: url is not null |remotePathAndName:" + remotePathAndName);
+            throw new NullPointerException("urlStr is null remotePathAndName:" + remotePathAndName);
+        }
+        String newFileFullPath = remotePathAndName;
+        logger.info("http_download_path:" + newFileFullPath);
+        Map<String, String> ftpMap = getDownLoadCfg(newFileFullPath);
+        if (ftpMap == null) {
+            throw new GeneralException("2999", "根据下载路径未找到可用的下载服务，remotePathAndName=" + newFileFullPath);
+        }
+        if (FileUpDownConstants.UPDOWN_RNFS.equalsIgnoreCase(ftpMap.get("uploadDwnldModeCd"))) {
+            // 如果路径中包含FTP则替换路径
+            if (newFileFullPath.startsWith(ftpMap.get("ftpAls"))) {
+                String rootPath = ftpMap.get("rootPath");
+                if (!rootPath.endsWith("/")) {
+                    rootPath = rootPath + "/";
+                }
+                newFileFullPath = newFileFullPath.replaceAll(ftpMap.get("ftpAls"), rootPath);
+                newFileFullPath = newFileFullPath.replaceAll("//", "/");// 将两个斜杠替换为一个
+            }
+            String ipPort = ftpMap.get("rnfsAddrPrtnum");
+            ret = downBusiByRnfs(ipPort, timeOut, newFileFullPath);
+            long end = System.currentTimeMillis();
+            logger.error(String.format("DOWNLOAD_RNFS PATH=%s time=%s", newFileFullPath, String.valueOf(end - begin)));
+        } else if (FileUpDownConstants.UPDOWN_FTP.equalsIgnoreCase(ftpMap.get("uploadDwnldModeCd"))) {
+            ret = downBusiByFtp(ftpMap, newFileFullPath);
+            long end = System.currentTimeMillis();
+            logger.error(String.format("DOWNLOAD_FTP PATH=%s time=%s", newFileFullPath, String.valueOf(end - begin)));
+        }
+        return ret;
+
+    }
+
+    private String uploadBusiByOnest(String bucketName, String path, byte[] inputByte) {
+        String uploadUrl;
+        InputStream in = null;
+        in = new ByteArrayInputStream(inputByte);
+        try {
+            ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
+            uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + path;
+            return uploadUrl;
+        } catch (Exception e) {
+            logger.error("ONEST上传异常 onest error:", e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                logger.error("close inputstream error:", e2);
+            }
+        }
+        return null;
+    }
+
+    private byte[] downloadBusiByOnest(String bucketName, String path) {
+        InputStream result;
+        byte[] resultByte = null;
+        try {
+            result = ONestUtil.download(bucketName, path);
+            if (result != null) {
+                resultByte = toByteArray(result);
+            }
+        } catch (Exception e) {
+            logger.error("downloadByOnest error:", e);
+        }
+        return resultByte;
+    }
+
+    private byte[] downBusiByFtp(Map<String, String> ftpMap, String remotePathAndName) throws GeneralException {
+        FTPClient client = null;
+        InputStream input = null;
+        try {
+            String ftpPathAndName = remotePathAndName;
+            if (remotePathAndName.startsWith(ftpMap.get("ftpAls"))) {
+                ftpPathAndName = ftpPathAndName.replaceAll(ftpMap.get("ftpAls"), "");
+            } else {
+                ftpPathAndName = ftpPathAndName.replaceAll(ftpMap.get("rootPath"), "");
+            }
+            if (!ftpPathAndName.startsWith("/")) {
+                ftpPathAndName = "/" + ftpPathAndName;
+            }
+            // 获取ftp客户连接工具
+            client = getFtpClient(ftpMap);
+            input = client.retrieveFileStream(ftpPathAndName);
+            if (input != null) {
+                return IOUtils.toByteArray(input);
+            } else {
+                logger.error("FTP file name=" + remotePathAndName + " is not exist");
+                return null;
+            }
+        } catch (Exception e) {
+            throw new GeneralException("9999", e.getMessage() + " remotePathAndName=" + remotePathAndName, e);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                    if (client != null) {
+                        client.completePendingCommand();
+                    }
+                }
+            } catch (Exception e2) {
+                logger.error(e2.getMessage(), e2);
+            }
+            closeFtp(client);
+        }
+    }
+
+    private byte[] downBusiByRnfs(String ipPort, String timeOut, String newFileFullPath)
+            throws GeneralException {
+        if (StringUtil.isBlank(ipPort)) {
+            throw new GeneralException("2999", "根据下载路径未找到相应下载节点ip，remotePathAndName=" + newFileFullPath);
+        }
+        try {
+            // String isNginx = BaseDataCodeActionNew.getCodeValue("RNFS_DOWN_LOAD", "NGINX");
+            // String urlStr;
+            // if ("true".equalsIgnoreCase(isNginx)) {
+            // urlStr = "http://" + ipPort + newFileFullPath;
+            // logger.info(String.format("nginx下载url=%s,filePath=%s", urlStr, newFileFullPath));
+            // return HttpMultiPartUtil.upDownPost(urlStr, null, null);
+            // }
+            // String urlParam = BaseDataCodeActionNew.getCodeValue("RNFS_URL_PARAM", "RNFS_URL_PARAM");
+            String urlStr;
+            String urlParam = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_USERNAME_PWD);
+            if (StringUtil.isBlank(urlParam)) {
+                throw new GeneralException("2999", "RNFS_URL_PARAM配置数据为空！");
+            }
+            Map<String, String> textMap = new HashMap<String, String>();
+            textMap.put("filePath", newFileFullPath);
+            urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, urlParam);
+            if (timeOut != null && timeOut.trim().length() > 0) {
+                HttpMultiPartUtil.setConnection_timeout(timeOut);
+                HttpMultiPartUtil.setSo_timeout(timeOut);
+                logger.info("download timeOut=" + timeOut);
+            } else {
+                // String _timeOut = BaseDataCodeActionNew.getCodeValue("RNFS_TIMEOUT", "HTTP_TIMEOUT");
+                String _timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_TIME_OUT);
+                if (_timeOut != null && _timeOut.trim().length() > 0) {
+                    HttpMultiPartUtil.setConnection_timeout(_timeOut);
+                    HttpMultiPartUtil.setSo_timeout(_timeOut);
+                    logger.info("download timeOut=" + _timeOut);
+                }
+            }
+            logger.info(String.format("下载url=%s,filePath=%s", urlStr, newFileFullPath));
+            return HttpMultiPartUtil.upDownPost(urlStr, textMap, null);
+        } catch (GeneralException e) {
+            throw new GeneralException("2999", e.getMessage() + "downByRnfs error，remotePathAndName=" + newFileFullPath,
+                e);
+        } catch (Exception e) {
+            throw new GeneralException("9999", e.getMessage() + "downByRnfs error，remotePathAndName=" + newFileFullPath,
+                e);
+        }
+    }
+
+    /**
+     * 根据下载文件路径获取文件服务配置
+     * @param downLoadPath
+     * @return
+     * @throws GeneralException
+     */
+    private Map<String, String> getDownLoadCfg(String downLoadPath) throws GeneralException {
+        try {
+            if (downLoadPath != null && downLoadPath.trim().length() > 0) {
+
+                Map<String, String> ftpMap = cacheUtil.getJVMMap(
+                    CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX + downLoadPath.substring(0, downLoadPath.indexOf("/")));
+                return ftpMap;
+            }
+        } catch (Exception e) {
+            throw new GeneralException("9999", "获取下载节点ip端口号异常 downLoadPath=" + downLoadPath, e);
+
+        }
+        return null;
+    }
+
+    /**
      * 轮询获取服务列表
      * @return
      */
-    public static synchronized Map<String, String> roundRobin(String fileType) throws GeneralException {
+    private synchronized Map<String, String> roundRobin(String fileType) throws GeneralException {
         Map<String, String> uploadMap;
         if (StringUtil.isBlank(fileType)) {
             throw new GeneralException("2999", "文件上传，必须传入文件类型（P,W,V）");
@@ -837,7 +821,7 @@ public class FileUpDownUtil {
      * @return
      * @throws BusiException
      */
-    private static String uploadBusiByRnfs(String ipPort, byte[] inputByte, String timeOut, String remotePathAndName)
+    private String uploadBusiByRnfs(String ipPort, byte[] inputByte, String timeOut, String remotePathAndName)
             throws GeneralException {
         Map<String, byte[]> fileMap = new HashMap<String, byte[]>();
         fileMap.put(remotePathAndName, inputByte);
@@ -882,7 +866,7 @@ public class FileUpDownUtil {
      * @param inputByte
      * @return
      */
-    private static boolean uploadBusiByFtp(Map<String, String> uploadServerMap, String ftpPathAndName, byte[] inputByte)
+    private boolean uploadBusiByFtp(Map<String, String> uploadServerMap, String ftpPathAndName, byte[] inputByte)
             throws GeneralException {
         FTPClient client = null;
         InputStream input = null;
@@ -917,7 +901,7 @@ public class FileUpDownUtil {
         }
     }
 
-    private static String[] getPathAndFileName(String remotePathAndName) throws GeneralException {
+    private String[] getPathAndFileName(String remotePathAndName) throws GeneralException {
         try {
             if (StringUtil.isNotBlank(remotePathAndName)) {
                 String pathAndName = remotePathAndName;
@@ -941,7 +925,7 @@ public class FileUpDownUtil {
      * @param path 需要切换的目录
      * @throws BusiException
      */
-    private static void changeDir(FTPClient client, String path) throws GeneralException {
+    private void changeDir(FTPClient client, String path) throws GeneralException {
         try {
             if (client != null) {
                 logger.info("changeDir: " + path);
@@ -983,7 +967,7 @@ public class FileUpDownUtil {
         }
     }
 
-    private static void closeFtp(FTPClient client) {
+    private void closeFtp(FTPClient client) {
         try {
             if (client != null && client.isConnected()) {
                 client.disconnect();
@@ -999,7 +983,7 @@ public class FileUpDownUtil {
      * @return
      * @throws BusiException
      */
-    private static FTPClient getFtpClient(Map<String, String> serverMap) throws GeneralException {
+    private FTPClient getFtpClient(Map<String, String> serverMap) throws GeneralException {
         FTPClient client;
         try {
             if (serverMap != null) {
@@ -1025,5 +1009,6 @@ public class FileUpDownUtil {
         return null;
     }
     // --------------------------------------------------业务图片上传下载end----------------------------------------------------------------------
+
 
 }
