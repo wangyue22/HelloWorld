@@ -27,8 +27,10 @@ public class TOpRnfsCfgSVImpl implements ITOpRnfsCfgSV {
         List<TOpRnfsCfgDO> grpNm = tOpRnfsCfgDAO.getRnfsGrpNm(cacheTypeCd,cacheDataTypeCd);
         List<TOpRnfsCfgDO> all = new ArrayList<TOpRnfsCfgDO>();
         for(int i=0;i<grpNm.size();i++){
-             all = tOpRnfsCfgDAO.getRnfsGrpNmByrnfsGrpNm(grpNm.get(i).getRnfsGrpNm());
-            returnList.add(all);
+            if(grpNm.get(i)!=null) {
+                all = tOpRnfsCfgDAO.getRnfsGrpNmByrnfsGrpNm(grpNm.get(i).getRnfsGrpNm());
+                returnList.add(all);
+            }
         }
         return returnList;
     }

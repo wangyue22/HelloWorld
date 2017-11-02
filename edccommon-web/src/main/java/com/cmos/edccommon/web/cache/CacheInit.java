@@ -36,16 +36,16 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
     @Autowired
     private CacheFatctoryUtil cacheFatctoryUtil;
 
-	@Reference
+	@Reference(group = "edcco")
     private IServiceSwitchSV serviceSwitchSV;
 	
-	@Reference
+	@Reference(group = "edcco")
 	private ITOpRnfsCfgSV  opRnfsCfgSV;
 	
-	@Reference
+	@Reference(group = "edcco")
 	private ITOpRealityAccountSV opRealityAccountSV;
 	
-	@Reference
+	@Reference(group = "edcco")
 	private IKeyInfoSV keyInfoSV;
 				
 	@Override
@@ -89,7 +89,7 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
 	@Override
 	public Map<String, String> getJvmStringCacheDate() {
 		Map all = new HashMap();
-        all.put("pushType","");
+        all.put("cacheTypeCd","");
         Map<String, String> StringData = new HashMap<String, String>();
         
         //获取t_op_service_switch表的初始化数据
@@ -116,8 +116,8 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
 	@Override
 	public Map<String, Map<String, String>> getJvmMapCacheDate() {
         //获取Rnfs配置表的初始化数据
-        String cacheTypeCd = "1";
-        String cacheDataTypeCd = "1";
+        String cacheTypeCd = "";
+        String cacheDataTypeCd = "";
         Map<String, String> rnfsData = new HashMap<String, String>(); 
         Map<String, Map<String, String>> returnMap = new HashMap<String, Map<String, String>>(); 
         List<TOpRnfsCfgDO> rnfsList = opRnfsCfgSV.getRnfsGrpNmByType(cacheTypeCd, cacheDataTypeCd);
@@ -136,26 +136,26 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         }     
         
         //获取实名账户表的初始化数据
-        Map<String, String> realityData = new HashMap<String, String>(); 
-        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
-        for(int i=0;i<realityAccountList.size();i++){
-        	String key = "";
-        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
-        	realityData.put("PW", realityAccountList.get(i).getPw());
-        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
-        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
-        	returnMap.put(key, realityData);	
-        }
-        
-        //获取rsa密钥表的初始化数据
-        Map<String, String> coRsaKeyData = new HashMap<String, String>(); 
-        List<CoRsaKeyDO> coRsaKeylist = keyInfoSV.getKeyByType(cacheTypeCd, cacheDataTypeCd);
-        for(int i=0;i<coRsaKeylist.size();i++){
-        	String key = "";
-        	coRsaKeyData.put("PBKEY", coRsaKeylist.get(i).getPbkey());
-        	coRsaKeyData.put("PRTKEY", coRsaKeylist.get(i).getPrtkey());
-        	returnMap.put(key, coRsaKeyData);	
-        }
+//        Map<String, String> realityData = new HashMap<String, String>();
+//        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
+//        for(int i=0;i<realityAccountList.size();i++){
+//        	String key = "";
+//        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
+//        	realityData.put("PW", realityAccountList.get(i).getPw());
+//        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
+//        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
+//        	returnMap.put(key, realityData);
+//        }
+//
+//        //获取rsa密钥表的初始化数据
+//        Map<String, String> coRsaKeyData = new HashMap<String, String>();
+//        List<CoRsaKeyDO> coRsaKeylist = keyInfoSV.getKeyByType(cacheTypeCd, cacheDataTypeCd);
+//        for(int i=0;i<coRsaKeylist.size();i++){
+//        	String key = "";
+//        	coRsaKeyData.put("PBKEY", coRsaKeylist.get(i).getPbkey());
+//        	coRsaKeyData.put("PRTKEY", coRsaKeylist.get(i).getPrtkey());
+//        	returnMap.put(key, coRsaKeyData);
+//        }
 		return returnMap;
 	}
 

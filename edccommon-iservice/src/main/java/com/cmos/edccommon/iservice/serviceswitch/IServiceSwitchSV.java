@@ -8,7 +8,7 @@ import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
 
 /**
  * 缓存开关
- * Created by 66408 on 2017/10/17.
+ * Created by guozong on 2017/10/17.
  */
 public interface IServiceSwitchSV {
 	/**
