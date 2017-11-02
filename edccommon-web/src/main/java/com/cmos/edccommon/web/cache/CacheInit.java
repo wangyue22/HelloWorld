@@ -136,26 +136,26 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         }     
         
         //获取实名账户表的初始化数据
-//        Map<String, String> realityData = new HashMap<String, String>();
-//        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
-//        for(int i=0;i<realityAccountList.size();i++){
-//        	String key = "";
-//        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
-//        	realityData.put("PW", realityAccountList.get(i).getPw());
-//        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
-//        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
-//        	returnMap.put(key, realityData);
-//        }
-//
-//        //获取rsa密钥表的初始化数据
-//        Map<String, String> coRsaKeyData = new HashMap<String, String>();
-//        List<CoRsaKeyDO> coRsaKeylist = keyInfoSV.getKeyByType(cacheTypeCd, cacheDataTypeCd);
-//        for(int i=0;i<coRsaKeylist.size();i++){
-//        	String key = "";
-//        	coRsaKeyData.put("PBKEY", coRsaKeylist.get(i).getPbkey());
-//        	coRsaKeyData.put("PRTKEY", coRsaKeylist.get(i).getPrtkey());
-//        	returnMap.put(key, coRsaKeyData);
-//        }
+        Map<String, String> realityData = new HashMap<String, String>();
+        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
+        for(int i=0;i<realityAccountList.size();i++){
+        	String key = "";
+        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
+        	realityData.put("PW", realityAccountList.get(i).getPw());
+        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
+        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
+        	returnMap.put(key, realityData);
+        }
+
+        //获取rsa密钥表的初始化数据
+        Map<String, String> coRsaKeyData = new HashMap<String, String>();
+        List<CoRsaKeyDO> coRsaKeylist = keyInfoSV.getKeyByType(cacheTypeCd, cacheDataTypeCd);
+        for(int i=0;i<coRsaKeylist.size();i++){
+        	String key = "";
+        	coRsaKeyData.put("PBKEY", coRsaKeylist.get(i).getPbkey());
+        	coRsaKeyData.put("PRTKEY", coRsaKeylist.get(i).getPrtkey());
+        	returnMap.put(key, coRsaKeyData);
+        }
 		return returnMap;
 	}
 

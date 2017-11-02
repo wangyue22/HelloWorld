@@ -25,10 +25,10 @@
   <sql id="Base_Column_List" >
     REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, USER_NM, PW, AES_KEY, DES_KEY, INTF_PRIV_CODE,
     VALID_FLAG, CACHE_TYPE_CD, BIZ_SYS_CODE, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID,
-    MODIFY_TIME, MODIFY_APP_SYS_ID,CACHE_DATA_TYPE_CD,PUSH_ALERT_FLAG
+    MODIFY_TIME, MODIFY_APP_SYS_ID
   </sql>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from t_op_reality_account
+    delete from t_co_reality_account
     where REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO" >
@@ -79,7 +79,7 @@
   <select id="getRealityAccountByType" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List" />
-    from t_op_reality_account
+    from t_co_reality_account
     where 1=1
     <if test="cacheTypeCd!=null and cacheTypeCd!=''">
       and CACHE_TYPE_CD = #{cacheTypeCd}
