@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cmos.edccommon.dao.rnfsCfg.TOpRnfsCfgDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO" >
+    <id column="CONFIG_ID" property="configId" jdbcType="BIGINT" />
+    <result column="RNFS_GRP_NM" property="rnfsGrpNm" jdbcType="VARCHAR" />
+    <result column="ROOT_PATH" property="rootPath" jdbcType="VARCHAR" />
+    <result column="RNFS_ADDR_PRTNUM" property="rnfsAddrPrtnum" jdbcType="VARCHAR" />
+    <result column="UPLOAD_DWNLD_MODE_CD" property="uploadDwnldModeCd" jdbcType="VARCHAR" />
+    <result column="FTP_PRTNUM" property="ftpPrtnum" jdbcType="VARCHAR" />
+    <result column="FTP_USER_NM" property="ftpUserNm" jdbcType="VARCHAR" />
+    <result column="FTP_USER_PW" property="ftpUserPw" jdbcType="VARCHAR" />
+    <result column="STS_CD" property="stsCd" jdbcType="VARCHAR" />
+    <result column="FTP_ALS" property="ftpAls" jdbcType="VARCHAR" />
+    <result column="RMK" property="rmk" jdbcType="VARCHAR" />
+    <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
+    <result column="CRT_USER_ID" property="crtUserId" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_APP_SYS_ID" property="crtAppSysId" jdbcType="VARCHAR" />
+    <result column="MODF_USER_ID" property="modfUserId" jdbcType="VARCHAR" />
+    <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
+    <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
+    <result column="CACHE_TYPE_CD" property="cacheTypeCd" jdbcType="VARCHAR" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CONFIG_ID, RNFS_GRP_NM, ROOT_PATH, RNFS_ADDR_PRTNUM, UPLOAD_DWNLD_MODE_CD, FTP_PRTNUM, 
+    FTP_USER_NM, FTP_USER_PW, STS_CD, FTP_ALS, RMK, BIZ_SYS_CODE, CRT_USER_ID, CRT_TIME, 
+    CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME,MODF_APP_SYS_ID,CACHE_TYPE_CD,VALID_FLAG
+  </sql>
+  <select id="getRnfsGrpNmByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_op_rnfs_cfg
+    where 1=1
+    <if test="cacheTypeCd!=null and cacheTypeCd!=''">
+      and CACHE_TYPE_CD = #{cacheTypeCd}
+    </if>
+    <if test="cacheDataTypeCd!=null and cacheDataTypeCd!=''">
+      and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="getRnfsGrpNm" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select distinct RNFS_GRP_NM
+    from t_op_rnfs_cfg
+  </select>
+  <select id="getRnfsGrpNmByrnfsGrpNm" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_op_rnfs_cfg
+    where RNFS_GRP_NM = #{rnfsGrpNm,jdbcType=VARCHAR}
+  </select>
+</mapper>

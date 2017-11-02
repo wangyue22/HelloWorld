@@ -2,6 +2,7 @@ package com.cmos.edccommon.service.impl.crkey;
 
 
 
+import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -11,6 +12,8 @@ import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
 import com.cmos.edccommon.dao.crkey.CoRsaKeyDAO;
 import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
+
+import java.util.List;
 
 /**
  * 根据请求源编码，秘钥类型，和省编码获取秘钥
@@ -34,6 +37,10 @@ public  class KeyInfoSVImpl implements  IKeyInfoSV {
 			logger.debug("key=" + result.getPrtkey());
 		}
 		return result;
+	}
+	@Override
+	public List<CoRsaKeyDO> getKeyByType(String cacheTypeCd, String cacheDataTypeCd) {
+		return keyDAO.getKeyByType(cacheTypeCd,cacheDataTypeCd);
 	}
 
 }

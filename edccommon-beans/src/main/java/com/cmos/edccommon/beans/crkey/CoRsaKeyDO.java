@@ -66,6 +66,25 @@ public class CoRsaKeyDO extends GenericBean {
      * 修改系统
      */
     private String modfAppSysId;
+    public String getPushAlertFlag() {
+        return pushAlertFlag;
+    }
+
+    public void setPushAlertFlag(String pushAlertFlag) {
+        this.pushAlertFlag = pushAlertFlag;
+    }
+
+
+    public String getCacheDataTypeCd() {
+        return cacheDataTypeCd;
+    }
+
+    public void setCacheDataTypeCd(String cacheDataTypeCd) {
+        this.cacheDataTypeCd = cacheDataTypeCd;
+    }
+
+    private String cacheDataTypeCd;
+    private String pushAlertFlag;
 
 
     public Long getCrkeyId() {
