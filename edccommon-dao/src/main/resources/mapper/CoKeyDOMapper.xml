@@ -17,10 +17,11 @@
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
     <result column="CACHE_DATA_TYPE_CD" property="cacheDataTypeCd" jdbcType="VARCHAR" />
     <result column="PUSH_ALERT_FLAG" property="pushAlertFlag" jdbcType="VARCHAR" />
+    <result column="CACHE_KEY_VAL" property="cacheKeyVal" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, PBKEY, PRTKEY, BIZ_TYPE_CD, 
-    VALID_FLAG, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID
+    VALID_FLAG, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,CACHE_KEY_VAL
   </sql>
   <!--  检索rsa秘钥 -->
 	<select id="selectKey" resultMap="BaseResultMap"

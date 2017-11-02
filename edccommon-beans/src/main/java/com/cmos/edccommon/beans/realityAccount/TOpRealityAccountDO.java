@@ -44,6 +44,18 @@ public class TOpRealityAccountDO extends GenericBean {
 
     private String modifyAppSysId;
 
+    private String cacheKeyVal;
+    private String cacheDataTypeCd;
+    private String pushAlertFlag;
+
+    public String getCacheKeyVal() {
+        return cacheKeyVal;
+    }
+
+    public void setCacheKeyVal(String cacheKeyVal) {
+        this.cacheKeyVal = cacheKeyVal;
+    }
+
     public String getPushAlertFlag() {
         return pushAlertFlag;
     }
@@ -60,9 +72,6 @@ public class TOpRealityAccountDO extends GenericBean {
     public void setCacheDataTypeCd(String cacheDataTypeCd) {
         this.cacheDataTypeCd = cacheDataTypeCd;
     }
-
-    private String cacheDataTypeCd;
-    private String pushAlertFlag;
 
     public Long getRealAcctId() {
         return realAcctId;

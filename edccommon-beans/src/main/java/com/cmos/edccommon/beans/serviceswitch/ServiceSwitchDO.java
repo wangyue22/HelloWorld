@@ -14,10 +14,6 @@ public class ServiceSwitchDO extends GenericBean{
 
     private String bizSysCode;//业务系统编码
 
-    private String swtchTypeCd;//开关类型编码
-
-    private String swtchNm;//开关名称
-
     private String swtchDesc;//开关描述
 
     private String swtchKey;//开关关键字
@@ -71,22 +67,6 @@ public class ServiceSwitchDO extends GenericBean{
 
     public void setBizSysCode(String bizSysCode) {
         this.bizSysCode = bizSysCode == null ? null : bizSysCode.trim();
-    }
-
-    public String getSwtchTypeCd() {
-        return swtchTypeCd;
-    }
-
-    public void setSwtchTypeCd(String swtchTypeCd) {
-        this.swtchTypeCd = swtchTypeCd == null ? null : swtchTypeCd.trim();
-    }
-
-    public String getSwtchNm() {
-        return swtchNm;
-    }
-
-    public void setSwtchNm(String swtchNm) {
-        this.swtchNm = swtchNm == null ? null : swtchNm.trim();
     }
 
     public String getSwtchDesc() {

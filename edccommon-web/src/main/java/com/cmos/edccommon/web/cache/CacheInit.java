@@ -130,22 +130,21 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         	rnfsData.put("FTP_PRTNUM", rnfsList.get(i).getFtpPrtnum());
         	rnfsData.put("FTP_USER_NM", rnfsList.get(i).getFtpUserNm());
         	rnfsData.put("FTP_USER_PW", rnfsList.get(i).getFtpUserPw());
-        	rnfsData.put("STS_CD", rnfsList.get(i).getStsCd());
         	rnfsData.put("FTP_ALS", rnfsList.get(i).getFtpAls());
         	returnMap.put(key2, rnfsData);	
         }     
         
         //获取实名账户表的初始化数据
         Map<String, String> realityData = new HashMap<String, String>();
-        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
-        for(int i=0;i<realityAccountList.size();i++){
-        	String key = "";
-        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
-        	realityData.put("PW", realityAccountList.get(i).getPw());
-        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
-        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
-        	returnMap.put(key, realityData);
-        }
+//        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
+//        for(int i=0;i<realityAccountList.size();i++){
+//        	String key = "";
+//        	realityData.put("USER_NM", realityAccountList.get(i).getUserNm());
+//        	realityData.put("PW", realityAccountList.get(i).getPw());
+//        	realityData.put("AES_KEY", realityAccountList.get(i).getAesKey());
+//        	realityData.put("DES_KEY", realityAccountList.get(i).getDesKey());
+//        	returnMap.put(key, realityData);
+//        }
 
         //获取rsa密钥表的初始化数据
         Map<String, String> coRsaKeyData = new HashMap<String, String>();
@@ -185,7 +184,6 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
                 rnfsDataMap.put("FTP_PRTNUM", rnfsData.get(j).getFtpPrtnum());
                 rnfsDataMap.put("FTP_USER_NM", rnfsData.get(j).getFtpUserNm());
                 rnfsDataMap.put("FTP_USER_PW", rnfsData.get(j).getFtpUserPw());
-                rnfsDataMap.put("STS_CD", rnfsData.get(j).getStsCd());
                 rnfsDataMap.put("FTP_ALS", rnfsData.get(j).getFtpAls());
                 returnList.add(rnfsDataMap);
             }

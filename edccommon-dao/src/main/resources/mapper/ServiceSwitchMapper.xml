@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO" >
     <id column="SWTCH_ID" property="swtchId" jdbcType="BIGINT" />
     <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
-    <result column="SWTCH_TYPE_CD" property="swtchTypeCd" jdbcType="VARCHAR" />
-    <result column="SWTCH_NM" property="swtchNm" jdbcType="VARCHAR" />
     <result column="SWTCH_DESC" property="swtchDesc" jdbcType="VARCHAR" />
     <result column="SWTCH_KEY" property="swtchKey" jdbcType="VARCHAR" />
     <result column="SWTCH_VAL" property="swtchVal" jdbcType="VARCHAR" />
@@ -19,7 +17,7 @@
     <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    SWTCH_ID, BIZ_SYS_CODE, SWTCH_TYPE_CD, SWTCH_NM, SWTCH_DESC, SWTCH_KEY, SWTCH_VAL,
+    SWTCH_ID, BIZ_SYS_CODE, SWTCH_DESC, SWTCH_KEY, SWTCH_VAL,
     CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,
     CACHE_TYPE_CD, VALID_FLAG
   </sql>

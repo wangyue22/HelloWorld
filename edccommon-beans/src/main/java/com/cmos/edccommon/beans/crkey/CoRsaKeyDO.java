@@ -66,6 +66,18 @@ public class CoRsaKeyDO extends GenericBean {
      * 修改系统
      */
     private String modfAppSysId;
+    /**
+     *缓存key 值
+     */
+    private String cacheKeyVal;
+
+    public String getCacheKeyVal() {
+        return cacheKeyVal;
+    }
+
+    public void setCacheKeyVal(String cacheKeyVal) {
+        this.cacheKeyVal = cacheKeyVal;
+    }
     public String getPushAlertFlag() {
         return pushAlertFlag;
     }

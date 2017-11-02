@@ -25,8 +25,6 @@ public class TOpRnfsCfgDO extends GenericBean {
 
     private String ftpUserPw;
 
-    private String stsCd;
-
     private String ftpAls;
 
     private String rmk;
@@ -48,6 +46,25 @@ public class TOpRnfsCfgDO extends GenericBean {
     private String cacheTypeCd;
 
     private String validFlag;
+    private String grpCacheKeyVal;
+
+    private String alsCacheKeyVal;
+
+    public String getGrpCacheKeyVal() {
+        return grpCacheKeyVal;
+    }
+
+    public void setGrpCacheKeyVal(String grpCacheKeyVal) {
+        this.grpCacheKeyVal = grpCacheKeyVal;
+    }
+
+    public String getAlsCacheKeyVal() {
+        return alsCacheKeyVal;
+    }
+
+    public void setAlsCacheKeyVal(String alsCacheKeyVal) {
+        this.alsCacheKeyVal = alsCacheKeyVal;
+    }
 
     public String getCacheDataTypeCd() {
         return cacheDataTypeCd;
@@ -130,14 +147,6 @@ public class TOpRnfsCfgDO extends GenericBean {
 
     public void setFtpUserPw(String ftpUserPw) {
         this.ftpUserPw = ftpUserPw == null ? null : ftpUserPw.trim();
-    }
-
-    public String getStsCd() {
-        return stsCd;
-    }
-
-    public void setStsCd(String stsCd) {
-        this.stsCd = stsCd == null ? null : stsCd.trim();
     }
 
     public String getFtpAls() {
