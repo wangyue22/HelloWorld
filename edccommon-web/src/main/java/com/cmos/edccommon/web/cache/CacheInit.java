@@ -50,40 +50,39 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
 				
 	@Override
 	public void run(String... args) throws Exception {
-        System.out.println("缓存数据初始化");
+        logger.info("缓存数据初始化");
         Map<String, String> jvmStringData = new HashMap<String, String>();
         Map<String, Map<String, String>> jvmMapData = new HashMap<String, Map<String,String>>();
         Map<String, List> jvmListData = new HashMap<String, List>();
         Map<String, String> redisStringData = new HashMap<String, String>();
         Map<String, Map<String, String>> redisMapData = new HashMap<String, Map<String,String>>();
         Map<String, List> redisListData = new HashMap<String, List>();
-
-        //获取需要在JVM中初始化的String类型数据                    
-        jvmStringData = this.getJvmStringCacheDate();
-        
-        //获取需要在JVM中初始化的Map类型数据                    
-        jvmMapData = this.getJvmMapCacheDate();
-
-        //获取需要在JVM中初始化的List类型数据                    
-        jvmListData = this.getJvmListCacheDate();
-        
-        //获取需要在redis中初始化的String类型数据                    
-        redisStringData = this.getRedisStringCacheDate();
-        
-        //获取需要在JVM中初始化的Map类型数据                    
-        redisMapData = this.getRedisMapCacheDate();
-        
-        //获取需要在JVM中初始化的List类型数据                    
-        redisListData = this.getRedisListCacheDate();
-                     
         try {
+            //获取需要在JVM中初始化的String类型数据
+            jvmStringData = this.getJvmStringCacheDate();
+        
+            //获取需要在JVM中初始化的Map类型数据
+            jvmMapData = this.getJvmMapCacheDate();
+
+            //获取需要在JVM中初始化的List类型数据
+            jvmListData = this.getJvmListCacheDate();
+        
+            //获取需要在redis中初始化的String类型数据
+            redisStringData = this.getRedisStringCacheDate();
+        
+            //获取需要在JVM中初始化的Map类型数据
+            redisMapData = this.getRedisMapCacheDate();
+        
+            //获取需要在JVM中初始化的List类型数据
+            redisListData = this.getRedisListCacheDate();
+                     
         	cacheFatctoryUtil.putJVMStringData(jvmStringData);
         	cacheFatctoryUtil.putJVMMapData(jvmMapData);
         	cacheFatctoryUtil.putJVMListData(jvmListData);
         } catch (GeneralException e) {
-            e.printStackTrace();
-        }      
-        System.out.println("缓存数据初始化over");
+            logger.error("缓存初始化失败",e);
+        }
+        logger.info("缓存数据初始化over");
     }
 	
 	@Override
