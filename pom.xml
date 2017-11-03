@@ -34,14 +34,13 @@
         <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
         <cmos.core-finalName>edccommon-core</cmos.core-finalName>
         <cmos.control-finalName>edccommon-control</cmos.control-finalName>
+        <cmos.mqconsumer-finalName>edccommon-mqconsumer</cmos.mqconsumer-finalName>
     </properties>
 
     <profiles>
         <profile>
             <id>development</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+
             <properties>
                 <project.profile>development</project.profile>
             </properties>
@@ -60,6 +59,9 @@
         </profile>
         <profile>
             <id>test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <project.profile>test</project.profile>
             </properties>
