@@ -1,14 +1,14 @@
 package com.cmos.edccommon.beans.realityAccount;
 
-import com.cmos.common.bean.GenericBean;
-
 import java.util.Date;
+
+import com.cmos.common.bean.GenericBean;
 
 /**
  * 人像比对实名账户
  *
  */
-public class TOpRealityAccountDO extends GenericBean {
+public class RealityAccountInDTO extends GenericBean {
     private static final long serialVersionUID = 1L;
     private Long realAcctId;
 
@@ -51,7 +51,6 @@ public class TOpRealityAccountDO extends GenericBean {
     public void setPushAlertFlag(String pushAlertFlag) {
         this.pushAlertFlag = pushAlertFlag;
     }
-
 
     public String getCacheDataTypeCd() {
         return cacheDataTypeCd;

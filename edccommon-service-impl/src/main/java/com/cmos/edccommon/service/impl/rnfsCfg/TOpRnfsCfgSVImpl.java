@@ -1,13 +1,15 @@
 package com.cmos.edccommon.service.impl.rnfsCfg;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.alibaba.dubbo.config.annotation.Service;
+import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgInDTO;
 import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
 import com.cmos.edccommon.dao.rnfsCfg.TOpRnfsCfgDAO;
 import com.cmos.edccommon.iservice.rnfsCfg.ITOpRnfsCfgSV;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by guozong on 2017/10/31.
@@ -39,4 +41,25 @@ public class TOpRnfsCfgSVImpl implements ITOpRnfsCfgSV {
     public List<TOpRnfsCfgDO> getRnfsGrpNmByType(String cacheTypeCd, String cacheDataTypeCd) {
         return tOpRnfsCfgDAO.getRnfsGrpNmByType(cacheTypeCd, cacheDataTypeCd);
     }
+
+    @Override
+    public List<TOpRnfsCfgDO> getRnfsCfg(RnfsCfgInDTO rnfsCfgDto) {
+        return tOpRnfsCfgDAO.select(rnfsCfgDto);
+    }
+
+    @Override
+    public void insertgetRnfsCfg(RnfsCfgInDTO rnfsCfgDto) {
+        tOpRnfsCfgDAO.insert(rnfsCfgDto);
+    }
+
+    @Override
+    public void deletegetRnfsCfg(RnfsCfgInDTO rnfsCfgDto) {
+        tOpRnfsCfgDAO.delete(rnfsCfgDto);
+    }
+
+    @Override
+    public void updategetRnfsCfg(RnfsCfgInDTO rnfsCfgDto) {
+        tOpRnfsCfgDAO.update(rnfsCfgDto);
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.cmos.edccommon.dao.realityAccount;
 
-import com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO;
+import com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO;
 
 /**
  * Created by guozong on 2017/10/31.
@@ -16,4 +18,25 @@ public interface TOpRealityAccountDAO {
      * @return
      */
     List<TOpRealityAccountDO> getRealityAccountByType(@Param(value = "cacheTypeCd") String cacheTypeCd, @Param(value = "cacheDataTypeCd") String cacheDataTypeCd);
+
+    /**查询db实名账户信息
+     * @param dto
+     * @return
+     */
+    List<TOpRealityAccountDO> select(RealityAccountInDTO dto);
+
+    /**新增db实名账户信息
+     * @param dto
+     */
+    void insert(RealityAccountInDTO dto);
+
+    /**删除db实名账户信息
+     * @param dto
+     */
+    void delete(RealityAccountInDTO dto);
+
+    /**更改sb实名账户信息
+     * @param dto
+     */
+    void update(RealityAccountInDTO dto);
 }

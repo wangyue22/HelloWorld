@@ -1,8 +1,9 @@
 package com.cmos.edccommon.iservice.rnfsCfg;
 
-import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
-
 import java.util.List;
+
+import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgInDTO;
+import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
 
 /**
  * Created by guozong on 2017/10/31.
@@ -21,4 +22,28 @@ public interface ITOpRnfsCfgSV {
      * @return
      */
     List<TOpRnfsCfgDO> getRnfsGrpNmByType(String cacheTypeCd, String cacheDataTypeCd);
+
+    /**查询db配置表
+     * @param RnfsCfgOutDTO
+     * @return
+     */
+    public List<TOpRnfsCfgDO> getRnfsCfg(RnfsCfgInDTO rnfsCfgDto);
+
+    /**
+     * 新增db配置表数据
+     * @param RnfsCfgOutDTO
+     *
+     */
+    public void insertgetRnfsCfg(RnfsCfgInDTO rnfsCfgDto);
+
+    /**
+     * 删除db配置表数据
+     * @param RnfsCfgOutDTO
+     */
+    public void deletegetRnfsCfg(RnfsCfgInDTO rnfsCfgDto);
+
+    /**更新db配置表数据
+     * @param RnfsCfgOutDTO
+     */
+    public void updategetRnfsCfg(RnfsCfgInDTO rnfsCfgDto);
 }

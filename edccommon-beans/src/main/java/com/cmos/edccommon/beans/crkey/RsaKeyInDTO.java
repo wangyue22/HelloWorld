@@ -3,12 +3,12 @@ package com.cmos.edccommon.beans.crkey;
 import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
-/**
- * RSA秘钥数据表
- * @author xdx
+
+/**RSA秘钥
+ * @author 王飞
  *
  */
-public class CoRsaKeyDO extends GenericBean {
+public class RsaKeyInDTO extends GenericBean {
     private static final long serialVersionUID = 90716934787134967L;
 
     /**
@@ -71,6 +71,7 @@ public class CoRsaKeyDO extends GenericBean {
      * 修改系统
      */
     private String modfAppSysId;
+
     public String getPushAlertFlag() {
         return pushAlertFlag;
     }
@@ -78,7 +79,6 @@ public class CoRsaKeyDO extends GenericBean {
     public void setPushAlertFlag(String pushAlertFlag) {
         this.pushAlertFlag = pushAlertFlag;
     }
-
 
     public String getCacheDataTypeCd() {
         return cacheDataTypeCd;
@@ -90,7 +90,6 @@ public class CoRsaKeyDO extends GenericBean {
 
     private String cacheDataTypeCd;
     private String pushAlertFlag;
-
 
     public Long getCrkeyId() {
         return crkeyId;

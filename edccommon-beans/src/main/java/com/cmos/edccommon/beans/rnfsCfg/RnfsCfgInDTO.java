@@ -3,11 +3,8 @@ package com.cmos.edccommon.beans.rnfsCfg;
 import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
-/**
- * 人像比对rnfs配置
- *
- */
-public class TOpRnfsCfgDO extends GenericBean {
+
+public class RnfsCfgInDTO extends GenericBean{
     private static final long serialVersionUID = 1L;
     private Long configId;
 
@@ -72,6 +69,7 @@ public class TOpRnfsCfgDO extends GenericBean {
     private String cacheDataTypeCd;
 
     private String pushAlertFlag;
+
     public Long getConfigId() {
         return configId;
     }

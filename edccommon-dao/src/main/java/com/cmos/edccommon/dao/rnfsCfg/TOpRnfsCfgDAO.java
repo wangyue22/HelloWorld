@@ -1,32 +1,39 @@
 package com.cmos.edccommon.dao.rnfsCfg;
 
-import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgInDTO;
+import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
 
 /**
  * Created by guozong on 2017/10/31.
  */
 public interface TOpRnfsCfgDAO {
-    /**
-     * 根据缓存类型和数据类型查询出网缓存放的RnfsGrpNm类别
-     * @param cacheTypeCd
-     * @param cacheDataTypeCd
-     * @return
-     */
+
     List<TOpRnfsCfgDO> getRnfsGrpNm(@Param(value = "cacheTypeCd") String cacheTypeCd, @Param(value = "cacheDataTypeCd") String cacheDataTypeCd);
-    /**
-     * 根据nfsGrpNm类别查询网缓存存放的list
-     * @param rnfsGrpNm
-     * @return
-     */
     List<TOpRnfsCfgDO> getRnfsGrpNmByrnfsGrpNm(String rnfsGrpNm);
-    /**
-     * 根据缓存类型和数据类型查询出网缓存放的数据
-     * @param cacheTypeCd
-     * @param cacheDataTypeCd
+    List<TOpRnfsCfgDO> getRnfsGrpNmByType(@Param(value = "cacheTypeCd") String cacheTypeCd, @Param(value = "cacheDataTypeCd") String cacheDataTypeCd);
+
+    /**查询db配置表信息
+     * @param dto
      * @return
      */
-    List<TOpRnfsCfgDO> getRnfsGrpNmByType(@Param(value = "cacheTypeCd") String cacheTypeCd, @Param(value = "cacheDataTypeCd") String cacheDataTypeCd);
+    List<TOpRnfsCfgDO> select(RnfsCfgInDTO dto);
+
+    /**新增db配置
+     * @param dto
+     */
+    void insert(RnfsCfgInDTO dto);
+
+    /**删除db配置
+     * @param dto
+     */
+    void delete(RnfsCfgInDTO dto);
+
+    /**更新db配置
+     * @param dto
+     */
+    void update(RnfsCfgInDTO dto);
 }

@@ -1,9 +1,10 @@
 package com.cmos.edccommon.iservice.crkey;
 
+import java.util.List;
+
 import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
-
-import java.util.List;
+import com.cmos.edccommon.beans.crkey.RsaKeyInDTO;
 
 /**
  * 根据手机号得到对应的省端编码
@@ -13,14 +14,14 @@ import java.util.List;
  */
 public interface IKeyInfoSV {
 
-   
+
     /**
      * @param param
      * @return
-     * @throws Exception 
+     * @throws Exception
      * @date 2017-10-17 17:00:00
      */
-  public  CoRsaKeyDO getRsaKey(KeyInfoDTO inParam);
+    public  CoRsaKeyDO getRsaKey(KeyInfoDTO inParam);
     /**
      * 获取初始化缓存数据
      * @param cacheTypeCd
@@ -28,4 +29,25 @@ public interface IKeyInfoSV {
      * @return
      */
     List<CoRsaKeyDO> getKeyByType(String cacheTypeCd, String cacheDataTypeCd);
+
+    /**查询db密钥
+     * @param dto
+     * @return
+     */
+    public List<CoRsaKeyDO> getRsaKey(RsaKeyInDTO dto);
+
+    /**新增db密钥
+     * @param dto
+     */
+    public void insertRsaKey(RsaKeyInDTO dto);
+
+    /**删除db密钥
+     * @param dto
+     */
+    public void deleteRsaKey(RsaKeyInDTO dto);
+
+    /**更新db密钥
+     * @param dto
+     */
+    public void updateRsaKey(RsaKeyInDTO dto);
 }

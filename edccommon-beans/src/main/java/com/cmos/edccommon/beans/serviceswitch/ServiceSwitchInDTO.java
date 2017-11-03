@@ -4,57 +4,38 @@ import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 
-/**
- * 开关缓存配置
- *
- */
-public class ServiceSwitchDO extends GenericBean{
-    private static final long serialVersionUID = 7181946962324445621L;
-    private Long swtchId;//开关ID
+public class ServiceSwitchInDTO extends GenericBean {
 
-    private String bizSysCode;//业务系统编码
+	private static final long serialVersionUID = 1L;
+   
+	private Long swtchId;
 
-    private String swtchTypeCd;//开关类型编码
+    private String bizSysCode;
 
-    private String swtchNm;//开关名称
+    private String swtchTypeCd;
 
-    private String swtchDesc;//开关描述
+    private String swtchNm;
 
-    private String swtchKey;//开关关键字
+    private String swtchDesc;
 
-    private String swtchVal;//开关取值
+    private String swtchKey;
 
-    /**
-     * 创建用户id
-     */
+    private String swtchVal;
+
     private String crtUserId;
-    /**
-     * 创建时间
-     */
+
     private Date crtTime;
-    /**
-     * 创建系统id
-     */
+
     private String crtAppSysId;
-    /**
-     * 修改用户名
-     */
+
     private String modfUserId;
-    /**
-     * 修改时间
-     */
+
     private Date modfTime;
-    /**
-     * 修改系统
-     */
+
     private String modfAppSysId;
-    /**
-     * 开关缓存类型 1jvm 2redis
-     */
+
     private String cacheTypeCd;
-    /**
-     * 开关有效标志位 1 有效 
-     */
+
     private String validFlag;
 
     public Long getSwtchId() {
