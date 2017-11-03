@@ -79,7 +79,7 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         	cacheFatctoryUtil.putJVMStringData(jvmStringData);
         	cacheFatctoryUtil.putJVMMapData(jvmMapData);
         	cacheFatctoryUtil.putJVMListData(jvmListData);
-        } catch (GeneralException e) {
+        } catch (Exception e) {
             logger.error("缓存初始化失败",e);
         }
         logger.info("缓存数据初始化over");
