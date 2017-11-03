@@ -51,7 +51,8 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    public Map<String, String> uploadGztPic(String path, String base64Str) throws GeneralException {
+    public Map<String, String> uploadGztPic(String path, String base64Str, boolean doubleWriteFlag)
+            throws GeneralException {
         Map<String,String> resMap = new HashMap<String,String>();
         // 获取onest开关，onest是否开放优先使用
         String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
@@ -61,7 +62,7 @@ public class FileUpDownUtil {
             onestUploadResult = uploadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path, inputByte);
             resMap.put("uploadType", FileUpDownConstants.GztFile.ONEST);
         }
-        if ("false".equals(onestSwitch) || FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED.equals(onestUploadResult)) {
+        if ("false".equals(onestSwitch) || FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED.equals(onestUploadResult) || doubleWriteFlag) {
             String serverName = uploadGztFileByRnfs(path, inputByte);
             if(StringUtil.isNotBlank(serverName)){
                 resMap.put("uploadType", FileUpDownConstants.GztFile.RNFS);
@@ -80,14 +81,7 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    public byte[] dowdloadGztPic(String inPath) throws GeneralException {
-        String path = inPath;
-        if (StringUtil.isBlank(path)) {
-            throw new GeneralException("2999", "下载路径不能为空！");
-        } else {
-            path = path.substring(path.indexOf("cert"));
-        }
-
+    public byte[] dowdloadGztPic(String path) throws GeneralException {
         // 获取onest开关，onest是否开放优先使用
         String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
         // 根据路径下载图片
@@ -245,7 +239,6 @@ public class FileUpDownUtil {
         }
         return resStr;
     }
-
 
 
     /**
@@ -475,7 +468,7 @@ public class FileUpDownUtil {
      * @throws BusiException
      */
     public String uploadBusiStr(String fileType, String relativePath, String fileName, String inputStr, String timeOut)
-        throws GeneralException {
+            throws GeneralException {
         if (StringUtil.isNotBlank(inputStr)) {
             try {
                 return uploadBusiByte(fileType, relativePath, fileName,
