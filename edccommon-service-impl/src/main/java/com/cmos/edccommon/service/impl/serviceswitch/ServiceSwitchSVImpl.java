@@ -13,9 +13,9 @@ import com.cmos.edccommon.dao.serviceswitch.ServiceSwitchDAO;
 import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 
 /**
- * Created by 66408 on 2017/10/17.
+ * Created by guozong on 2017/10/17.
  */
-@Service
+@Service(group = "edcco")
 public class ServiceSwitchSVImpl implements IServiceSwitchSV {
     @Autowired
     private ServiceSwitchDAO serviceSwitchDao;
