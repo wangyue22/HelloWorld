@@ -15,6 +15,8 @@
     <result column="MODF_USER_ID" property="modfUserId" jdbcType="VARCHAR" />
     <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
+    <result column="CACHE_TYPE_CD" property="cacheTypeCd" jdbcType="VARCHAR" />
+    <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
     <result column="CACHE_DATA_TYPE_CD" property="cacheDataTypeCd" jdbcType="VARCHAR" />
     <result column="PUSH_ALERT_FLAG" property="pushAlertFlag" jdbcType="VARCHAR" />
     <result column="CACHE_KEY_VAL" property="cacheKeyVal" jdbcType="VARCHAR" />
@@ -181,8 +183,9 @@
         where CACHE_KEY_VAL= #{cacheKeyVal,jdbcType=VARCHAR}
    </select>
   <select id="select" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.crkey.RsaKeyInDTO">
-  	select
-  	<include refid="Base_Column_List" />
+  	select CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, PBKEY, PRTKEY, BIZ_TYPE_CD, 
+    	   VALID_FLAG, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,CACHE_TYPE_CD,
+    	   BIZ_SYS_CODE,CACHE_DATA_TYPE_CD,PUSH_ALERT_FLAG,CACHE_KEY_VAL
   	from t_op_rsa_key
   	<where>
   		<if test="crkeyId != null and crkeyId !=''">
@@ -203,6 +206,12 @@
   		<if test="bizTypeCd != null and bizTypeCd !=''">
   			and BIZ_TYPE_CD = #{bizTypeCd,jdbcType=VARCHAR}
   		</if>
+  		<if test="cacheTypeCd != null and cacheTypeCd !=''">
+  			and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+  		</if>
+  		<if test="bizSysCode != null and bizSysCode !=''">
+  			and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+  		</if>
   		<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
   			and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
   		</if>
@@ -218,9 +227,6 @@
   <insert id="insert" parameterType="com.cmos.edccommon.beans.crkey.RsaKeyInDTO">
   	insert into t_co_rsa_key
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="crkeyId != null" >
-        CRKEY_ID,
-      </if>
       <if test="reqstSrcCode != null" >
         REQST_SRC_CODE,
       </if>
@@ -248,14 +254,23 @@
       <if test="crtAppSysId != null" >
         CRT_APP_SYS_ID,
       </if>
+      <if test="cacheTypeCd != null" >
+        CACHE_TYPE_CD,
+      </if>
+      <if test="bizSysCode != null" >
+        BIZ_SYS_CODE,
+      </if>
+      <if test="cacheDataType != null" >
+        CACHE_DATA_TYPE_CD,
+      </if>
+      <if test="pushAlertFlag != null" >
+        PUSH_ALERT_FLAG,
+      </if>
       <if test="cacheKeyVal != null" >
-        CACHE_KEY_VAL,
+        CACHE_KEY_VAL
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="crkeyId != null" >
-        #{crkeyId,jdbcType=BIGINT},
-      </if>
       <if test="reqstSrcCode != null" >
         #{reqstSrcCode,jdbcType=VARCHAR},
       </if>
@@ -283,8 +298,20 @@
       <if test="crtAppSysId != null" >
         #{crtAppSysId,jdbcType=VARCHAR},
       </if>
+      <if test="cacheTypeCd != null" >
+        #{cacheTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="bizSysCode != null" >
+        #{bizSysCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cacheDataType != null" >
+        #{cacheDataType,jdbcType=VARCHAR},
+      </if>
+      <if test="pushAlertFlag != null" >
+        #{pushAlertFlag,jdbcType=VARCHAR},
+      </if>
       <if test="cacheKeyVal != null" >
-        #{cacheKeyVal,jdbcType=VARCHAR},
+        #{cacheKeyVal,jdbcType=VARCHAR}
       </if>
     </trim>
   </insert>
@@ -313,6 +340,12 @@
   		<if test="bizTypeCd != null and bizTypeCd !=''">
   			and BIZ_TYPE_CD = #{bizTypeCd,jdbcType=VARCHAR}
   		</if>
+   		<if test="cacheTypeCd != null and cacheTypeCd !=''">
+  			and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+  		</if>
+  		<if test="bizSysCode != null and bizSysCode !=''">
+  			and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+  		</if>
   		<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
   			and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
   		</if>
@@ -328,7 +361,7 @@
   	update t_co_rsa_key
   	 <set>
       <if test="reqstSrcCode != null" >
-        REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
+       	 REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
       </if>
       <if test="reqstSrcNm != null" >
         REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR},
@@ -351,9 +384,21 @@
       <if test="modfAppSysId != null" >
         MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR},
       </if>
-      <if test="cacheKeyVal != null ">
-  	 	CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}
-  	  </if>
+      <if test="cacheTypeCd != null ">
+		CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
+ 	  </if>
+ 	  <if test="bizSysCode != null ">
+ 		BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR},
+ 	  </if>
+ 	  <if test="cacheDataTypeCd != null ">
+ 		CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR},
+ 	  </if>
+ 	  <if test="pushAlertFlag != null ">
+ 		PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR},
+ 	  </if>
+ 	  <if test="cacheKeyVal != null ">
+ 		CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}
+ 	  </if>
     </set>
     <where>
   		<if test="crkeyId != null and crkeyId !=''">
@@ -373,6 +418,12 @@
   		</if>
   		<if test="bizTypeCd != null and bizTypeCd !=''">
   			and BIZ_TYPE_CD = #{bizTypeCd,jdbcType=VARCHAR}
+  		</if>
+  		<if test="cacheTypeCd != null and cacheTypeCd !=''">
+  			and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+  		</if>
+  		<if test="bizSysCode != null and bizSysCode !=''">
+  			and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
   		</if>
   		<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
   			and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}

@@ -63,14 +63,36 @@ public class RsaKeyInDTO extends GenericBean {
      * 修改时间
      */
     private Date modfTime;
+
+    /**
+     * 修改应用系统ID
+     */
+    private String modfAppSysId;
+
+    /**
+     * 缓存类型代码
+     */
+    private String cacheTypeCd;
+
+    /**
+     * 业务系统编码
+     */
+    private String bizSysCode;
+
+    /**
+     * 缓存数据类型代码
+     */
+    private String cacheDataTypeCd;
+
+    /**
+     * 推送提醒标志
+     */
+    private String pushAlertFlag;
+
     /**
      * 缓存KEY值
      */
     private String cacheKeyVal;
-    /**
-     * 修改系统
-     */
-    private String modfAppSysId;
 
     public String getPushAlertFlag() {
         return pushAlertFlag;
@@ -87,9 +109,6 @@ public class RsaKeyInDTO extends GenericBean {
     public void setCacheDataTypeCd(String cacheDataTypeCd) {
         this.cacheDataTypeCd = cacheDataTypeCd;
     }
-
-    private String cacheDataTypeCd;
-    private String pushAlertFlag;
 
     public Long getCrkeyId() {
         return crkeyId;
@@ -201,5 +220,21 @@ public class RsaKeyInDTO extends GenericBean {
 
     public void setCacheKeyVal(String cacheKeyVal) {
         this.cacheKeyVal = cacheKeyVal == null ? null : cacheKeyVal.trim();
+    }
+
+    public String getBizSysCode() {
+        return bizSysCode;
+    }
+
+    public void setBizSysCode(String bizSysCode) {
+        this.bizSysCode = bizSysCode;
+    }
+
+    public String getCacheTypeCd() {
+        return cacheTypeCd;
+    }
+
+    public void setCacheTypeCd(String cacheTypeCd) {
+        this.cacheTypeCd = cacheTypeCd;
     }
 }
