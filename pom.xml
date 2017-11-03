@@ -40,7 +40,9 @@
     <profiles>
         <profile>
             <id>development</id>
-
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <project.profile>development</project.profile>
             </properties>
@@ -59,9 +61,6 @@
         </profile>
         <profile>
             <id>test</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <project.profile>test</project.profile>
             </properties>
