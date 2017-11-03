@@ -165,7 +165,7 @@
   <select id="getKeyByType" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List" />
-    from t_co_rsa_key
+    from t_op_rsa_key
     where 1=1
     <if test="cacheTypeCd!=null and cacheTypeCd!=''">
       and CACHE_TYPE_CD = #{cacheTypeCd}

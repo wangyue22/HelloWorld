@@ -135,16 +135,16 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         }     
         
         //获取实名账户表的初始化数据
-//        Map<String, String> realityData = new HashMap<String, String>();
-//        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
-//        for(int i=0;i<realityAccountList.size();i++){
-//        	String key = realityAccountList.get(i).getCacheKeyVal();
-//        	realityData.put("userNm", realityAccountList.get(i).getUserNm());
-//        	realityData.put("pw", realityAccountList.get(i).getPw());
-//        	realityData.put("aesKey", realityAccountList.get(i).getAesKey());
-//        	realityData.put("desKey", realityAccountList.get(i).getDesKey());
-//        	returnMap.put(key, realityData);
-//        }
+        Map<String, String> realityData = new HashMap<String, String>();
+        List<TOpRealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd, cacheDataTypeCd);
+        for(int i=0;i<realityAccountList.size();i++){
+        	String key = realityAccountList.get(i).getCacheKeyVal();
+        	realityData.put("userNm", realityAccountList.get(i).getUserNm());
+        	realityData.put("pw", realityAccountList.get(i).getPw());
+        	realityData.put("aesKey", realityAccountList.get(i).getAesKey());
+        	realityData.put("desKey", realityAccountList.get(i).getDesKey());
+        	returnMap.put(key, realityData);
+        }
 
         //获取rsa密钥表的初始化数据
         Map<String, String> coRsaKeyData = new HashMap<String, String>();
