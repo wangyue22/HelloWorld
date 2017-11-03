@@ -36,4 +36,14 @@ public interface TOpRnfsCfgDAO {
      * @param dto
      */
     void update(RnfsCfgInDTO dto);
+    /**根据key获取单个对象
+     * @param
+     * @return
+     */
+    TOpRnfsCfgDO  getRnfsGrpNmByAlsCacheKeyVal(String alsCacheKeyVal);
+    /**根据key获取缓存list
+     * @param
+     * @return
+     */
+    List<TOpRnfsCfgDO> getRnfsGrpNmByGrpCacheKeyVal(String alsCacheKeyVal);
 }

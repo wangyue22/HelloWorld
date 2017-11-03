@@ -61,5 +61,14 @@ public class TOpRnfsCfgSVImpl implements ITOpRnfsCfgSV {
     public void updategetRnfsCfg(RnfsCfgInDTO rnfsCfgDto) {
         tOpRnfsCfgDAO.update(rnfsCfgDto);
     }
+    @Override
+    public TOpRnfsCfgDO getRnfsGrpNmByAlsCacheKeyVal(String alsCacheKeyVal) {
+        return tOpRnfsCfgDAO.getRnfsGrpNmByAlsCacheKeyVal(alsCacheKeyVal);
+    }
+
+    @Override
+    public List<TOpRnfsCfgDO> getRnfsGrpNmByGrpCacheKeyVal(String alsCacheKeyVal) {
+        return tOpRnfsCfgDAO.getRnfsGrpNmByGrpCacheKeyVal(alsCacheKeyVal);
+    }
 
 }

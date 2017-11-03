@@ -49,6 +49,18 @@
     from t_op_rnfs_cfg
     where RNFS_GRP_NM = #{rnfsGrpNm,jdbcType=VARCHAR}
   </select>
+   <select id="getRnfsGrpNmByAlsCacheKeyVal" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List" />
+        from t_op_rnfs_cfg
+        where ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+   </select>
+    <select id="getRnfsGrpNmByGrpCacheKeyVal" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List" />
+        from t_op_rnfs_cfg
+        where GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR}
+    </select>
    <delete id="delete" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgInDTO" >
     update t_op_rnfs_cfg
     set VALID_FLAG = '0'

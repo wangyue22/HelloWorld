@@ -46,4 +46,14 @@ public interface ITOpRnfsCfgSV {
      * @param RnfsCfgOutDTO
      */
     public void updategetRnfsCfg(RnfsCfgInDTO rnfsCfgDto);
+    /**根据key获取单个对象
+     * @param
+     * @return
+     */
+    TOpRnfsCfgDO  getRnfsGrpNmByAlsCacheKeyVal(String alsCacheKeyVal);
+    /**根据key获取缓存list
+     * @param
+     * @return
+     */
+    List<TOpRnfsCfgDO> getRnfsGrpNmByGrpCacheKeyVal(String alsCacheKeyVal);
 }
