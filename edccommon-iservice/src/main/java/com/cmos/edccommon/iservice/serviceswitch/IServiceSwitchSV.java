@@ -6,42 +6,21 @@ import java.util.Map;
 import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
 import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchInDTO;
 
-
 /**
- * 缓存开关
- * Created by 66408 on 2017/10/17.
+ * Created by guozong on 2017/10/17.
  */
 public interface IServiceSwitchSV {
+
+    void insertSelective(ServiceSwitchDO record);
+    void updateByPrimaryKeySelective(ServiceSwitchDO record);
+    ServiceSwitchDO getServiceSwitchByKey(String swtchKey);
+    List<ServiceSwitchDO> getServiceSwitchByDataType(String cacheTypeCd,String dataType);
+
     /**
-     * 检索出加入内存的数据
-     * @param input
+     * 查询开关
+     * @param switchdo
      * @return
      */
-    List<ServiceSwitchDO> selectByType(Map<String, Object> input);
-
-    /**
-     * 新增
-     * @param record
-     */
-    void insertSelective(ServiceSwitchDO record);
-
-    /**
-     * 更新
-     * @param record
-     */
-    void updateByPrimaryKeySelective(ServiceSwitchDO record);
-
-    /**
-     * 根据开关关键字检索开关值
-     * @param record
-     */
-    ServiceSwitchDO getServiceSwitchByKey(String swtchKey);
-
-    /** 
-    * 查询开关
-    * @param switchdo
-    * @return
-    */
     public List<ServiceSwitchDO> getServiceSwitchByCode(ServiceSwitchInDTO switchdo);
 
     /**
@@ -64,4 +43,11 @@ public interface IServiceSwitchSV {
      *
      */
     public void updateServiceSwitch(ServiceSwitchInDTO switchdo);
+    /**
+     * 根据缓存类型获取开关的key  value
+     * @param input
+     * @return
+     */
+    List<ServiceSwitchDO> selectByType(Map<String, Object> input);
+
 }

@@ -15,7 +15,7 @@ import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 /**
  * Created by guozong on 2017/10/17.
  */
-@Service(group = "edcco")
+@Service(group = "edcctsvs")
 public class ServiceSwitchSVImpl implements IServiceSwitchSV {
     @Autowired
     private ServiceSwitchDAO serviceSwitchDao;
@@ -44,28 +44,41 @@ public class ServiceSwitchSVImpl implements IServiceSwitchSV {
     }
 
     @Override
-    public List<ServiceSwitchDO> getServiceSwitchByCode(ServiceSwitchInDTO switchdo) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("swtchTypeCd", switchdo.getSwtchTypeCd());
-        map.put("bizSysCode", switchdo.getBizSysCode());
-        return serviceSwitchDao.select(map);
+    public List<ServiceSwitchDO> getServiceSwitchByDataType(String cacheTypeCd, String dataType) {
+        List<ServiceSwitchDO> serviceSwitch = serviceSwitchDao.getServiceSwitchByDataType(cacheTypeCd, dataType);
+        return serviceSwitch;
     }
 
+    /**
+     * 开关表查询开关信息
+     */
+    @Override
+    public List<ServiceSwitchDO> getServiceSwitchByCode(ServiceSwitchInDTO switchdo) {
+        return serviceSwitchDao.select(switchdo);
+    }
+
+    /**
+     * 开关表新增开关信息
+     */
     @Override
     public void insertServiceSwitch(ServiceSwitchInDTO switchdo) {
         serviceSwitchDao.insert(switchdo);
     }
 
+    /**
+     * 开关表删除开关信息(将标志位置为0)
+     */
     @Override
     public void deleteServiceSwitch(ServiceSwitchInDTO switchdo) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("swtchTypeCd", switchdo.getSwtchTypeCd());
-        map.put("bizSysCode", switchdo.getBizSysCode());
-        serviceSwitchDao.delete(map);
+        serviceSwitchDao.delete(switchdo);
     }
 
+    /**
+     * 开关表修改开关信息
+     */
     @Override
     public void updateServiceSwitch(ServiceSwitchInDTO switchdo) {
         serviceSwitchDao.update(switchdo);
     }
+
 }

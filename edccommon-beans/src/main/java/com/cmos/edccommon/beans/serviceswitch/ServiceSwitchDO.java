@@ -4,55 +4,87 @@ import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 
-/**
- * 开关缓存配置
- *
+/**开关表
+ * @author wangfei
  */
-public class ServiceSwitchDO extends GenericBean{
-    private static final long serialVersionUID = 7181946962324445621L;
-    private Long swtchId;//开关ID
+public class ServiceSwitchDO extends GenericBean {
 
-    private String bizSysCode;//业务系统编码
+    private static final long serialVersionUID = 1L;
 
-    private String swtchDesc;//开关描述
-
-    private String swtchKey;//开关关键字
-
-    private String swtchVal;//开关取值
+    /**主键
+     * 开关id
+     */
+    private Long swtchId;
 
     /**
-     * 创建用户id
+     * 业务系统编码
+     */
+    private String bizSysCode;
+
+    /**
+     * 开关描述
+     */
+    private String swtchDesc;
+
+    /**
+     * 开关键
+     */
+    private String swtchKey;
+
+    /**
+     * 开关值
+     */
+    private String swtchVal;
+
+    /**
+     * 创建用户ID
      */
     private String crtUserId;
+
     /**
      * 创建时间
      */
     private Date crtTime;
+
     /**
-     * 创建系统id
+     * 创建应用系统ID
      */
     private String crtAppSysId;
+
     /**
-     * 修改用户名
+     * 修改用户ID
      */
     private String modfUserId;
+
     /**
      * 修改时间
      */
     private Date modfTime;
+
     /**
-     * 修改系统
+     * 修改应用系统ID
      */
     private String modfAppSysId;
+
     /**
-     * 开关缓存类型 1jvm 2redis
+     * 缓存类型代码
      */
     private String cacheTypeCd;
+
     /**
-     * 开关有效标志位 1 有效 
+     * 有效标志 1：有效
      */
     private String validFlag;
 
+    /**
+     * 缓存数据类型代码
+     */
+    private String cacheDataTypeCd;
+
+    /**
+     * 推送提醒标志
+     */
+    private String pushAlertFlag;
     public Long getSwtchId() {
         return swtchId;
     }
@@ -155,5 +187,21 @@ public class ServiceSwitchDO extends GenericBean{
 
     public void setValidFlag(String validFlag) {
         this.validFlag = validFlag == null ? null : validFlag.trim();
+    }
+
+    public String getCacheDataTypeCd() {
+        return cacheDataTypeCd;
+    }
+
+    public void setCacheDataTypeCd(String cacheDataTypeCd) {
+        this.cacheDataTypeCd = cacheDataTypeCd == null ? null : cacheDataTypeCd.trim();
+    }
+
+    public String getPushAlertFlag() {
+        return pushAlertFlag;
+    }
+
+    public void setPushAlertFlag(String pushAlertFlag) {
+        this.pushAlertFlag = pushAlertFlag == null ? null : pushAlertFlag.trim();
     }
 }

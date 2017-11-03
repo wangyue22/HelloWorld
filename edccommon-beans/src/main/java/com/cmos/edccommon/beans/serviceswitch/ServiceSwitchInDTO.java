@@ -4,40 +4,87 @@ import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 
+/**开关表dto
+ * @author wangfei
+ */
 public class ServiceSwitchInDTO extends GenericBean {
 
-	private static final long serialVersionUID = 1L;
-   
-	private Long swtchId;
+    private static final long serialVersionUID = 1L;
 
+    /**主键
+     * 开关id
+     */
+    private Long swtchId;
+
+    /**
+     * 业务系统编码
+     */
     private String bizSysCode;
 
-    private String swtchTypeCd;
-
-    private String swtchNm;
-
+    /**
+     * 开关描述
+     */
     private String swtchDesc;
 
+    /**
+     * 开关键
+     */
     private String swtchKey;
 
+    /**
+     * 开关值
+     */
     private String swtchVal;
 
+    /**
+     * 创建用户ID
+     */
     private String crtUserId;
 
+    /**
+     * 创建时间
+     */
     private Date crtTime;
 
+    /**
+     * 创建应用系统ID
+     */
     private String crtAppSysId;
 
+    /**
+     * 修改用户ID
+     */
     private String modfUserId;
 
+    /**
+     * 修改时间
+     */
     private Date modfTime;
 
+    /**
+     * 修改应用系统ID
+     */
     private String modfAppSysId;
 
+    /**
+     * 缓存类型代码
+     */
     private String cacheTypeCd;
 
+    /**
+     * 有效标志 1：有效
+     */
     private String validFlag;
 
+    /**
+     * 缓存数据类型代码
+     */
+    private String cacheDataTypeCd;
+
+    /**
+     * 推送提醒标志
+     */
+    private String pushAlertFlag;
     public Long getSwtchId() {
         return swtchId;
     }
@@ -52,22 +99,6 @@ public class ServiceSwitchInDTO extends GenericBean {
 
     public void setBizSysCode(String bizSysCode) {
         this.bizSysCode = bizSysCode == null ? null : bizSysCode.trim();
-    }
-
-    public String getSwtchTypeCd() {
-        return swtchTypeCd;
-    }
-
-    public void setSwtchTypeCd(String swtchTypeCd) {
-        this.swtchTypeCd = swtchTypeCd == null ? null : swtchTypeCd.trim();
-    }
-
-    public String getSwtchNm() {
-        return swtchNm;
-    }
-
-    public void setSwtchNm(String swtchNm) {
-        this.swtchNm = swtchNm == null ? null : swtchNm.trim();
     }
 
     public String getSwtchDesc() {
@@ -157,4 +188,21 @@ public class ServiceSwitchInDTO extends GenericBean {
     public void setValidFlag(String validFlag) {
         this.validFlag = validFlag == null ? null : validFlag.trim();
     }
+
+    public String getCacheDataTypeCd() {
+        return cacheDataTypeCd;
+    }
+
+    public void setCacheDataTypeCd(String cacheDataTypeCd) {
+        this.cacheDataTypeCd = cacheDataTypeCd == null ? null : cacheDataTypeCd.trim();
+    }
+
+    public String getPushAlertFlag() {
+        return pushAlertFlag;
+    }
+
+    public void setPushAlertFlag(String pushAlertFlag) {
+        this.pushAlertFlag = pushAlertFlag == null ? null : pushAlertFlag.trim();
+    }
+
 }
