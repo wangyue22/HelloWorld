@@ -7,11 +7,11 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
 import com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO;
 import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
-import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
+import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
+import com.cmos.edccommon.iservice.IServiceSwitchSV;
 import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
 import com.cmos.edccommon.iservice.realityAccount.ITOpRealityAccountSV;
 import com.cmos.edccommon.iservice.rnfsCfg.ITOpRnfsCfgSV;
-import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -30,7 +30,6 @@ import java.util.Map;
 @Component
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class CacheInit implements ICacheInit,CommandLineRunner{
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(CacheInit.class);
 	
     @Autowired

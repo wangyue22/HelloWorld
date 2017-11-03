@@ -6,12 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.core.logger.Logger;
@@ -27,17 +25,15 @@ import com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO;
 import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgInDTO;
 import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgOutDTO;
 import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
-import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchDO;
-import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchInDTO;
-import com.cmos.edccommon.beans.serviceswitch.ServiceSwitchOutDTO;
+import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
+import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchInDTO;
+import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchOutDTO;
+import com.cmos.edccommon.iservice.IServiceSwitchSV;
 import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
 import com.cmos.edccommon.iservice.realityAccount.ITOpRealityAccountSV;
 import com.cmos.edccommon.iservice.rnfsCfg.ITOpRnfsCfgSV;
-import com.cmos.edccommon.iservice.serviceswitch.IServiceSwitchSV;
 import com.cmos.edccommon.web.cache.JVMCacheDataUtil;
 import com.cmos.edccommon.web.cache.RedisCacheDataUtil;
-
-
 
 /**
  * @author 任林达
