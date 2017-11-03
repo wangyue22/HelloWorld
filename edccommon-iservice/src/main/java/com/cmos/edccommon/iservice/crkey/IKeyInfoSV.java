@@ -50,4 +50,8 @@ public interface IKeyInfoSV {
      * @param dto
      */
     public void updateRsaKey(RsaKeyInDTO dto);
+    /**
+     * 根据数据库key 获取秘钥
+     */
+    RsaKeyInDTO getKeyByCacheKey(String cacheKeyVal);
 }

@@ -37,4 +37,8 @@ public interface ITOpRealityAccountSV {
      * @param dto
      */
     public void updaterealityAccount(RealityAccountInDTO dto);
+    /**
+     * 根据缓存key获取实名账户信息
+     */
+    RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal);
 }

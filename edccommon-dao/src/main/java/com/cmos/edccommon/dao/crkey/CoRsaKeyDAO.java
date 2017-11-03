@@ -47,4 +47,8 @@ public interface CoRsaKeyDAO {
      * @param dto
      */
     public void update(RsaKeyInDTO dto);
+    /**
+     * 根据数据库key 获取秘钥
+     */
+    RsaKeyInDTO getKeyByCacheKey(String cacheKeyVal);
 }
