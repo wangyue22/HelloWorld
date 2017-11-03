@@ -15,6 +15,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
@@ -26,7 +27,7 @@ import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.FileUpDownConstants;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.onest.ONestUtil;
-
+@Component
 public class FileUpDownUtil {
 
 
