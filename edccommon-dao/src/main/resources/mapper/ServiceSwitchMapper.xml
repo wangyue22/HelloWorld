@@ -15,6 +15,8 @@
     <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
     <result column="CACHE_TYPE_CD" property="cacheTypeCd" jdbcType="VARCHAR" />
     <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+    <result column="CACHE_DATA_TYPE_CD" property="cacheDataTypeCd" jdbcType="VARCHAR" />
+    <result column="PUSH_ALERT_FLAG" property="pushAlertFlag" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     SWTCH_ID, BIZ_SYS_CODE, SWTCH_DESC, SWTCH_KEY, SWTCH_VAL,
@@ -170,21 +172,45 @@
     </set>
     where SWTCH_ID = #{swtchId,jdbcType=BIGINT}
   </update>
-  <delete id="delete" parameterType="java.util.Map" >
+   <delete id="delete" parameterType="com.cmos.edcctsvs.beans.dto.ServiceSwitchInDTO" >
     update t_op_service_switch
-    set VALID_FLAG ='0'
+    set VALID_FLAG ='0',
+    	MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
+    	MODF_TIME = #{modfTime,jdbcType=TIMESTAMP},
+    	MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR}
     <where>
-    <if test="bizSysCode!=null and bizSysCode!=''">
-    and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+    <if test="swtchId != null and swtchId !=''">
+    	SWTCH_ID = #{swtchId,jdbcType=BIGINT}
+    </if>
+    <if test="bizSysCode ! =null and bizSysCode !=''">
+    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+    </if>
+    <if test="swtchDesc ! = null and swtchDesc !=''">
+    	and SWTCH_DESC= #{swtchDesc,jdbcType=VARCHAR}
+    </if>
+    <if test="swtchTypeCd ! =null and swtchTypeCd !=''">
+    	and SWTCH_TYPE_CD= #{swtchTypeCd,jdbcType=VARCHAR}
+    </if>
+    <if test="swtchKey ! =null and swtchKey !=''">
+    	and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
+    </if>
+    <if test="swtchVal ! =null and swtchVal !=''">
+    	and SWTCH_VAL = #{swtchVal,jdbcType=VARCHAR}
+    </if>
+    <if test="cacheTypeCd ! =null and cacheTypeCd !=''">
+    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+    </if>
+    <if test="cacheDataTypeCd ! =null and cacheDataTypeCd !=''">
+    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+    </if>
+    <if test="pushAlertFlag ! =null and pushAlertFlag !=''">
+    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
     </if>
     </where> 
   </delete>
-  <insert id="insert" parameterType="com.cmos.edccommon.beans.serviceswitch.ServiceSwitchInDTO" >
+  <insert id="insert" parameterType="com.cmos.edcctsvs.beans.dto.ServiceSwitchInDTO" >
      insert into t_op_service_switch
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="swtchId != null" >
-        SWTCH_ID,
-      </if>
       <if test="bizSysCode != null" >
         BIZ_SYS_CODE,
       </if>
@@ -206,26 +232,20 @@
       <if test="crtAppSysId != null" >
         CRT_APP_SYS_ID,
       </if>
-      <if test="modfUserId != null" >
-        MODF_USER_ID,
-      </if>
-      <if test="modfTime != null" >
-        MODF_TIME,
-      </if>
-      <if test="modfAppSysId != null" >
-        MODF_APP_SYS_ID,
-      </if>
       <if test="cacheTypeCd != null" >
         CACHE_TYPE_CD,
       </if>
       <if test="validFlag != null" >
         VALID_FLAG,
       </if>
+      <if test="cacheDataTypeCd != null" >
+        CACHE_DATA_TYPE_CD,
+      </if>
+      <if test="pushAlertFlag != null" >
+        PUSH_ALERT_FLAG,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="swtchId != null" >
-        #{swtchId,jdbcType=BIGINT},
-      </if>
       <if test="bizSysCode != null" >
         #{bizSysCode,jdbcType=VARCHAR},
       </if>
@@ -247,74 +267,118 @@
       <if test="crtAppSysId != null" >
         #{crtAppSysId,jdbcType=VARCHAR},
       </if>
-      <if test="modfUserId != null" >
-        #{modfUserId,jdbcType=VARCHAR},
-      </if>
-      <if test="modfTime != null" >
-        #{modfTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modfAppSysId != null" >
-        #{modfAppSysId,jdbcType=VARCHAR},
-      </if>
       <if test="cacheTypeCd != null" >
         #{cacheTypeCd,jdbcType=VARCHAR},
       </if>
       <if test="validFlag != null" >
         #{validFlag,jdbcType=VARCHAR},
       </if>
+      <if test="cacheDataTypeCd != null" >
+        #{cacheDataTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="pushAlertFlag != null" >
+        #{pushAlertFlag,jdbcType=VARCHAR},
+      </if>
     </trim>
    </insert>
-  <update id="update" parameterType="com.cmos.edccommon.beans.serviceswitch.ServiceSwitchInDTO" >
+  <update id="update" parameterType="com.cmos.edcctsvs.beans.dto.ServiceSwitchInDTO" >
     update t_op_service_switch
     <set>
       <if test="bizSysCode != null" >
-        BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+        BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR},
       </if>
       <if test="swtchDesc != null" >
-        and SWTCH_DESC = #{swtchDesc,jdbcType=VARCHAR}
+        SWTCH_DESC = #{swtchDesc,jdbcType=VARCHAR},
       </if>
       <if test="swtchKey != null" >
-        and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
+        SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR},
       </if>
       <if test="swtchVal != null" >
-        and SWTCH_VAL = #{swtchVal,jdbcType=VARCHAR}
+        SWTCH_VAL = #{swtchVal,jdbcType=VARCHAR},
       </if>
       <if test="modfUserId != null" >
-        and MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR}
+        MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
       </if>
       <if test="modfTime != null" >
-        and MODF_TIME = #{modfTime,jdbcType=TIMESTAMP}
+        MODF_TIME = #{modfTime,jdbcType=TIMESTAMP},
       </if>
       <if test="modfAppSysId != null" >
-        and MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR}
+        MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR},
       </if>
       <if test="cacheTypeCd != null" >
-        and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+        CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
       </if>
-      <if test="validFlag != null" >
-        and VALID_FLAG = #{validFlag,jdbcType=VARCHAR}
+      <if test="cacheDataTypeCd ! =null and cacheDataTypeCd !=''">
+    	CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR},
+      </if>
+      <if test="pushAlertFlag ! =null and pushAlertFlag !=''">
+    	PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
       </if>
     </set>
     <where> 
-    <if test="bizSysCode!=null and bizSysCode!=''">
-    and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
-    </if>
-    <if test="swtchId!=null and swtchId!=''">
-    and SWTCH_ID = #{swtchId,jdbcType=BIGINT}
-    </if>
-    <if test="swtchKey!=null and swtchKey!=''">
-    and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
-    </if>
-    </where>
+   	  <if test="swtchId != null and swtchId !=''">
+    	SWTCH_ID = #{swtchId,jdbcType=BIGINT}
+      </if>
+      <if test="bizSysCode ! =null and bizSysCode !=''">
+    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchDesc ! = null and swtchDesc !=''">
+    	and SWTCH_DESC= #{swtchDesc,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchTypeCd ! =null and swtchTypeCd !=''">
+    	and SWTCH_TYPE_CD= #{swtchTypeCd,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchKey ! =null and swtchKey !=''">
+    	and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchVal ! =null and swtchVal !=''">
+    	and SWTCH_VAL = #{swtchVal,jdbcType=VARCHAR}
+      </if>
+      <if test="cacheTypeCd ! =null and cacheTypeCd !=''">
+    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+      </if>
+      <if test="cacheDataTypeCd ! =null and cacheDataTypeCd !=''">
+    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+      </if>
+      <if test="pushAlertFlag ! =null and pushAlertFlag !=''">
+    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+      </if>
+    </where> 
   </update>
-  <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select SWTCH_ID,SWTCH_KEY, SWTCH_VAL
+  <select id="select" resultMap="BaseResultMap" parameterType="com.cmos.edcctsvs.beans.dto.ServiceSwitchInDTO" >
+    select SWTCH_ID, BIZ_SYS_CODE,  SWTCH_DESC, SWTCH_KEY, SWTCH_VAL,
+    CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID,
+    CACHE_TYPE_CD, VALID_FLAG, CACHE_DATA_TYPE_CD, PUSH_ALERT_FLAG, 
     from t_op_service_switch
     <where>
-    <if test="bizSysCode!=null and bizSysCode!=''">
-    and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
-    </if>
-    and VALID_FLAG ='1'
+      <if test="swtchId != null and swtchId !=''">
+    	SWTCH_ID = #{swtchId,jdbcType=BIGINT}
+      </if>
+      <if test="bizSysCode ! =null and bizSysCode !=''">
+    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchDesc ! = null and swtchDesc !=''">
+    	and SWTCH_DESC= #{swtchDesc,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchTypeCd ! =null and swtchTypeCd !=''">
+    	and SWTCH_TYPE_CD= #{swtchTypeCd,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchKey ! =null and swtchKey !=''">
+    	and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
+      </if>
+      <if test="swtchVal ! =null and swtchVal !=''">
+    	and SWTCH_VAL = #{swtchVal,jdbcType=VARCHAR}
+      </if>
+      <if test="cacheTypeCd ! =null and cacheTypeCd !=''">
+    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+      </if>
+      <if test="cacheDataTypeCd ! =null and cacheDataTypeCd !=''">
+    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+      </if>
+      <if test="pushAlertFlag ! =null and pushAlertFlag !=''">
+    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+      </if>
+      	and VALID_FLAG = '1'
     </where> 
   </select>
 </mapper>
