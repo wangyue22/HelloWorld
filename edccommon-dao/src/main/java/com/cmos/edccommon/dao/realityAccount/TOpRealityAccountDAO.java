@@ -19,6 +19,11 @@ public interface TOpRealityAccountDAO {
      */
     List<TOpRealityAccountDO> getRealityAccountByType(@Param(value = "cacheTypeCd") String cacheTypeCd, @Param(value = "cacheDataTypeCd") String cacheDataTypeCd);
 
+    /**
+     * 根据缓存key获取实名账户信息
+     */
+    RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal);
+
     /**查询db实名账户信息
      * @param dto
      * @return
@@ -39,8 +44,4 @@ public interface TOpRealityAccountDAO {
      * @param dto
      */
     void update(RealityAccountInDTO dto);
-    /**
-     * 根据缓存key获取实名账户信息
-     */
-    RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal);
 }

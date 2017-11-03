@@ -23,31 +23,36 @@ public class TOpRealityAccountSVImpl implements ITOpRealityAccountSV {
         return list;
     }
 
+    /**
+     * 根据缓存key获取实名账户信息
+     */
+    @Override
+    public RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal) {
+        return tOpRealityAccountDAO.getRealityAccountBycacheKey(cacheKeyVal);
+    };
+
+    /* 查询实名账户信息 */
     @Override
     public List<TOpRealityAccountDO> getRealityAccount(RealityAccountInDTO dto) {
         return tOpRealityAccountDAO.select(dto);
     }
 
+    /* 新增实名账户信息 */
     @Override
     public void insertRealityAccount(RealityAccountInDTO dto) {
         tOpRealityAccountDAO.insert(dto);
-
     }
 
+    /* 删除实名账户信息(将标识位置为0) */
     @Override
     public void deleteRealityAccount(RealityAccountInDTO dto) {
         tOpRealityAccountDAO.delete(dto);
     }
 
+    /* 更新实名账户信息 */
     @Override
     public void updaterealityAccount(RealityAccountInDTO dto) {
         tOpRealityAccountDAO.update(dto);
     }
-    /**
-     * 根据缓存key获取实名账户信息
-     */
-    @Override
-    public  RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal){
-        return tOpRealityAccountDAO.getRealityAccountBycacheKey(cacheKeyVal);
-    };
+
 }

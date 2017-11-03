@@ -5,44 +5,120 @@ import java.util.Date;
 import com.cmos.common.bean.GenericBean;
 
 /**
- * 人像比对实名账户
+ * 人像比对实名账户DTO
  *
  */
 public class RealityAccountInDTO extends GenericBean {
+
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 实名账号ID
+     */
     private Long realAcctId;
 
+    /**
+     * 请求源编码
+     */
     private String reqstSrcCode;
 
+    /**
+     * 请求源名称
+     */
     private String reqstSrcNm;
 
+    /**
+     * 用户名
+     */
     private String userNm;
 
+    /**
+     * 密码
+     */
     private String pw;
 
+    /**
+     * AES加密秘钥
+     */
     private String aesKey;
 
+    /**
+     * DES秘钥
+     */
     private String desKey;
 
+    /**
+     * 接口权限编码
+     */
     private String intfPrivCode;
 
+    /**
+     * 有效标志
+     */
     private String validFlag;
 
+    /**
+     * 缓存类型代码
+     */
     private String cacheTypeCd;
 
+    /**
+     * 业务系统编码
+     */
     private String bizSysCode;
 
+    /**
+     * 创建用户ID
+     */
     private String crtUserId;
 
+    /**
+     * 创建时间
+     */
     private Date crtTime;
 
+    /**
+     * 创建应用系统ID
+     */
     private String crtAppSysId;
 
+    /**
+     * 修改用户ID
+     */
     private String modfUserId;
 
+    /**
+     * 修改时间
+     */
     private Date modifyTime;
 
+    /**
+     * 修改应用系统ID
+     */
     private String modifyAppSysId;
+
+    /**
+     * 缓存数据类型代码
+     */
+    private String cacheDataTypeCd;
+
+    /**
+     * 推送提醒标志
+     */
+    private String pushAlertFlag;
+
+    /**
+     * 缓存KEY值
+     */
+    private String cacheKeyVal;
+
+    public String getCacheKeyVal() {
+        return cacheKeyVal;
+    }
+
+    public void setCacheKeyVal(String cacheKeyVal) {
+        this.cacheKeyVal = cacheKeyVal;
+    }
 
     public String getPushAlertFlag() {
         return pushAlertFlag;
@@ -59,9 +135,6 @@ public class RealityAccountInDTO extends GenericBean {
     public void setCacheDataTypeCd(String cacheDataTypeCd) {
         this.cacheDataTypeCd = cacheDataTypeCd;
     }
-
-    private String cacheDataTypeCd;
-    private String pushAlertFlag;
 
     public Long getRealAcctId() {
         return realAcctId;
@@ -198,4 +271,5 @@ public class RealityAccountInDTO extends GenericBean {
     public void setModifyAppSysId(String modifyAppSysId) {
         this.modifyAppSysId = modifyAppSysId == null ? null : modifyAppSysId.trim();
     }
+
 }

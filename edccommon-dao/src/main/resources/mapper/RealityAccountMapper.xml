@@ -87,43 +87,43 @@
     from t_op_reality_account
     <where>
     <if test="realAcctId != null and realAcctId !=''">
-    REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
+    	REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
     </if>
     <if test="reqstSrcCode != null and reqstSrcCode !=''">
-    and REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR}
+    	and REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR}
     </if>
     <if test="reqstSrcNm != null and reqstSrcNm !=''">
-    and REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR}
+    	and REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR}
     </if>
     <if test="userNm != null and userNm !=''">
-    and USER_NM = #{userNm,jdbcType=VARCHAR}
+    	and USER_NM = #{userNm,jdbcType=VARCHAR}
     </if>
     <if test="pw != null and pw !=''">
-    and PW = #{pw,jdbcType=VARCHAR}
+    	and PW = #{pw,jdbcType=VARCHAR}
     </if>
     <if test="aesKey != null and aesKey !=''">
-    and AES_KEY = #{aesKey,jdbcType=VARCHAR}
+    	and AES_KEY = #{aesKey,jdbcType=VARCHAR}
     </if>
     <if test="desKey != null and desKey !=''">
-    and DES_KEY = #{desKey,jdbcType=VARCHAR}
+    	and DES_KEY = #{desKey,jdbcType=VARCHAR}
     </if>
     <if test="intfPrivCode != null and intfPrivCode !=''">
-    and INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR}
+    	and INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR}
     </if>
     <if test="cacheTypeCd != null and cacheTypeCd !=''">
-    and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
     </if>
     <if test="bizSysCode != null and bizSysCode !=''">
-    and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
     </if>
     <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-    and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
     </if>
     <if test="pushAlertFlag != null and pushAlertFlag !=''">
-    and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
     </if>
     <if test="cacheKeyValue != null and cacheKeyValue !=''">
-    and CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
+    	and CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
     </if>
     and VALID_FLAG = '1'
     </where> 
@@ -132,49 +132,52 @@
   	insert into t_op_reality_account
   	<trim prefix="(" suffix=")" suffixOverrides="," >
   		<if test="reqstSrcCode != null and reqstSrcCode !=''">
-  			reqstSrcCode,
+  			REQST_SRC_CODE,
   		</if>
   		<if test="reqstSrcNm != null and reqstSrcNm !=''">
-  			reqstSrcNm,
+  			REQST_SRC_NM,
   		</if>
   		<if test="userNm != null and userNm !=''">
-  			userNm,
+  			USER_NM,
   		</if>
   		<if test="pw != null and pw !=''">
-  			pw,
+  			PW,
   		</if>
   		<if test="aesKey != null and aesKey !=''">
-  			aesKey,
+  			AES_KEY,
   		</if>
   		<if test="desKey != null and desKey !=''">
-  			desKey,
+  			DES_KEY,
   		</if>
   		<if test="intfPrivCode != null and intfPrivCode !=''">
-  			intfPrivCode,
+  			INTF_PRIV_CODE,
+  		</if>
+  		<if test="validFlag != null and validFlag !=''">
+  			VALID_FLAG,
   		</if>
   		<if test="cacheTypeCd != null and cacheTypeCd !=''">
-  			cacheTypeCd,
+  			CACHE_TYPE_CD,
   		</if>
   		<if test="bizSysCode != null and bizSysCode !=''">
-  			bizSysCode,
-  		</if>
-  		<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-  			cacheDataTypeCd,
-  		</if>
-  		<if test="pushAlertFlag != null and pushAlertFlag !=''">
-  			pushAlertFlag,
+  			BIZ_SYS_CODE,
   		</if>
   		<if test="crtUserId != null and crtUserId !=''">
-  			crtUserId,
+  			CRT_USER_ID,
   		</if>
   		<if test="crtTime != null and crtTime !=''">
-  			crtTime,
+  			CRT_TIME,
   		</if>
   		<if test="crtAppSysId != null and crtAppSysId !=''">
-  			crtAppSysId,
+  			CRT_APP_SYS_ID,
+  		</if>
+		<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
+			CACHE_DATA_TYPE_CD,
+  		</if>
+  		<if test="pushAlertFlag != null and pushAlertFlag !=''">
+  			PUSH_ALERT_FLAG,
   		</if>
   		<if test="cacheKeyValue != null and cacheKeyValue !=''">
-  			cacheKeyValue,
+  			CACHE_KEY_VAL
   		</if>
   	</trim>
   	<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -199,17 +202,14 @@
 	    <if test="intfPrivCode != null and intfPrivCode !=''">
 	    	#{intfPrivCode,jdbcType=VARCHAR},
 	    </if>
+	    <if test="validFlag != null and validFlag !=''">
+	    	#{validFlag,jdbcType=VARCHAR},
+	    </if>
 	    <if test="cacheTypeCd != null and cacheTypeCd !=''">
 	    	#{cacheTypeCd,jdbcType=VARCHAR},
 	    </if>
 	    <if test="bizSysCode != null and bizSysCode !=''">
 	    	#{bizSysCode,jdbcType=VARCHAR},
-	    </if>
-	    <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-	    	#{cacheDataTypeCd,jdbcType=VARCHAR},
-	    </if>
-	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
-	    	#{pushAlertFlag,jdbcType=VARCHAR},
 	    </if>
 	    <if test="crtUserId != null and crtUserId !=''">
 	    	#{crtUserId,jdbcType=VARCHAR},
@@ -220,17 +220,23 @@
 	    <if test="crtAppSysId != null and crtAppSysId !=''">
 	    	#{crtAppSysId,jdbcType=VARCHAR},
 	    </if>
+   	    <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
+	    	#{cacheDataTypeCd,jdbcType=VARCHAR},
+	    </if>
+	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
+	    	#{pushAlertFlag,jdbcType=VARCHAR},
+	    </if>
 	    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-	    	#{cacheKeyValue,jdbcType=VARCHAR},
+	    	#{cacheKeyValue,jdbcType=VARCHAR}
 	    </if>
   	</trim>
   </insert>
   <delete id="delete" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
   	update t_op_reality_account
   	set VALID_FLAG = '0'
-  	and  MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR}
-    and  MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP}
-    and  MODIFY_APP_SYS_ID = #{modifyAppSysId,jdbcType=VARCHAR}	
+  	and MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR}
+    and MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP}
+    and MODIFY_APP_SYS_ID = #{modifyAppSysId,jdbcType=VARCHAR}	
   	<where>
   		<if test="realAcctId != null and realAcctId !=''">
     		REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
@@ -274,52 +280,52 @@
     </where> 
   </delete>
   <update id="update" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
-  	update	t_op_reality_account
+  	update t_op_reality_account
   	<set>
   		<if test="reqstSrcCode != null and reqstSrcCode !=''">
-    		and REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR}
+    		REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
     	</if>
     	<if test="reqstSrcNm != null and reqstSrcNm !=''">
-    		and REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR}
+    		REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR},
     	</if>
     	<if test="userNm != null and userNm !=''">
-    		and USER_NM = #{userNm,jdbcType=VARCHAR}
+    		USER_NM = #{userNm,jdbcType=VARCHAR},
     	</if>
     	<if test="pw != null and pw !=''">
-    		and PW = #{pw,jdbcType=VARCHAR}
+    		PW = #{pw,jdbcType=VARCHAR},
     	</if>
     	<if test="aesKey != null and aesKey !=''">
-    		and AES_KEY = #{aesKey,jdbcType=VARCHAR}
+    		AES_KEY = #{aesKey,jdbcType=VARCHAR},
     	</if>
     	<if test="desKey != null and desKey !=''">
-    		and DES_KEY = #{desKey,jdbcType=VARCHAR}
+    		DES_KEY = #{desKey,jdbcType=VARCHAR},
     	</if>
 	    <if test="intfPrivCode != null and intfPrivCode !=''">
-	    	and INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR}
+	    	INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR},
 	    </if>
 	    <if test="cacheTypeCd != null and cacheTypeCd !=''">
-	    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+	    	CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
 	    </if>
 	    <if test="bizSysCode != null and bizSysCode !=''">
-	    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
-	    </if>
-	    <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-	    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
-	    </if>
-	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
-	    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+	    	BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR},
 	    </if>
 	    <if test="modfUserId != null and modfUserId !=''">
-	    	and MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR}
+	    	MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
 	    </if>
 	    <if test="modifyTime != null and modifyTime !=''">
-	    	and MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP}
+	    	MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
 	    </if>
 	    <if test="modifyAppSysId != null and modifyAppSysId !=''">
-	    	and MODIFY_APP_SYS_ID = #{modifyAppSysId,jdbcType=TIMESTAMP}
+	    	MODIFY_APP_SYS_ID = #{modifyAppSysId,jdbcType=TIMESTAMP},
+	    </if>
+	    <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
+	    	CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR},
+	    </if>
+	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
+	    	PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR},
 	    </if>
 	    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-	    	and CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
+	    	CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
 	    </if>
   	</set>
   	<where>
