@@ -74,6 +74,37 @@ public class PicCompareController {
 		return picCompare(inParam);
 	}
 
+	@RequestMapping(value = "/testSendMq", method = RequestMethod.POST)
+	public EdcCoOutDTO testSendMq(@RequestBody PicCompareInDTO inParam ) {
+		log.info("****************************"+inParam);
+		EdcCoOutDTO outParam = new EdcCoOutDTO();
+		String swftno = inParam.getSwftno();
+		String reqstSrcCode = inParam.getReqstSrcCode();
+		String bizTypeCode = inParam.getBizTypeCode();
+
+		String picRPath = inParam.getPhotoPath();
+		String picTPath = inParam.getPicTPath();
+		String picRType = inParam.getPhotoType();
+		String picTType = inParam.getPicTType();
+		
+		try {
+			Map<String, Object> logMap = new HashMap<String, Object>();
+			// 发送消息队列的内容
+			logMap.put("picRPath", picRPath);
+			logMap.put("picTPath", picTPath);
+			logMap.put("picRType", picRType);
+			logMap.put("picTPath", picTType);
+			EdcCoOutDTO out = new EdcCoOutDTO();
+			out.setReturnCode("0");
+			out.setReturnMessage("TEST_MQ");
+			sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
+		} catch (Exception e) {
+			log.error("MQ保存消费信息出错");
+			outParam.setReturnCode("2999");
+		}
+		outParam.setReturnCode("0000");
+		return outParam;
+	}
 	
 	/**
 	 * 人像比对接口
