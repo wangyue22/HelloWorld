@@ -78,8 +78,26 @@ public class CacheConsts {
      *	调用国政通总放行开关，true打开放行，false关闭走实时接口
      *	ACMS_SWITCH:SEND_GZT_PASS_FLAG
      */
-    public interface JVM{
+	public interface JVM {
 
-    }
+		/** 人像比对默认分值  */
+		String CHECK_PERSON_CRD_SCORE_RANGE_DEFAULT_VALUE = CACHE_SWITCH_PREFIX
+				+ "CHECK_PERSON_CRD_SCORE_RANGE_DEFAULT_VALUE";
+		/** 是否进行手持证件照无证件的检测  */
+		String PIC_CHECK_FETCH_ISHEAD = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH_ISHEAD";
+		/**  手持证件照判断是否含有证件照的分值 */
+		String PIC_CHECK_FETCH__PER_SCORE = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH__PER_SCORE";
+		/**  自拍照是否有人像判定分值 */
+		String PIC_CHECK_FETCH__PORTRAIT_SCORE = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH__PORTRAIT_SCORE";
+		/**  是否判断picZIn为HACK攻击照片 当不传或者0 的时候不进行防HACK的检测,当为1的时候进行防HACK的检测 */
+		String PIC_CHECK_FETCH_HACK_SWITCH = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH_HACK_SWITCH";
+		/**  防HACK的检测的判定分值 */
+		String PIC_CHECK_FETCH_HACK_SCORE = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH_HACK_SCORE";
+		/**  人像比对服务的url */
+		String PIC_CHECK_FETCH_URL = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH_URL";
+		/**  调用人像比对服务的超时时间 */
+		String PIC_CHECK_FETCH_TIMEOUT = CACHE_SWITCH_PREFIX + "PIC_CHECK_FETCH_TIMEOUT";
+
+	}
 
 }
