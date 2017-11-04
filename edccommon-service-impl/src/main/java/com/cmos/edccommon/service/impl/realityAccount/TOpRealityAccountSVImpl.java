@@ -27,7 +27,7 @@ public class TOpRealityAccountSVImpl implements ITOpRealityAccountSV {
      * 根据缓存key获取实名账户信息
      */
     @Override
-    public RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal) {
+    public TOpRealityAccountDO getRealityAccountBycacheKey(String cacheKeyVal) {
         return tOpRealityAccountDAO.getRealityAccountBycacheKey(cacheKeyVal);
     };
 

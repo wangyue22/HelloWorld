@@ -22,7 +22,7 @@ public interface TOpRealityAccountDAO {
     /**
      * 根据缓存key获取实名账户信息
      */
-    RealityAccountInDTO getRealityAccountBycacheKey(String cacheKeyVal);
+    TOpRealityAccountDO getRealityAccountBycacheKey(String cacheKeyVal);
 
     /**查询db实名账户信息
      * @param dto
