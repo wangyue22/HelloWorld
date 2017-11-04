@@ -65,7 +65,7 @@ public  class KeyInfoSVImpl implements  IKeyInfoSV {
     }
 
     @Override
-    public RsaKeyInDTO getKeyByCacheKey(String cacheKeyVal) {
+    public CoRsaKeyDO getKeyByCacheKey(String cacheKeyVal) {
         return keyDAO.getKeyByCacheKey(cacheKeyVal);
     }
 

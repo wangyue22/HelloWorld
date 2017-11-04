@@ -50,5 +50,5 @@ public interface CoRsaKeyDAO {
     /**
      * 根据数据库key 获取秘钥
      */
-    RsaKeyInDTO getKeyByCacheKey(String cacheKeyVal);
+    CoRsaKeyDO getKeyByCacheKey(String cacheKeyVal);
 }
