@@ -5,8 +5,10 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
+import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
 import com.cmos.edccommon.beans.crkey.RsaKeyInDTO;
 import com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO;
+import com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO;
 import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
 import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
 import com.cmos.edccommon.iservice.IServiceSwitchSV;
@@ -109,7 +111,7 @@ public class CacheFatctoryUtil {
 		  	        	rnfsData.put("ftpAls", opRnfsDo.getFtpAls());
 	  	            }
 	  	        case "REALACC" :
-	  	        	RealityAccountInDTO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
+                    TOpRealityAccountDO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
 	  	        	if(null != realityDto){
 	  	        		rnfsData.put("userNm", realityDto.getUserNm());
 	  	        		rnfsData.put("pw", realityDto.getPw());
@@ -118,7 +120,7 @@ public class CacheFatctoryUtil {
 	  	        	}
 	  	        	return rnfsData;
 	  	        case "RSAKEY" :
-	  	        	RsaKeyInDTO rsaDto = keyInfoSV.getKeyByCacheKey(key);
+                    CoRsaKeyDO rsaDto = keyInfoSV.getKeyByCacheKey(key);
 	  	        	if(null != rsaDto){
 	  	        		rnfsData.put("pbkey", rsaDto.getPbkey());
 	  	        		rnfsData.put("prtkey", rsaDto.getPrtkey());
