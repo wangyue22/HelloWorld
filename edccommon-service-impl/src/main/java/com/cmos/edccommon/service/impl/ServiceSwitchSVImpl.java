@@ -27,16 +27,6 @@ public class ServiceSwitchSVImpl implements IServiceSwitchSV {
     }
 
     @Override
-    public void insertSelective(ServiceSwitchDO record) {
-        serviceSwitchDao.insertSelective(record);
-    }
-
-    @Override
-    public void updateByPrimaryKeySelective(ServiceSwitchDO record) {
-        serviceSwitchDao.updateByPrimaryKeySelective(record);
-    }
-
-    @Override
     public ServiceSwitchDO getServiceSwitchByKey(String swtchKey) {
         Map a= new HashMap();
         a.put("swtchKey",swtchKey);

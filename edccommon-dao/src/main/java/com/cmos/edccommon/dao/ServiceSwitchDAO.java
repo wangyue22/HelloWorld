@@ -7,9 +7,18 @@ import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
 import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchInDTO;
 
 public interface ServiceSwitchDAO {
+    /**
+     * 获取数据库所有该存入缓存的开关
+     * @param input
+     * @return
+     */
     List<ServiceSwitchDO> slectByType(Map<String, Object> input);
-    void insertSelective(ServiceSwitchDO record);
-    void updateByPrimaryKeySelective(ServiceSwitchDO record);
+
+    /**
+     * 根据缓存key值获取开关信息
+     * @param in
+     * @return
+     */
     ServiceSwitchDO getServiceSwitchByKey(Map in);
 
     /**根据开关类型和业务系统编码查询开关的key和value

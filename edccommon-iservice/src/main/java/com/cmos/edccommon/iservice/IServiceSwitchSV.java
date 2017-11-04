@@ -10,9 +10,17 @@ import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchInDTO;
  * Created by guozong on 2017/10/17.
  */
 public interface IServiceSwitchSV {
+    /**
+     * 获取数据库所有该存入缓存的开关
+     * @param input
+     * @return
+     */
     List<ServiceSwitchDO> selectByType(Map<String, Object> input);
-    void insertSelective(ServiceSwitchDO record);
-    void updateByPrimaryKeySelective(ServiceSwitchDO record);
+    /**
+     * 根据开关key值获取开关
+     * @param swtchKey
+     * @return
+     */
     ServiceSwitchDO getServiceSwitchByKey(String swtchKey);
 
     /** 
