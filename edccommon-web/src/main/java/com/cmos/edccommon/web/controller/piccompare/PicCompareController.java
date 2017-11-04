@@ -1,9 +1,5 @@
 package com.cmos.edccommon.web.controller.piccompare;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -29,12 +25,12 @@ import com.cmos.edccommon.beans.piccompare.PicDoubleCompareInDTO;
 import com.cmos.edccommon.utils.Base64;
 import com.cmos.edccommon.utils.BsStaticDataUtil;
 import com.cmos.edccommon.utils.CoConstants;
-import com.cmos.edccommon.utils.FileUtil;
 import com.cmos.edccommon.utils.HttpUtil;
-import com.cmos.edccommon.utils.IOUtils;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.des.MsDesPlus;
+import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
@@ -49,8 +45,8 @@ public class PicCompareController {
 //	@Autowired
 //    private Environment env;
 	
-//	@Autowired
-//	private CacheFatctoryUtil cacheFactory;
+	@Autowired
+	private CacheFatctoryUtil cacheFactory;
 	
 	@Autowired
 	private FileUpDownUtil fileUpDownUtil;
@@ -502,7 +498,13 @@ public class PicCompareController {
 	 * @throws BusiException
 	 */
 	private String sendPicCheck(String base64StrR, String base64StrT, String picRType, String picTType) {
-		return sendPicCheck(base64StrR, base64StrT, "false", picRType, picTType);
+		String result = null;
+		try {
+			result = sendPicCheck(base64StrR, base64StrT, "false", picRType, picTType);
+		} catch (GeneralException e) {
+			log.error("调用人像照片质检接口异常 ",e);
+		}
+		return result;
 	}
 	
 	
@@ -514,9 +516,10 @@ public class PicCompareController {
 	 * @param picRType 第一个参数是头像照片还是手持人像照片  t:头像 r:手持人像 
 	 * @param picTType  第二个参数是国政通照片还是芯片照片   g:国政通 x:芯片
 	 * @return
+	 * @throws GeneralException 
 	 * @throws BusiException
 	 */
-	private String sendPicCheck(String base64StrR, String base64StrT, String returnPicRFlag, String picRType, String picTType) {
+	private String sendPicCheck(String base64StrR, String base64StrT, String returnPicRFlag, String picRType, String picTType) throws GeneralException {
 		String rt;
 		//1封装报文
 		Map<String, Object> reqJsonMap = new HashMap<String, Object>();
@@ -532,14 +535,14 @@ public class PicCompareController {
 			reqInfoMap.put("IsCHeckHand", "0");
 		} else if (CoConstants.PIC_TYPE.PHOTO_R.equals(picRType)) {
 			// 第一个图片是手持证件照---当为1的时候进行手持证件照无证件的检测
-			String isHeadCheck = BsStaticDataUtil.getCodeValue("PIC_CHECK_FETCH", "PIC_ISHEAD", "JVM");
+			String isHeadCheck = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_ISHEAD);
 			if (StringUtil.isEmpty(isHeadCheck)) {
 				isHeadCheck = "0";
 			}
 			reqInfoMap.put("IsCHeckHand", isHeadCheck);
 			
 			// 只有进行手持证件照判断是否含有证件照才传值
-			String perScore = BsStaticDataUtil.getCodeValue("PIC_CHECK_FETCH", "PIC_CHECK_PER_SCORE", "JVM");
+			String perScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PER_SCORE);
 			if (StringUtil.isEmpty(perScore)) {
 				perScore = "0";
 			}
@@ -557,20 +560,20 @@ public class PicCompareController {
 		}
 
 		// 自拍照是否有人像判定分值
-		String portraitSorce = BsStaticDataUtil.getCodeValue("PIC_CHECK_FETCH","PIC_CHECK_PORTRAIT_SCORE","JVM");
+		String portraitSorce = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PORTRAIT_SCORE);
 		if (StringUtil.isEmpty(portraitSorce)) {
 			portraitSorce = "0";
 		}
 		reqInfoMap.put("PortraitSorce", portraitSorce);
 		//是否判断picZIn为HACK攻击照片 当不传或者0 的时候不进行防HACK的检测,当为1的时候进行防HACK的检测
 		
-		String chekHackPicFlag = BsStaticDataUtil.getCodeValue("PIC_CHECK_FETCH","PIC_CHECK_HACK_SWITCH","JVM");
+		String chekHackPicFlag = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_HACK_SWITCH);
 		if (StringUtil.isEmpty(chekHackPicFlag)) {
 			chekHackPicFlag = "0";
 		}
 		reqInfoMap.put("isChekHackPic", chekHackPicFlag);
 		//防HACK的检测的判定分值
-		String hackSorce = BsStaticDataUtil.getCodeValue("PIC_CHECK_FETCH","PIC_CHECK_HACK_SCORE","JVM");
+		String hackSorce = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_HACK_SCORE);
 		if (StringUtil.isEmpty(hackSorce)) {
 			hackSorce = "0";
 		}
@@ -580,12 +583,13 @@ public class PicCompareController {
 		reqJsonMap.put("reqInfo", reqInfoMap);
 		String reqJson = JsonUtil.convertObject2Json(reqJsonMap);	
 		//环境变量配置是否调用人像比对 地址
-//		String svUrl = env.getProperty("cfg.picCheck.url");
-//		String svUrl = "http://192.168.100.139:30503/verify";		
-		String svUrl = BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "PIC_CHECK_URL", "JVM");
+//		String svUrl = env.getProperty("cfg.picCheck.url");	
+		String svUrl = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_URL);
 		log.info("*********************"+svUrl);
-		String timeOutConf = "12000";//BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "PIC_CHECK_TIMEOUT", "JVM");
-		
+		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PORTRAIT_SCORE);
+		if (StringUtil.isEmpty(timeOutConf)) {
+			timeOutConf = "12000";
+		}
 		int timeOut = Integer.parseInt(timeOutConf);
 		try {
 			rt =  HttpUtil.sendHttpPostEntityNolog(svUrl, reqJson,timeOut);
