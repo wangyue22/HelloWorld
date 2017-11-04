@@ -78,7 +78,7 @@
 		select
 		<include refid="Base_Column_List" />
 		from t_op_reality_account
-		where cacheKeyVal =#{CACHE_KEY_VAL,jdbcType=VARCHAR}
+		where CACHE_KEY_VAL =#{cacheKeyVal,jdbcType=VARCHAR}
 	</select>
   <select id="select" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
   	select REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, USER_NM, PW, AES_KEY, DES_KEY, 
@@ -122,8 +122,8 @@
     <if test="pushAlertFlag != null and pushAlertFlag !=''">
     	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
     </if>
-    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-    	and CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
+    <if test="cacheKeyVal != null and cacheKeyVal !=''">
+    	and CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}
     </if>
     and VALID_FLAG = '1'
     </where> 
@@ -176,7 +176,7 @@
   		<if test="pushAlertFlag != null and pushAlertFlag !=''">
   			PUSH_ALERT_FLAG,
   		</if>
-  		<if test="cacheKeyValue != null and cacheKeyValue !=''">
+  		<if test="cacheKeyVal != null and cacheKeyVal !=''">
   			CACHE_KEY_VAL
   		</if>
   	</trim>
@@ -226,8 +226,8 @@
 	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
 	    	#{pushAlertFlag,jdbcType=VARCHAR},
 	    </if>
-	    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-	    	#{cacheKeyValue,jdbcType=VARCHAR}
+	    <if test="cacheKeyVal != null and cacheKeyVal !=''">
+	    	#{cacheKeyVal,jdbcType=VARCHAR}
 	    </if>
   	</trim>
   </insert>
@@ -274,8 +274,8 @@
 	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
 	    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
 	    </if>
-	    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-	    	and CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
+	    <if test="cacheKeyVal != null and cacheKeyVal !=''">
+	    	and CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}
 	    </if>
     </where> 
   </delete>
@@ -324,8 +324,8 @@
 	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
 	    	PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR},
 	    </if>
-	    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-	    	CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
+	    <if test="cacheKeyVal != null and cacheKeyVal !=''">
+	    	CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}
 	    </if>
   	</set>
   	<where>
@@ -365,8 +365,8 @@
 	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
 	    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
 	    </if>
-	    <if test="cacheKeyValue != null and cacheKeyValue !=''">
-	    	and CACHE_KEY_VALUE = #{cacheKeyValue,jdbcType=VARCHAR}
+	    <if test="cacheKeyVal != null and cacheKeyVal !=''">
+	    	and CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}
 	    </if>
   	</where>
   </update>
