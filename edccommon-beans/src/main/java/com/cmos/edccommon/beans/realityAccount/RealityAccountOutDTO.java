@@ -6,12 +6,9 @@ import com.cmos.common.bean.GenericBean;
 
 public class RealityAccountOutDTO extends GenericBean {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 112084917690811921L;
 
-    private List<TOpRealityAccountDO> beans;
+	private List<TOpRealityAccountDO> beans;
 
     private String returnCode;
 

@@ -1,6 +1,25 @@
 package com.cmos.edccommon.web.controller.piccompare;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+//import org.springframework.core.env.Environment;
+
 import com.cmos.common.bean.JsonFormatException;
+import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
@@ -16,22 +35,9 @@ import com.cmos.edccommon.utils.IOUtils;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.des.MsDesPlus;
+import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.core.env.Environment;
 
 /**
  * @author Administrator
@@ -45,6 +51,9 @@ public class PicCompareController {
 	
 //	@Autowired
 //	private CacheFatctoryUtil cacheFactory;
+	
+	@Autowired
+	private FileUpDownUtil fileUpDownUtil;
 	
 	private static Logger log=LoggerFactory.getActionLog(PicCompareController.class);
 	
@@ -205,7 +214,9 @@ public class PicCompareController {
 			MsDesPlus Ms = new MsDesPlus(crkey);
 			String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
 			if(StringUtil.isNotEmpty(picRDecStr)){
-				picRBase64Str = Base64.encode(picRDecStr.getBytes());//解密后的Base64字符串
+				log.info("解密后的图片字符串"+picRDecStr.length());
+				picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
+				log.info("解密后的图片Base64字符串"+picRBase64Str.length());
 			}
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
@@ -232,7 +243,9 @@ public class PicCompareController {
 			}
 			//base64转码
 			if (StringUtil.isNotEmpty(picRDecStr)) {
-				picTBase64Str = Base64.encode(picRDecStr.getBytes());// 解密后的Base64字符串
+				log.info("解密后的标准图片字符串"+picRDecStr.length());
+				picTBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+				log.info("解密后的标准图片Base64字符串"+picTBase64Str.length());
 			}
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
@@ -457,18 +470,16 @@ public class PicCompareController {
 		InputStream picInputStream = null;
 		String picStr = null;
 		try {
-			picInputStream = FileUtil.download(picPath);
-//			picInputStream = new FileInputStream("E:/xdx/base1.jpg");
-			picStr = IOUtils.toString(picInputStream);
+			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
-			log.error("人像比对服务下载芯片图片异常", e);
+			log.error("人像比对服务下载图片异常", e);
 		} finally {
 			if (null != picInputStream) {
 				try {
 					picInputStream.close();
 				} catch (IOException e1) {
-					log.error("人像比对服务关闭芯片图片流异常", e1);
+					log.error("人像比对服务关闭图片流异常", e1);
 				}
 			}
 		}
