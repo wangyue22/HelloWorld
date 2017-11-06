@@ -249,9 +249,9 @@ public class PicCompareController {
 			MsDesPlus Ms = new MsDesPlus(crkey);
 			String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
 			if(StringUtil.isNotEmpty(picRDecStr)){
-				log.info("解密后的图片字符串"+picRDecStr.length());
+				log.info("解密后的人像图片字符串"+picRDecStr.length());
 				picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
-				log.info("解密后的图片Base64字符串"+picRBase64Str.length());
+				log.info("解密后的人像图片Base64字符串"+picRBase64Str.length());
 			}
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
@@ -272,6 +272,8 @@ public class PicCompareController {
 					out.setReturnMessage("标准照片下载异常");
 					return out;
 				}
+				picTBase64Str = picTStr;
+				log.info("base64转码后的国政通图片字符串长度为：" + picTBase64Str.length());
 			}else if(CoConstants.PIC_TYPE.PIC_STOIN.equalsIgnoreCase(picTType)){
 				MsDesPlus Ms = new MsDesPlus(crkey);
 				picTStr = downloadPic(picTPath);
@@ -303,8 +305,14 @@ public class PicCompareController {
 			Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult, Map.class);
 			Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 			if (compareMap != null) {
-				out.setReturnCode("0000");
-				out.setReturnMessage("人像比对成功");
+				String verifyState = compareMap.get("verifyState");
+				if (StringUtil.isNotEmpty(verifyState) && "0".equals(verifyState)) {
+					out.setReturnCode("0000");
+					out.setReturnMessage("人像比对成功");
+				}else{
+					out.setReturnCode("2999");
+					out.setReturnMessage("人像比对不通过");
+				}
 				out.setBean(compareMap);
 			}
 			// 5调用消息队列，保存调用日志记录到数据库
