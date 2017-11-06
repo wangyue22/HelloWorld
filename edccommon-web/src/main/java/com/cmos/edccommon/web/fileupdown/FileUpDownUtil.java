@@ -82,6 +82,21 @@ public class FileUpDownUtil {
         resMap.put("onestUploadResult", onestUploadResult);
         return resMap;
     }
+    
+    /**
+     * 根据路径下载国政通图片，并转换为base64字符串返回
+     * @param inPath
+     * @return
+     * @throws GeneralException
+     */
+    public String downloadGztPicBase64Str(String inPath) throws GeneralException{
+        String base64Str = null;
+        byte[] bt = dowdloadGztPic(inPath);
+        if(bt!=null){
+            base64Str = Base64.encode(bt);
+        }
+        return base64Str;
+    }
 
     /**
      * 下载国政通头像
