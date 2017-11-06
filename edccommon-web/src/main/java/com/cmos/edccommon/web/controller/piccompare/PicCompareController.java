@@ -541,11 +541,16 @@ public class PicCompareController {
 	 */
 	private String downloadGZTPic(String picPath) {
 		InputStream picInputStream = null;
-		String picStr = null;
+		byte[] picBytes = null;
+		String picGZTBase64Str = null;
 		try {
-			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
+			picBytes = fileUpDownUtil.dowdloadGztPic(picPath);
+			if (picBytes != null) {
+				picGZTBase64Str = Base64.encode(picBytes);// 解密后的Base64字符串
+			}
+
 		} catch (Exception e) {
-			picStr = null;
+			picGZTBase64Str = null;
 			log.error("人像比对服务下载国政通图片异常", e);
 		} finally {
 			if (null != picInputStream) {
@@ -556,7 +561,7 @@ public class PicCompareController {
 				}
 			}
 		}
-		return picStr;
+		return picGZTBase64Str;
 	}
 	
 	
