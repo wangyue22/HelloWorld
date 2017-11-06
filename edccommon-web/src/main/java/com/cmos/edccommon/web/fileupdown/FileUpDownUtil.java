@@ -353,7 +353,7 @@ public class FileUpDownUtil {
     private byte[] toByteArray(InputStream result) throws IOException {
         byte[] resultByte;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] data = new byte[1024];
+        byte[] data = new byte[4096];
         int len = 0;
         while ((len = result.read(data)) != -1) {
             baos.write(data, 0, len);
