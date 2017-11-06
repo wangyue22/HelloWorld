@@ -9,15 +9,6 @@ package com.cmos.edccommon.utils.consts;
 public class FileUpDownConstants {
 
     public interface GztFile{
-        /**
-         * 使用rnfs方式上传下载，根据路径获取主机地址时，需要从路径中截取的起始位数
-         */
-        int START_SUB = 9;
-
-        /**
-         * 使用rnfs方式上传下载，根据路径获取主机地址时，需要从路径中截取的结束位数
-         */
-        int END_SUB = 17;
 
         /**
          * onest方式上传下载
@@ -95,4 +86,6 @@ public class FileUpDownConstants {
      * onest上传下载 url固定前缀
      */
     public static final String ONEST_URL_PREFIX = "oNest";
+
+
 }

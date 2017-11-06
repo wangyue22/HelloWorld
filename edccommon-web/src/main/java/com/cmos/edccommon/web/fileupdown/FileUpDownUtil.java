@@ -27,9 +27,18 @@ import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.FileUpDownConstants;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.onest.ONestUtil;
-@Component
-public class FileUpDownUtil {
 
+
+/**
+ *
+ * @ClassName:  FileUpDownUtil
+ * @Description: 文件上传下载工具类
+ * @author: 王海洋
+ * @date:   2017年11月1日 下午5:47:25
+ */
+@Component
+@SuppressWarnings("rawtypes")
+public class FileUpDownUtil {
 
     @Autowired
     private Environment env;
@@ -51,8 +60,7 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    public Map<String, String> uploadGztPic(String path, String base64Str, boolean doubleWriteFlag)
-            throws GeneralException {
+    public Map<String,String> uploadGztPic(String path, String base64Str) throws GeneralException {
         Map<String,String> resMap = new HashMap<String,String>();
         // 获取onest开关，onest是否开放优先使用
         String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
@@ -62,7 +70,7 @@ public class FileUpDownUtil {
             onestUploadResult = uploadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path, inputByte);
             resMap.put("uploadType", FileUpDownConstants.GztFile.ONEST);
         }
-        if ("false".equals(onestSwitch) || FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED.equals(onestUploadResult) || doubleWriteFlag) {
+        if ("false".equals(onestSwitch) || FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED.equals(onestUploadResult)) {
             String serverName = uploadGztFileByRnfs(path, inputByte);
             if(StringUtil.isNotBlank(serverName)){
                 resMap.put("uploadType", FileUpDownConstants.GztFile.RNFS);
@@ -81,7 +89,14 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    public byte[] dowdloadGztPic(String path) throws GeneralException {
+    public byte[] dowdloadGztPic(String inPath) throws GeneralException {
+        String path = inPath;
+        if(StringUtil.isBlank(path)){
+            throw new GeneralException("2999","下载路径不能为空！");
+        }else{
+            path = path.substring(path.indexOf("cert"));
+        }
+        
         // 获取onest开关，onest是否开放优先使用
         String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
         // 根据路径下载图片
@@ -89,14 +104,14 @@ public class FileUpDownUtil {
         if ("true".equals(onestSwitch)) {
             inputByte = downloadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path);
         }
-        if ("false".equals(onestSwitch) || inputByte == null) {
+        if ("false".equals(onestSwitch) || inputByte==null) {
             // 如果onest未开启，或者如果下载失败，使用rnfs下载
             // 如果是rnfs，则根据路径获取文件服务器地址并上传
             Map<String, String> map = getGztRnfsServerNameByPath(path);
             String rnfsServerName = map.get("rnfsServerName");
             inputByte = downGztFileByRnfs(path, rnfsServerName);
         }
-        if (inputByte == null) {
+        if(inputByte == null){
             // 如果仍然下载失败，使用default节点下载
             String rnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_DEFAULT);
             inputByte = downGztFileByRnfs(path, rnfsServerName);
@@ -173,14 +188,14 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    private Map<String, String> getGztRnfsServerNameByPath(String path) throws GeneralException {
+    private Map<String,String> getGztRnfsServerNameByPath(String path) throws GeneralException {
         Map<String,String> serverMap = new HashMap<String,String>();
         String lastServerName = "";
         // 分省获取文件服务器规则：
         // 根据路径解析，由于路径中有身份证前6位分成的3级目录，先截取出这3级目录
         // 然后由3级到1级逐级匹配
         // 先截取路径中的第9到16位，得到3级目录如： 41/10/81
-        String switchStr = path.substring(path.indexOf("/") + 1, path.lastIndexOf("/"));
+        String switchStr = path.substring(path.indexOf("/")+1, path.lastIndexOf("/"));
         // 将斜杠替换为下划线
         switchStr = switchStr.replace("/", "_");// 41_10_81
         // 先全匹配获取rnfs主机别名
@@ -216,8 +231,7 @@ public class FileUpDownUtil {
         if (StringUtil.isBlank(ipPort)) {
             throw new GeneralException("2999", "上传时未找到可用的服务，remotePathAndName=" + remotePath);
         }
-        String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.UPLOAD,
-            FileUpDownConstants.RNFS_URL_PARAM);
+        String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.UPLOAD, FileUpDownConstants.RNFS_URL_PARAM);
         logger.info("upload urlStr=" + urlStr + "  remotePathAndName=" + remotePath);
         String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
         if (timeOut != null && timeOut.trim().length() > 0) {
@@ -235,10 +249,15 @@ public class FileUpDownUtil {
             resStr = new String(res);
             logger.error("upload res:" + resStr);
         } else {
-            logger.error("upload res:is null; remotePath=" + remotePath);
+            logger.error("upload res:is null; remotePath="+remotePath);
         }
         return resStr;
     }
+
+
+
+
+
 
 
     /**
@@ -247,7 +266,7 @@ public class FileUpDownUtil {
      * @param path
      * @return
      */
-    private byte[] downloadGztFileByOnest(String bucketName, String path) {
+    private byte[] downloadGztFileByOnest(String bucketName, String path){
         InputStream result;
         byte[] resultByte = null;
         try {
@@ -268,7 +287,7 @@ public class FileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    private byte[] downGztFileByRnfs(String path, String serverName) throws GeneralException {
+    private byte[] downGztFileByRnfs(String path , String serverName) throws GeneralException {
         // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
         Map serverInfoMap = cacheUtil.getJVMMap(serverName);
 
@@ -357,8 +376,7 @@ public class FileUpDownUtil {
             path.replaceAll("//", "/");
 
             try {
-                return uploadBusiByOnest(env.getProperty("onest.gztfile.bucketname"), path,
-                    content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
+                return uploadBusiByOnest(env.getProperty("onest.gztfile.bucketname"), path, content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
             } catch (Exception e) {
                 logger.error("onest upload getBytes error:", e);
             }
@@ -467,8 +485,8 @@ public class FileUpDownUtil {
      * @return 文件全路径
      * @throws BusiException
      */
-    public String uploadBusiStr(String fileType, String relativePath, String fileName, String inputStr, String timeOut)
-            throws GeneralException {
+    public String uploadBusiStr(String fileType, String relativePath, String fileName, String inputStr,
+        String timeOut) throws GeneralException {
         if (StringUtil.isNotBlank(inputStr)) {
             try {
                 return uploadBusiByte(fileType, relativePath, fileName,
@@ -491,7 +509,8 @@ public class FileUpDownUtil {
      * @param timeOut 超时时间
      * @return 文件全路径
      */
-    public String uploadBusiByte(String fileType, String filePath, String fileName, byte[] inputByte, String timeOut) {
+    public String uploadBusiByte(String fileType, String filePath, String fileName, byte[] inputByte,
+        String timeOut) {
         String remotePath = filePath;
         long begin = System.currentTimeMillis();
         try {
@@ -765,8 +784,9 @@ public class FileUpDownUtil {
         try {
             if (downLoadPath != null && downLoadPath.trim().length() > 0) {
 
-                Map<String, String> ftpMap = cacheUtil.getJVMMap(
-                    CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX + downLoadPath.substring(0, downLoadPath.indexOf("/")));
+                Map<String, String> ftpMap = cacheUtil
+                        .getJVMMap(
+                            CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX + downLoadPath.substring(0, downLoadPath.indexOf("/")));
                 return ftpMap;
             }
         } catch (Exception e) {
@@ -1010,6 +1030,5 @@ public class FileUpDownUtil {
         return null;
     }
     // --------------------------------------------------业务图片上传下载end----------------------------------------------------------------------
-
 
 }
