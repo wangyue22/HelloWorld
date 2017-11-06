@@ -74,16 +74,6 @@ public final class StringUtil {
     }
 
     /**
-     * 判断字符串是否为非null && 非空字符串 && 非null字符串
-     *
-     * @param param
-     * @return
-     */
-    public static boolean isNotBlank(String param) {
-        return param != null && !"".equals(param.trim()) && !"null".equals(param.trim().toLowerCase());
-    }
-
-    /**
      * 判断字符串是否为null || 空字符串 || null字符串
      *
      * @param param
@@ -91,6 +81,16 @@ public final class StringUtil {
      */
     public static boolean isBlank(String param) {
         return param == null || "".equals(param.trim()) || "null".equals(param.trim().toLowerCase());
+    }
+
+    /**
+     * 判断字符串是否为非null && 非空字符串 && 非null字符串
+     *
+     * @param param
+     * @return
+     */
+    public static boolean isNotBlank(String param) {
+        return param != null && !"".equals(param.trim()) && !"null".equals(param.trim().toLowerCase());
     }
 
     /**
@@ -270,6 +270,39 @@ public final class StringUtil {
         String GBK = "GBK";
         String ISO_8858_1 = "ISO-8859-1";
         String GB2312 = "GB2312";
+    }
+
+    public static String replaceHtml(String str) {
+        String tmpstr = str;
+        tmpstr = replace(tmpstr, "<br>", "\n");
+        tmpstr = replace(tmpstr, "&lt;", "<");
+        tmpstr = replace(tmpstr, "&gt;", ">");
+        tmpstr = replace(tmpstr, "&amp;", "&");
+        tmpstr = replace(tmpstr, "&apos;", "\'");
+        tmpstr = replace(tmpstr, "&quot;", "\"");
+        tmpstr = replace(tmpstr, "&nbsp;", " ");
+        return tmpstr;
+    }
+
+    public static String replace(String text, String repl, String with) {
+        return replace(text, repl, with, -1);
+    }
+
+    public static String replace(String text, String repl, String with, int max) {
+        if (text == null || isEmpty(repl) || with == null || max == 0) {
+            return text;
+        }
+        StringBuffer buf = new StringBuffer(text.length());
+        int start = 0;
+        for (int end = 0; (end = text.indexOf(repl, start)) != -1;) {
+            buf.append(text.substring(start, end)).append(with);
+            start = end + repl.length();
+            if (--max == 0) {
+                break;
+            }
+        }
+        buf.append(text.substring(start));
+        return buf.toString();
     }
 
 }
