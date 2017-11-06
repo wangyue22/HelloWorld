@@ -142,10 +142,10 @@ public class PicCompareController {
 		try {
 			MsDesPlus Ms = new MsDesPlus(crkey);
 			String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
-//			if(StringUtil.isNotEmpty(picRDecStr)){//图片本身已将转为Base64
-//				picRBase64Str = Base64.encode(picRDecStr.getBytes());//解密后的Base64字符串
-//			}
-			picRBase64Str = picRDecStr;
+			if(StringUtil.isNotEmpty(picRDecStr)){//图片本身已将转为Base64
+				picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
+			}
+//			picRBase64Str = picRDecStr;
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
 			out.setReturnMessage("人像照片解密异常");
@@ -164,7 +164,7 @@ public class PicCompareController {
 					out.setReturnMessage("国政通照片下载异常");
 					return out;
 				}
-				picRDecStr = picRStr;// 国政通图片字符串不用解密
+				picTBase64Str = picRStr;// 国政通图片字符串不用解密
 			}else if(CoConstants.PIC_TYPE.PIC_STOIN.equalsIgnoreCase(picTType)){
 				picTStr = downloadPic(picTPath);
 				if (StringUtil.isEmpty(picTStr)) {
@@ -174,12 +174,13 @@ public class PicCompareController {
 				}
 				MsDesPlus Ms = new MsDesPlus(crkey);
 				picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串   NFC 芯片头像需要解密
+				//base64转码
+				if (StringUtil.isNotEmpty(picRDecStr)) {
+					picTBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+				}
 			}
-			//base64转码
-//			if (StringUtil.isNotEmpty(picRDecStr)) {
-//				picTBase64Str = Base64.encode(picRDecStr.getBytes());// 解密后的Base64字符串
-//			}
-			picTBase64Str = picRDecStr;
+
+			
 			
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
@@ -248,9 +249,8 @@ public class PicCompareController {
 			MsDesPlus Ms = new MsDesPlus(crkey);
 			String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
 			if(StringUtil.isNotEmpty(picRDecStr)){
-//				log.info("解密后的图片字符串"+picRDecStr.length());
-//				picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
-				picRBase64Str = picRDecStr;
+				log.info("解密后的图片字符串"+picRDecStr.length());
+				picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
 				log.info("解密后的图片Base64字符串"+picRBase64Str.length());
 			}
 		} catch (Exception e1) {
@@ -281,14 +281,14 @@ public class PicCompareController {
 					return out;
 				}
 				picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串   NFC 芯片头像需要解密
+				//base64转码
+				if (StringUtil.isNotEmpty(picRDecStr)) {
+					log.info("解密后的标准图片字符串"+picRDecStr.length());
+					picTBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+					log.info("解密后的标准图片Base64字符串" + picTBase64Str.length());
+				}
 			}
-			//base64转码
-			if (StringUtil.isNotEmpty(picRDecStr)) {
-//				log.info("解密后的标准图片字符串"+picRDecStr.length());
-//				picTBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
-				picTBase64Str = picRDecStr;
-				log.info("解密后的标准图片Base64字符串" + picTBase64Str.length());
-			}
+			
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
 			out.setReturnMessage("人像照片解密异常");
@@ -370,10 +370,9 @@ public class PicCompareController {
 		try {
 			MsDesPlus Ms = new MsDesPlus(crkey);
 			String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
-//			if(StringUtil.isNotEmpty(picRDecStr)){
-//				picRBase64Str = Base64.encode(picRDecStr.getBytes());//解密后的Base64字符串
-//			}
-			picRBase64Str = picRDecStr;
+			if(StringUtil.isNotEmpty(picRDecStr)){
+				picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
+			}
 		} catch (Exception e1) {
 			out.setReturnCode("2999");
 			out.setReturnMessage("人像照片解密异常");
@@ -383,14 +382,6 @@ public class PicCompareController {
 
 		// 2.1 获取国政通头像
 		String picTGStr = downloadGZTPic(picTGPath);
-//		try {
-//			if(StringUtil.isNotEmpty(picTGStr)){
-//				picGZTBase64Str = Base64.encode(picTGStr.getBytes());//解密后的Base64字符串
-//			}
-//		} catch (Exception e1) {
-//			picGZTBase64Str = null;
-//			log.error("国政通解密异常", e1);	
-//		}
 		picGZTBase64Str = picTGStr;
 		if (StringUtil.isEmpty(picGZTBase64Str)) {
 			log.info("国政通图片获取失败");
@@ -457,13 +448,12 @@ public class PicCompareController {
 			try {
 				MsDesPlus Ms = new MsDesPlus(crkey);
 				String picStoinDecStr = Ms.decrypt(picTStr);// 解密后的图片字符串
-//				if (StringUtil.isNotEmpty(picStoinDecStr)) {
-//					picStoinBase64Str = Base64.encode(picStoinDecStr.getBytes());// 解密后的Base64字符串
-//				}
-				picStoinBase64Str = picStoinDecStr;
+				if (StringUtil.isNotEmpty(picStoinDecStr)) {
+					picStoinBase64Str = Base64.encode(picStoinDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+				}
 			} catch (Exception e1) {
 				picStoinBase64Str = null;
-				log.error("芯片照片获取异常", e1);
+				log.error("芯片照片解密异常", e1);
 
 			}
 			if (StringUtil.isEmpty(picStoinBase64Str)) {
@@ -541,14 +531,9 @@ public class PicCompareController {
 	 */
 	private String downloadGZTPic(String picPath) {
 		InputStream picInputStream = null;
-		byte[] picBytes = null;
 		String picGZTBase64Str = null;
 		try {
-			picBytes = fileUpDownUtil.dowdloadGztPic(picPath);
-			if (picBytes != null) {
-				picGZTBase64Str = Base64.encode(picBytes);// 解密后的Base64字符串
-			}
-
+			picGZTBase64Str = fileUpDownUtil.downloadGztPicBase64Str(picPath);
 		} catch (Exception e) {
 			picGZTBase64Str = null;
 			log.error("人像比对服务下载国政通图片异常", e);
