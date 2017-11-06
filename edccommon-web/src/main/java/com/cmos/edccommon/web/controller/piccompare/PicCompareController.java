@@ -24,11 +24,11 @@ import com.cmos.edccommon.beans.piccompare.PicCompareInDTO;
 import com.cmos.edccommon.beans.piccompare.PicDoubleCompareInDTO;
 import com.cmos.edccommon.utils.Base64;
 import com.cmos.edccommon.utils.BsStaticDataUtil;
-import com.cmos.edccommon.utils.CoConstants;
 import com.cmos.edccommon.utils.HttpUtil;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
+import com.cmos.edccommon.utils.consts.CoConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
@@ -796,7 +796,8 @@ public class PicCompareController {
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String, Object> compareResult,
 			EdcCoOutDTO out) throws MsgException, JsonFormatException {
 		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
-		MsgProducerClient.getRocketMQProducer().send("EDCCO_PICCOMPARE", Msg);
+		MsgProducerClient.getRocketMQProducer().send(CoConstants.MQ_TOPIC.PIC_COMPARE_TEST, Msg);
+		MsgProducerClient.getRocketMQProducer().send(CoConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 	}
 
 }

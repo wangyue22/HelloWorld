@@ -5,6 +5,7 @@ import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 
 import com.cmos.edccommon.mqconsumer.service.PicCompareConsumer;
+import com.cmos.edccommon.utils.consts.CoConstants;
 import com.cmos.msg.exception.MsgException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,8 @@ public class ConsumerMsgRun implements CommandLineRunner {
 		
 		try {
 			log.info("*************ConsumerMsgRun is running********************");
-			MsgConsumerClient.getRocketMQConsumer().subscribe("EDCCO_PICCOMPARE", picCompareConsumer);
+			MsgConsumerClient.getRocketMQConsumer().subscribe(CoConstants.MQ_TOPIC.PIC_COMPARE, picCompareConsumer);
+			MsgConsumerClient.getRocketMQConsumer().subscribe(CoConstants.MQ_TOPIC.PIC_COMPARE_TEST, picCompareConsumer);
 //			MsgConsumerClient.getRocketMQConsumer().subscribe("EDCCO_FACELIVE", msgFaceLiveSV);
 		} catch (MsgException e) {
 			log.error("ConsumerMsgRun exception:", e);
