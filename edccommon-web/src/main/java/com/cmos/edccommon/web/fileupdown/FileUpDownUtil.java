@@ -151,7 +151,7 @@ public class FileUpDownUtil {
         Map<String, String> map = getGztRnfsServerNameByPath(path);
         String rnfsServerName = map.get("rnfsServerName");
         // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
-        Map serverInfoMap = cacheUtil.getJVMMap(rnfsServerName);
+        Map serverInfoMap = cacheUtil.getJVMMap(CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX+rnfsServerName);
         String ipPort = (String)serverInfoMap.get("rnfsAddrPrtnum");
         String rootPath = (String)serverInfoMap.get("rootPath");
         String remotePath = rootPath + "/" + path;
@@ -308,7 +308,7 @@ public class FileUpDownUtil {
      */
     private byte[] downGztFileByRnfs(String path , String serverName) throws GeneralException {
         // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
-        Map serverInfoMap = cacheUtil.getJVMMap(serverName);
+        Map serverInfoMap = cacheUtil.getJVMMap(CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX+serverName);
 
         String ipPort = (String)serverInfoMap.get("rnfsAddrPrtnum");
         String rootPath = (String)serverInfoMap.get("rootPath");
