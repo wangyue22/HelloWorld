@@ -1,57 +1,146 @@
 package com.cmos.edccommon.beans.rnfsCfg;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.cmos.common.bean.GenericBean;
-/**
- * 人像比对rnfs配置
- *
+
+/**rnfs配置表do
+ * @author wangfei
  */
-public class TOpRnfsCfgDO extends GenericBean {
+public class RnfsCfgDO extends GenericBean {
+
     private static final long serialVersionUID = 1L;
+
+    /**主键
+     * 配置id
+     */
     private Long configId;
 
+    /**
+     * RNFS组名称
+     */
     private String rnfsGrpNm;
 
+    /**
+     * 根路径
+     */
     private String rootPath;
 
+    /**
+     * RNFS地址端口号
+     */
     private String rnfsAddrPrtnum;
 
+    /**
+     * 上传下载方式代码
+     */
     private String uploadDwnldModeCd;
 
+    /**
+     * FTP端口号
+     */
     private String ftpPrtnum;
 
+    /**
+     * FTP用户名称
+     */
     private String ftpUserNm;
 
+    /**
+     * FTP用户密码
+     */
     private String ftpUserPw;
 
-    private String stsCd;
-
+    /**
+     * FTP别名
+     */
     private String ftpAls;
 
+    /**
+     * 备注
+     */
     private String rmk;
 
+    /**
+     * 业务系统编码
+     */
     private String bizSysCode;
 
+    /**
+     * 创建用户ID
+     */
     private String crtUserId;
 
-    private Date crtTime;
+    /**
+     * 创建时间
+     */
+    private Timestamp crtTime;
 
+    /**
+     * 创建应用系统ID
+     */
     private String crtAppSysId;
 
+    /**
+     * 修改用户ID
+     */
     private String modfUserId;
 
-    private Date modfTime;
+    /**
+     * 修改时间
+     */
+    private Timestamp modfTime;
 
+    /**
+     * 修改应用系统ID
+     */
     private String modfAppSysId;
 
+    /**
+     * 缓存类型代码
+     */
     private String cacheTypeCd;
 
+    /**
+     * 有效标志
+     */
     private String validFlag;
 
+    /**
+     * 缓存数据类型代码
+     */
+    private String cacheDataTypeCd;
+
+    /**
+     * 推送提醒标志
+     */
+    private String pushAlertFlag;
+
+    /**
+     * 组缓存KEY值
+     */
     private String grpCacheKeyVal;
 
+    /**
+     * 别名缓存KEY值
+     */
     private String alsCacheKeyVal;
+
+    public String getGrpCacheKeyVal() {
+        return grpCacheKeyVal;
+    }
+
+    public void setGrpCacheKeyVal(String grpCacheKeyVal) {
+        this.grpCacheKeyVal = grpCacheKeyVal;
+    }
+
+    public String getAlsCacheKeyVal() {
+        return alsCacheKeyVal;
+    }
+
+    public void setAlsCacheKeyVal(String alsCacheKeyVal) {
+        this.alsCacheKeyVal = alsCacheKeyVal;
+    }
 
     public String getCacheDataTypeCd() {
         return cacheDataTypeCd;
@@ -68,10 +157,6 @@ public class TOpRnfsCfgDO extends GenericBean {
     public void setPushAlertFlag(String pushAlertFlag) {
         this.pushAlertFlag = pushAlertFlag;
     }
-
-    private String cacheDataTypeCd;
-
-    private String pushAlertFlag;
     public Long getConfigId() {
         return configId;
     }
@@ -136,14 +221,6 @@ public class TOpRnfsCfgDO extends GenericBean {
         this.ftpUserPw = ftpUserPw == null ? null : ftpUserPw.trim();
     }
 
-    public String getStsCd() {
-        return stsCd;
-    }
-
-    public void setStsCd(String stsCd) {
-        this.stsCd = stsCd == null ? null : stsCd.trim();
-    }
-
     public String getFtpAls() {
         return ftpAls;
     }
@@ -176,11 +253,11 @@ public class TOpRnfsCfgDO extends GenericBean {
         this.crtUserId = crtUserId == null ? null : crtUserId.trim();
     }
 
-    public Date getCrtTime() {
+    public Timestamp getCrtTime() {
         return crtTime;
     }
 
-    public void setCrtTime(Date crtTime) {
+    public void setCrtTime(Timestamp crtTime) {
         this.crtTime = crtTime;
     }
 
@@ -200,11 +277,11 @@ public class TOpRnfsCfgDO extends GenericBean {
         this.modfUserId = modfUserId == null ? null : modfUserId.trim();
     }
 
-    public Date getModfTime() {
+    public Timestamp getModfTime() {
         return modfTime;
     }
 
-    public void setModfTime(Date modfTime) {
+    public void setModfTime(Timestamp modfTime) {
         this.modfTime = modfTime;
     }
 
@@ -230,21 +307,5 @@ public class TOpRnfsCfgDO extends GenericBean {
 
     public void setValidFlag(String validFlag) {
         this.validFlag = validFlag == null ? null : validFlag.trim();
-    }
-
-    public String getGrpCacheKeyVal() {
-        return grpCacheKeyVal;
-    }
-
-    public void setGrpCacheKeyVal(String grpCacheKeyVal) {
-        this.grpCacheKeyVal = grpCacheKeyVal;
-    }
-
-    public String getAlsCacheKeyVal() {
-        return alsCacheKeyVal;
-    }
-
-    public void setAlsCacheKeyVal(String alsCacheKeyVal) {
-        this.alsCacheKeyVal = alsCacheKeyVal;
     }
 }

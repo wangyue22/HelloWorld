@@ -1,6 +1,6 @@
 package com.cmos.edccommon.beans.realityAccount;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.cmos.common.bean.GenericBean;
 
@@ -8,7 +8,7 @@ import com.cmos.common.bean.GenericBean;
  * 人像比对实名账户
  *
  */
-public class TOpRealityAccountDO extends GenericBean {
+public class RealityAccountDO extends GenericBean {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,7 +75,7 @@ public class TOpRealityAccountDO extends GenericBean {
     /**
      * 创建时间
      */
-    private Date crtTime;
+    private Timestamp crtTime;
 
     /**
      * 创建应用系统ID
@@ -90,7 +90,7 @@ public class TOpRealityAccountDO extends GenericBean {
     /**
      * 修改时间
      */
-    private Date modifyTime;
+    private Timestamp modifyTime;
 
     /**
      * 修改应用系统ID
@@ -233,11 +233,11 @@ public class TOpRealityAccountDO extends GenericBean {
         this.crtUserId = crtUserId == null ? null : crtUserId.trim();
     }
 
-    public Date getCrtTime() {
+    public Timestamp getCrtTime() {
         return crtTime;
     }
 
-    public void setCrtTime(Date crtTime) {
+    public void setCrtTime(Timestamp crtTime) {
         this.crtTime = crtTime;
     }
 
@@ -257,11 +257,11 @@ public class TOpRealityAccountDO extends GenericBean {
         this.modfUserId = modfUserId == null ? null : modfUserId.trim();
     }
 
-    public Date getModifyTime() {
+    public Timestamp getModifyTime() {
         return modifyTime;
     }
 
-    public void setModifyTime(Date modifyTime) {
+    public void setModifyTime(Timestamp modifyTime) {
         this.modifyTime = modifyTime;
     }
 

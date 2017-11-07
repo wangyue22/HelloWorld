@@ -1,38 +1,90 @@
 package com.cmos.edccommon.beans.serviceSwitch;
 
-import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.cmos.common.bean.GenericBean;
 
-public class ServiceSwitchDO extends GenericBean implements Serializable {
-    private static final long serialVersionUID = 7181946962324445621L;
+/**开关表
+ * @author wangfei
+ */
+public class ServiceSwitchDO extends GenericBean {
+
+    private static final long serialVersionUID = 1L;
+
+    /**主键
+     * 开关id
+     */
     private Long swtchId;
 
+    /**
+     * 业务系统编码
+     */
     private String bizSysCode;
 
+    /**
+     * 开关描述
+     */
     private String swtchDesc;
 
+    /**
+     * 开关键
+     */
     private String swtchKey;
 
+    /**
+     * 开关值
+     */
     private String swtchVal;
 
+    /**
+     * 创建用户ID
+     */
     private String crtUserId;
 
-    private Date crtTime;
+    /**
+     * 创建时间
+     */
+    private Timestamp crtTime;
 
+    /**
+     * 创建应用系统ID
+     */
     private String crtAppSysId;
 
+    /**
+     * 修改用户ID
+     */
     private String modfUserId;
 
-    private Date modfTime;
+    /**
+     * 修改时间
+     */
+    private Timestamp modfTime;
 
+    /**
+     * 修改应用系统ID
+     */
     private String modfAppSysId;
 
+    /**
+     * 缓存类型代码
+     */
     private String cacheTypeCd;
 
+    /**
+     * 有效标志 1：有效
+     */
     private String validFlag;
 
+    /**
+     * 缓存数据类型代码
+     */
+    private String cacheDataTypeCd;
+
+    /**
+     * 推送提醒标志
+     */
+    private String pushAlertFlag;
     public Long getSwtchId() {
         return swtchId;
     }
@@ -81,11 +133,11 @@ public class ServiceSwitchDO extends GenericBean implements Serializable {
         this.crtUserId = crtUserId == null ? null : crtUserId.trim();
     }
 
-    public Date getCrtTime() {
+    public Timestamp getCrtTime() {
         return crtTime;
     }
 
-    public void setCrtTime(Date crtTime) {
+    public void setCrtTime(Timestamp crtTime) {
         this.crtTime = crtTime;
     }
 
@@ -105,11 +157,11 @@ public class ServiceSwitchDO extends GenericBean implements Serializable {
         this.modfUserId = modfUserId == null ? null : modfUserId.trim();
     }
 
-    public Date getModfTime() {
+    public Timestamp getModfTime() {
         return modfTime;
     }
 
-    public void setModfTime(Date modfTime) {
+    public void setModfTime(Timestamp modfTime) {
         this.modfTime = modfTime;
     }
 
@@ -135,5 +187,21 @@ public class ServiceSwitchDO extends GenericBean implements Serializable {
 
     public void setValidFlag(String validFlag) {
         this.validFlag = validFlag == null ? null : validFlag.trim();
+    }
+
+    public String getCacheDataTypeCd() {
+        return cacheDataTypeCd;
+    }
+
+    public void setCacheDataTypeCd(String cacheDataTypeCd) {
+        this.cacheDataTypeCd = cacheDataTypeCd == null ? null : cacheDataTypeCd.trim();
+    }
+
+    public String getPushAlertFlag() {
+        return pushAlertFlag;
+    }
+
+    public void setPushAlertFlag(String pushAlertFlag) {
+        this.pushAlertFlag = pushAlertFlag == null ? null : pushAlertFlag.trim();
     }
 }

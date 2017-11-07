@@ -1,6 +1,6 @@
 package com.cmos.edccommon.beans.crkey;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import com.cmos.common.bean.GenericBean;
 /**
@@ -12,7 +12,7 @@ import com.cmos.common.bean.GenericBean;
  * @author 王飞
  *
  */
-public class CoRsaKeyDO extends GenericBean {
+public class RsaKeyDO extends GenericBean {
     private static final long serialVersionUID = 90716934787134967L;
 
     /**
@@ -54,7 +54,7 @@ public class CoRsaKeyDO extends GenericBean {
     /**
      * 创建时间
      */
-    private Date crtTime;
+    private Timestamp crtTime;
     /**
      * 创建系统id
      */
@@ -66,7 +66,7 @@ public class CoRsaKeyDO extends GenericBean {
     /**
      * 修改时间
      */
-    private Date modfTime;
+    private Timestamp modfTime;
 
     /**
      * 修改应用系统ID
@@ -179,11 +179,11 @@ public class CoRsaKeyDO extends GenericBean {
         this.crtUserId = crtUserId == null ? null : crtUserId.trim();
     }
 
-    public Date getCrtTime() {
+    public Timestamp getCrtTime() {
         return crtTime;
     }
 
-    public void setCrtTime(Date crtTime) {
+    public void setCrtTime(Timestamp crtTime) {
         this.crtTime = crtTime;
     }
 
@@ -203,11 +203,11 @@ public class CoRsaKeyDO extends GenericBean {
         this.modfUserId = modfUserId == null ? null : modfUserId.trim();
     }
 
-    public Date getModfTime() {
+    public Timestamp getModfTime() {
         return modfTime;
     }
 
-    public void setModfTime(Date modfTime) {
+    public void setModfTime(Timestamp modfTime) {
         this.modfTime = modfTime;
     }
 

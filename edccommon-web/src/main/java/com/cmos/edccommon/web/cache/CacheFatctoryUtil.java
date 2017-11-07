@@ -1,24 +1,26 @@
 package com.cmos.edccommon.web.cache;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.cmos.core.logger.Logger;
-import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
-import com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO;
-import com.cmos.edccommon.beans.rnfsCfg.TOpRnfsCfgDO;
-import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
-import com.cmos.edccommon.iservice.IServiceSwitchSV;
-import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
-import com.cmos.edccommon.iservice.realityAccount.ITOpRealityAccountSV;
-import com.cmos.edccommon.iservice.rnfsCfg.ITOpRnfsCfgSV;
-import com.cmos.edccommon.utils.BeanUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.alibaba.dubbo.common.utils.StringUtils;
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.cmos.core.logger.Logger;
+import com.cmos.core.logger.LoggerFactory;
+import com.cmos.edccommon.beans.crkey.RsaKeyDO;
+import com.cmos.edccommon.beans.realityAccount.RealityAccountDO;
+import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO;
+import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
+import com.cmos.edccommon.iservice.IServiceSwitchSV;
+import com.cmos.edccommon.iservice.crkey.IRsaKeySV;
+import com.cmos.edccommon.iservice.realityAccount.IRealityAccountSV;
+import com.cmos.edccommon.iservice.rnfsCfg.IRnfsCfgSV;
+import com.cmos.edccommon.utils.BeanUtil;
 
 /**
  * 缓存工具类
@@ -32,143 +34,143 @@ public class CacheFatctoryUtil {
     @Autowired
     private RedisCacheDataUtil redisCacheDataUtil;
 
-	@Reference(group = "edcco")
+    @Reference(group = "edcco")
     private IServiceSwitchSV serviceSwitchSV;
-	
-	@Reference(group = "edcco")
-	private ITOpRnfsCfgSV  opRnfsCfgSV;
-	
-	@Reference(group = "edcco")
-	private ITOpRealityAccountSV opRealityAccountSV;
-	
-	@Reference(group = "edcco")
-	private IKeyInfoSV keyInfoSV;
+
+    @Reference(group = "edcco")
+    private IRnfsCfgSV  opRnfsCfgSV;
+
+    @Reference(group = "edcco")
+    private IRealityAccountSV opRealityAccountSV;
+
+    @Reference(group = "edcco")
+    private IRsaKeySV keyInfoSV;
     /**
-    *
-    * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
-    * @return String 表名字
-    */
+     *
+     * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
+     * @return String 表名字
+     */
     public String getStringFromDB (String key) {
-    	 if(StringUtils.isEmpty(key)){
-    		 logger.error("传入key值不能为空");
-    		 return "";
-         }
-    	 int start = key.indexOf("_") + 1;//取出首个下划线位置
-    	 int end = key.indexOf(":");//取出首个冒号为止
-    	 String table = key.substring(start,end);//取出表的名字
-    	 try{
-             switch(table){
-	  	         case "SWITCH" :
-	  			     ServiceSwitchDO swtichDo = serviceSwitchSV.getServiceSwitchByKey(key);
-	  			     if(null != swtichDo){
-		  				 return swtichDo.getSwtchVal();
-	  			     }else{
-	  			    	 return "";
-	  			     }
-	  			 default:
-	  	    		 logger.error("传入key不符合规范");
-	  	        	 return "";
-	         } 
-    	 }catch(Exception e){
-    		 logger.error("从DB中取值异常",e);
-    		 return "";
-    	 }    	        
-    }
-    
-    /**
-    *
-    * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
-    * @return String 表名字
-    */
-    public Map getMapFromDB (String key){
-    	Map<String, String> rnfsData = new HashMap<String, String>(); 
-    	if(StringUtils.isEmpty(key)){
-    		logger.error("传入key值不能为空");
-	        return rnfsData;
+        if(StringUtils.isEmpty(key)){
+            logger.error("传入key值不能为空");
+            return "";
         }
-    	int start = key.indexOf("_") + 1;//取出首个下划线位置
-    	int end = key.indexOf(":");//取出首个冒号位置
-    	String table = key.substring(start,end);//取出表的名字
-    	   	 
+        int start = key.indexOf("_") + 1;//取出首个下划线位置
+        int end = key.indexOf(":");//取出首个冒号为止
+        String table = key.substring(start,end);//取出表的名字
         try{
             switch(table){
-	  	        case "RNFS" :
-	  	            TOpRnfsCfgDO opRnfsDo = opRnfsCfgSV.getRnfsGrpNmByAlsCacheKeyVal(key);
-	  	            if(null != opRnfsDo){
-	  	                rnfsData.put("rnfsGrpNm", opRnfsDo.getRnfsGrpNm());        	
-		  	        	rnfsData.put("rootPath", opRnfsDo.getRootPath()); 
-		  	        	rnfsData.put("rnfsAddrPrtnum", opRnfsDo.getRnfsAddrPrtnum());
-		  	        	rnfsData.put("uploadDwnldModeCd", opRnfsDo.getUploadDwnldModeCd());
-		  	        	rnfsData.put("ftpPrtnum", opRnfsDo.getFtpPrtnum());
-		  	        	rnfsData.put("ftpUserNm", opRnfsDo.getFtpUserNm());
-		  	        	rnfsData.put("ftpUserPw", opRnfsDo.getFtpUserPw());
-		  	        	rnfsData.put("ftpAls", opRnfsDo.getFtpAls());
-	  	            }
-	  	        	return rnfsData;
-	  	        case "REALACC" :
-                    TOpRealityAccountDO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
-	  	        	if(null != realityDto){
-	  	        		rnfsData.put("userNm", realityDto.getUserNm());
-	  	        		rnfsData.put("pw", realityDto.getPw());
-	  	        		rnfsData.put("aesKey", realityDto.getAesKey());
-	  	        		rnfsData.put("desKey", realityDto.getDesKey());
-	  	        	}
-	  	        	return rnfsData;
-	  	        case "RSAKEY" :
-                    CoRsaKeyDO rsaDto = keyInfoSV.getKeyByCacheKey(key);
-	  	        	if(null != rsaDto){
-	  	        		rnfsData.put("pbkey", rsaDto.getPbkey());
-	  	        		rnfsData.put("prtkey", rsaDto.getPrtkey());
-	  	        	}
-	  	        	return rnfsData;
-	  			default:
-	  	    		logger.error("传入key不符合规范");
-	  	        	return rnfsData;
+            case "SWITCH" :
+                ServiceSwitchDO swtichDo = serviceSwitchSV.getServiceSwitchByKey(key);
+                if(null != swtichDo){
+                    return swtichDo.getSwtchVal();
+                }else{
+                    return "";
+                }
+            default:
+                logger.error("传入key不符合规范");
+                return "";
             }
         }catch(Exception e){
-    		logger.error("从DB中取值异常",e);
-    		return rnfsData;
+            logger.error("从DB中取值异常",e);
+            return "";
         }
     }
-    
-    
+
     /**
-    *
-    * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
-    * @return List 表名字
-    */
+     *
+     * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
+     * @return String 表名字
+     */
+    public Map getMapFromDB (String key){
+        Map<String, String> rnfsData = new HashMap<String, String>();
+        if(StringUtils.isEmpty(key)){
+            logger.error("传入key值不能为空");
+            return rnfsData;
+        }
+        int start = key.indexOf("_") + 1;//取出首个下划线位置
+        int end = key.indexOf(":");//取出首个冒号位置
+        String table = key.substring(start,end);//取出表的名字
+
+        try{
+            switch(table){
+            case "RNFS" :
+                RnfsCfgDO opRnfsDo = opRnfsCfgSV.getRnfsGrpNmByAlsCacheKeyVal(key);
+                if(null != opRnfsDo){
+                    rnfsData.put("rnfsGrpNm", opRnfsDo.getRnfsGrpNm());
+                    rnfsData.put("rootPath", opRnfsDo.getRootPath());
+                    rnfsData.put("rnfsAddrPrtnum", opRnfsDo.getRnfsAddrPrtnum());
+                    rnfsData.put("uploadDwnldModeCd", opRnfsDo.getUploadDwnldModeCd());
+                    rnfsData.put("ftpPrtnum", opRnfsDo.getFtpPrtnum());
+                    rnfsData.put("ftpUserNm", opRnfsDo.getFtpUserNm());
+                    rnfsData.put("ftpUserPw", opRnfsDo.getFtpUserPw());
+                    rnfsData.put("ftpAls", opRnfsDo.getFtpAls());
+                }
+                return rnfsData;
+            case "REALACC" :
+                RealityAccountDO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
+                if(null != realityDto){
+                    rnfsData.put("userNm", realityDto.getUserNm());
+                    rnfsData.put("pw", realityDto.getPw());
+                    rnfsData.put("aesKey", realityDto.getAesKey());
+                    rnfsData.put("desKey", realityDto.getDesKey());
+                }
+                return rnfsData;
+            case "RSAKEY" :
+                RsaKeyDO rsaDto = keyInfoSV.getKeyByCacheKey(key);
+                if(null != rsaDto){
+                    rnfsData.put("pbkey", rsaDto.getPbkey());
+                    rnfsData.put("prtkey", rsaDto.getPrtkey());
+                }
+                return rnfsData;
+            default:
+                logger.error("传入key不符合规范");
+                return rnfsData;
+            }
+        }catch(Exception e){
+            logger.error("从DB中取值异常",e);
+            return rnfsData;
+        }
+    }
+
+
+    /**
+     *
+     * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
+     * @return List 表名字
+     */
     @SuppressWarnings("unchecked")
-	public List getListFromDB(String key){
+    public List getListFromDB(String key){
         List resultList = new ArrayList();
         if(StringUtils.isEmpty(key)){
-    		logger.error("传入key值不能为空");
-    		return resultList;
+            logger.error("传入key值不能为空");
+            return resultList;
         }
-    	int start = key.indexOf("_") + 1;//取出首个下划线位置
-    	int end = key.indexOf(":");//取出首个冒号为止
-    	String table = key.substring(start,end);//取出表的名字 	   	    	 
+        int start = key.indexOf("_") + 1;//取出首个下划线位置
+        int end = key.indexOf(":");//取出首个冒号为止
+        String table = key.substring(start,end);//取出表的名字
         try{
-    	    switch(table){
-	            case "RNFS" :
-	        	    List<TOpRnfsCfgDO> opRnfsDoList = opRnfsCfgSV.getRnfsGrpNmByGrpCacheKeyVal(key);
-	        	    for(int i=0;i<opRnfsDoList.size();i++){
-	                    //将bean转成map用于后面方法的逻辑调用
-	                    Map<String, String> map = BeanUtil.convertBean(opRnfsDoList.get(i));
-	                    resultList.add(map);
-	        	    }
-	       	    return resultList;
-			    default:
-	  	   			logger.error("传入key不符合规范");
-	  	   		    return resultList;
-            }	 
+            switch(table){
+            case "RNFS" :
+                List<RnfsCfgDO> opRnfsDoList = opRnfsCfgSV.getRnfsGrpNmByGrpCacheKeyVal(key);
+                for(int i=0;i<opRnfsDoList.size();i++){
+                    //将bean转成map用于后面方法的逻辑调用
+                    Map<String, String> map = BeanUtil.convertBean(opRnfsDoList.get(i));
+                    resultList.add(map);
+                }
+                return resultList;
+            default:
+                logger.error("传入key不符合规范");
+                return resultList;
+            }
         }catch(Exception e){
-        	logger.error("从DB中取值异常",e);
-    		return resultList;
+            logger.error("从DB中取值异常",e);
+            return resultList;
         }
-           
+
     }
-    
-    
+
+
     /**
      *
      * @param Key 从JVM缓存中获取数据
@@ -177,180 +179,180 @@ public class CacheFatctoryUtil {
     public String getJVMString(String cacheKey){
         String resultString="";
         if(StringUtils.isEmpty(cacheKey)){
-        	logger.error("传入key不符合规范");
-	   		return "";
+            logger.error("传入key不符合规范");
+            return "";
         }
-        
+
         try{
             resultString = JVMCacheDataUtil.getStringCache(cacheKey);
         }catch(Exception e){
             logger.error(e.getMessage());
         }
-        
+
         if(StringUtils.isEmpty(resultString)){//取值为空的时候从DB中获取数据
-        	resultString = this.getStringFromDB(cacheKey);
+            resultString = getStringFromDB(cacheKey);
         }
         return resultString;
     }
-      
+
     /**
-    *
-    * @param Key 从redis缓存中获取数据
-    * @return String 缓存数据
-    */
+     *
+     * @param Key 从redis缓存中获取数据
+     * @return String 缓存数据
+     */
     public String getRedisString(String cacheKey){
-       String resultString="";
-       try{
-           resultString = redisCacheDataUtil.getStringCache(cacheKey);
-       }catch(Exception e){
-           logger.error(e.getMessage());
-       }
-       return resultString;
+        String resultString="";
+        try{
+            resultString = redisCacheDataUtil.getStringCache(cacheKey);
+        }catch(Exception e){
+            logger.error(e.getMessage());
+        }
+        return resultString;
     }
-     
+
     /**
-    *
-    * @param Key 从redis缓存中获取数据
-    * @return Map 缓存数据
-    */
+     *
+     * @param Key 从redis缓存中获取数据
+     * @return Map 缓存数据
+     */
     public Map getRedisMap(String cacheKey){
-  	   Map resultMap=new HashMap();
-       try{
-    	   resultMap = redisCacheDataUtil.getMapCache(cacheKey);
-       }catch(Exception e){
-           logger.error("缓存获取异常",e);
-       }
-       return resultMap;
-    }
-   
-    /**
-    *
-    * @param Key 从JVM缓存中获取数据
-    * @return Map 缓存数据
-    */
-	public Map getJVMMap(String cacheKey){
-  	   Map resultMap=new HashMap();
-       try{
-    	   resultMap = JVMCacheDataUtil.getMapCache(cacheKey);
-       }catch(Exception e){
-           logger.error("缓存获取异常",e);
-       }
-       
-       if(resultMap == null){//取值为空的时候从DB中获取数据
-    	   resultMap = this.getMapFromDB(cacheKey);
-       }
-       return resultMap;
-    }
-   
-   /**
-    *
-    * @param Key 从Redis缓存中获取数据
-    * @return List 缓存数据
-    */
-	public List getRedisList(String cacheKey){
-	    List resultList = new ArrayList();
+        Map resultMap=new HashMap();
         try{
-        	resultList = redisCacheDataUtil.getListCache(cacheKey);
+            resultMap = redisCacheDataUtil.getMapCache(cacheKey);
+        }catch(Exception e){
+            logger.error("缓存获取异常",e);
+        }
+        return resultMap;
+    }
+
+    /**
+     *
+     * @param Key 从JVM缓存中获取数据
+     * @return Map 缓存数据
+     */
+    public Map getJVMMap(String cacheKey){
+        Map resultMap=new HashMap();
+        try{
+            resultMap = JVMCacheDataUtil.getMapCache(cacheKey);
+        }catch(Exception e){
+            logger.error("缓存获取异常",e);
+        }
+
+        if(resultMap == null){//取值为空的时候从DB中获取数据
+            resultMap = getMapFromDB(cacheKey);
+        }
+        return resultMap;
+    }
+
+    /**
+     *
+     * @param Key 从Redis缓存中获取数据
+     * @return List 缓存数据
+     */
+    public List getRedisList(String cacheKey){
+        List resultList = new ArrayList();
+        try{
+            resultList = redisCacheDataUtil.getListCache(cacheKey);
         }catch(Exception e){
             logger.error("缓存获取异常",e);
         }
         return resultList;
     }
-	
-   /**
-    *
-    * @param Key 从JVM缓存中获取数据
-    * @return List 缓存数据
-    */
-	public List getJVMList(String cacheKey){
-	    List resultList = new ArrayList();
+
+    /**
+     *
+     * @param Key 从JVM缓存中获取数据
+     * @return List 缓存数据
+     */
+    public List getJVMList(String cacheKey){
+        List resultList = new ArrayList();
         try{
-        	resultList = JVMCacheDataUtil.getListCache(cacheKey);
+            resultList = JVMCacheDataUtil.getListCache(cacheKey);
         }catch(Exception e){
             logger.error("缓存获取异常",e);
         }
-        
+
         if(null == resultList || resultList.size() == 0){//取值为空的时候从DB中获取数据
-        	resultList = this.getListFromDB(cacheKey);
+            resultList = getListFromDB(cacheKey);
         }
         return resultList;
-    }	
-	
+    }
+
     /**
-    * @param inMap 将string对象存入JVM缓存,数据格式为{key ,value}
-    * @return boolean  缓存数据
-    */
+     * @param inMap 将string对象存入JVM缓存,数据格式为{key ,value}
+     * @return boolean  缓存数据
+     */
     public boolean putJVMStringData( Map<String,String> inMap){
         try {
-			return JVMCacheDataUtil.putStringCache(inMap);
-		} catch (Exception e) {
+            return JVMCacheDataUtil.putStringCache(inMap);
+        } catch (Exception e) {
             logger.error("存入缓存异常",e);
-			return false;
-		}
+            return false;
+        }
     }
-    
+
     /**
-    * @param inMap 将string对象存入redis缓存,数据格式为{key ,value}
-    * @return Map  缓存数据
-    */
+     * @param inMap 将string对象存入redis缓存,数据格式为{key ,value}
+     * @return Map  缓存数据
+     */
     public boolean putRedisStringData( Map<String,String> inMap){
         try {
-			return redisCacheDataUtil.putStringCache(inMap);
-		} catch (Exception e) {
+            return redisCacheDataUtil.putStringCache(inMap);
+        } catch (Exception e) {
             logger.error("存入缓存异常",e);
-			return false;
-		}
+            return false;
+        }
     }
-    
+
     /**
-    * @param inMap 将map 存入JVM缓存 数据格式为{key ,value} 
-    * @return boolean
-    */
+     * @param inMap 将map 存入JVM缓存 数据格式为{key ,value}
+     * @return boolean
+     */
     public boolean putJVMMapData(Map<String,Map<String,String>> inMap){
         try {
-			return JVMCacheDataUtil.putMapCache(inMap);
-		} catch (Exception e) {
+            return JVMCacheDataUtil.putMapCache(inMap);
+        } catch (Exception e) {
             logger.error("存入缓存异常",e);
             return false;
-		}
+        }
     }
-    
+
     /**
-    * @param inMap 将map 存入Redis缓存 数据格式为{key ,value} 
-    * @return boolean
-    */
+     * @param inMap 将map 存入Redis缓存 数据格式为{key ,value}
+     * @return boolean
+     */
     public boolean putRedisMapData(Map<String,Map<String,String>> inMap){
         try {
-			return redisCacheDataUtil.putMapCache(inMap);
-		} catch (Exception e) {
+            return redisCacheDataUtil.putMapCache(inMap);
+        } catch (Exception e) {
             logger.error("存入缓存异常",e);
             return false;
-		}
+        }
     }
-    
+
     /**
-    * @param inMap 将List存入JVM缓存 数据格式为{key ,value} 
-    * @return boolean
-    */
+     * @param inMap 将List存入JVM缓存 数据格式为{key ,value}
+     * @return boolean
+     */
     public boolean putJVMListData(Map<String,List> inMap){
         try {
-			return JVMCacheDataUtil.putListCache(inMap);
-		} catch (Exception e) {
-			 logger.error("存入缓存异常",e);
-	         return false;
-		}
+            return JVMCacheDataUtil.putListCache(inMap);
+        } catch (Exception e) {
+            logger.error("存入缓存异常",e);
+            return false;
+        }
     }
-    
+
     /**
-    * @param inMap 将List存入Redis缓存 数据格式为{key ,value} 
-    * @return boolean
-    */
+     * @param inMap 将List存入Redis缓存 数据格式为{key ,value}
+     * @return boolean
+     */
     public boolean putRedisListData(Map<String,List> inMap){
         try {
-			return redisCacheDataUtil.putListCache(inMap);
-		} catch (Exception e) {
-			logger.error("存入缓存异常",e);
+            return redisCacheDataUtil.putListCache(inMap);
+        } catch (Exception e) {
+            logger.error("存入缓存异常",e);
             return false;
-		}
+        }
     }
 }

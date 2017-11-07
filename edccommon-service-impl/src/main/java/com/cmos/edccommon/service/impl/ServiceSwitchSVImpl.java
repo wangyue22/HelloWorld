@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
-import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchInDTO;
 import com.cmos.edccommon.dao.ServiceSwitchDAO;
 import com.cmos.edccommon.iservice.IServiceSwitchSV;
-
 
 /**
  * Created by guozong on 2017/10/17.
@@ -25,7 +23,6 @@ public class ServiceSwitchSVImpl implements IServiceSwitchSV {
         List<ServiceSwitchDO> list = serviceSwitchDao.slectByType(input);
         return list;
     }
-
     @Override
     public ServiceSwitchDO getServiceSwitchByKey(String swtchKey) {
         Map a= new HashMap();
@@ -34,30 +31,42 @@ public class ServiceSwitchSVImpl implements IServiceSwitchSV {
         return serviceSwitchDO;
     }
 
-    @Override 
-    public List<ServiceSwitchDO> getServiceSwitchByCode(ServiceSwitchInDTO switchdo) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("swtchTypeCd", switchdo.getSwtchTypeCd());
-        map.put("bizSysCode", switchdo.getBizSysCode());
-        return serviceSwitchDao.select(map);
+    @Override
+    public List<ServiceSwitchDO> getServiceSwitchByDataType(String cacheTypeCd, String dataType) {
+        List<ServiceSwitchDO> serviceSwitch = serviceSwitchDao.getServiceSwitchByDataType(cacheTypeCd, dataType);
+        return serviceSwitch;
     }
 
+    /**
+     * 开关表查询开关信息
+     */
     @Override
-    public void insertServiceSwitch(ServiceSwitchInDTO switchdo) {
-        serviceSwitchDao.insert(switchdo);
+    public List<ServiceSwitchDO> getServiceSwitch(ServiceSwitchDO switchdo) {
+        return serviceSwitchDao.getServiceSwitch(switchdo);
     }
 
+    /**
+     * 开关表新增开关信息
+     */
     @Override
-    public void deleteServiceSwitch(ServiceSwitchInDTO switchdo) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("swtchTypeCd", switchdo.getSwtchTypeCd());
-        map.put("bizSysCode", switchdo.getBizSysCode());
-        serviceSwitchDao.delete(map);
+    public void saveServiceSwitch(ServiceSwitchDO switchdo) {
+        serviceSwitchDao.saveServiceSwitch(switchdo);
     }
 
+    /**
+     * 开关表删除开关信息(将标志位置为0)
+     */
     @Override
-    public void updateServiceSwitch(ServiceSwitchInDTO switchdo) {
-        serviceSwitchDao.update(switchdo);
+    public void deleteServiceSwitch(ServiceSwitchDO switchdo) {
+        serviceSwitchDao.deleteServiceSwitch(switchdo);
+    }
+
+    /**
+     * 开关表修改开关信息
+     */
+    @Override
+    public void updateServiceSwitch(ServiceSwitchDO switchdo) {
+        serviceSwitchDao.updateServiceSwitch(switchdo);
     }
 
 }

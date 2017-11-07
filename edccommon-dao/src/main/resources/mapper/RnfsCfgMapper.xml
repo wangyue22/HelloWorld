@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cmos.edccommon.dao.rnfsCfg.RnfsCfgDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
+    <id column="CONFIG_ID" property="configId" jdbcType="BIGINT" />
+    <result column="RNFS_GRP_NM" property="rnfsGrpNm" jdbcType="VARCHAR" />
+    <result column="ROOT_PATH" property="rootPath" jdbcType="VARCHAR" />
+    <result column="RNFS_ADDR_PRTNUM" property="rnfsAddrPrtnum" jdbcType="VARCHAR" />
+    <result column="UPLOAD_DWNLD_MODE_CD" property="uploadDwnldModeCd" jdbcType="VARCHAR" />
+    <result column="FTP_PRTNUM" property="ftpPrtnum" jdbcType="VARCHAR" />
+    <result column="FTP_USER_NM" property="ftpUserNm" jdbcType="VARCHAR" />
+    <result column="FTP_USER_PW" property="ftpUserPw" jdbcType="VARCHAR" />
+    <result column="FTP_ALS" property="ftpAls" jdbcType="VARCHAR" />
+    <result column="RMK" property="rmk" jdbcType="VARCHAR" />
+    <result column="BIZ_SYS_CODE" property="bizSysCode" jdbcType="VARCHAR" />
+    <result column="CRT_USER_ID" property="crtUserId" jdbcType="VARCHAR" />
+    <result column="CRT_TIME" property="crtTime" jdbcType="TIMESTAMP" />
+    <result column="CRT_APP_SYS_ID" property="crtAppSysId" jdbcType="VARCHAR" />
+    <result column="MODF_USER_ID" property="modfUserId" jdbcType="VARCHAR" />
+    <result column="MODF_TIME" property="modfTime" jdbcType="TIMESTAMP" />
+    <result column="MODF_APP_SYS_ID" property="modfAppSysId" jdbcType="VARCHAR" />
+    <result column="CACHE_TYPE_CD" property="cacheTypeCd" jdbcType="VARCHAR" />
+    <result column="VALID_FLAG" property="validFlag" jdbcType="VARCHAR" />
+	<result column="GRP_CACHE_KEY_VAL" property="grpCacheKeyVal" jdbcType="VARCHAR" />
+    <result column="ALS_CACHE_KEY_VAL" property="alsCacheKeyVal" jdbcType="VARCHAR" />  
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CONFIG_ID, RNFS_GRP_NM, ROOT_PATH, RNFS_ADDR_PRTNUM, UPLOAD_DWNLD_MODE_CD, FTP_PRTNUM, 
+    FTP_USER_NM, FTP_USER_PW, FTP_ALS, RMK, BIZ_SYS_CODE, CRT_USER_ID, CRT_TIME, 
+    CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME,MODF_APP_SYS_ID,CACHE_TYPE_CD,VALID_FLAG,
+    GRP_CACHE_KEY_VAL,ALS_CACHE_KEY_VAL
+  </sql>
+  <select id="getRnfsGrpNmByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_op_rnfs_cfg
+    where 1=1
+    <if test="cacheTypeCd!=null and cacheTypeCd!=''">
+      and CACHE_TYPE_CD = #{cacheTypeCd}
+    </if>
+  </select>
+  <select id="getRnfsGrpNm" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select distinct RNFS_GRP_NM
+    from t_op_rnfs_cfg
+  </select>
+  <select id="getRnfsGrpNmByrnfsGrpNm" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from t_op_rnfs_cfg
+    where RNFS_GRP_NM = #{rnfsGrpNm,jdbcType=VARCHAR}
+  </select>
+   <select id="getRnfsGrpNmByAlsCacheKeyVal" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List" />
+        from t_op_rnfs_cfg
+        where ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+   </select>
+    <select id="getRnfsGrpNmByGrpCacheKeyVal" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List" />
+        from t_op_rnfs_cfg
+        where GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR}
+    </select>
+ <delete id="deleteRnfsCfg" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
+    update t_op_rnfs_cfg
+    set VALID_FLAG = '0',
+    	MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
+    	MODF_TIME = #{modfTime,jdbcType=TIMESTAMP},
+    	MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR}
+    <where>
+    	<if test="configId !=null and configId !=''">
+    		CONFIG_ID = #{configId,jdbcType=VARCHAR}
+	    </if>
+		<if test="rnfsGrpNm !=null and nfsGrpNm !=''">
+	    	and RNFS_GRP_NM = #{nfsGrpNm,jdbcType=VARCHAR}
+	    </if>
+	    <if test="rootPath !=null and rootPath !=''">
+	    	and ROOT_PATH = #{rootPath,jdbcType=VARCHAR}
+	    </if>
+	    <if test="rnfsAddrPrtnum !=null and rnfsAddrPrtnum !=''">
+	    	and RNFS_ADDR_PRTNUM = #{rnfsAddrPrtnum,jdbcType=VARCHAR}
+	    </if>
+	    <if test="uploadDwnldModeCd !=null and uploadDwnldModeCd !=''">
+	    	and UPLOAD_DWNLD_MODE_CD = #{uploadDwnldModeCd,jdbcType=VARCHAR}
+	    </if>
+	    <if test="ftpPrtnum!=null and ftpPrtnum!=''">
+	    	and FTP_PRTNUM = #{ftpPrtnum,jdbcType=VARCHAR}
+	    </if>
+	    <if test="ftpUserNm !=null and ftpUserNm !=''">
+	    	and FTP_USER_NM = #{ftpUserNm,jdbcType=VARCHAR}
+	    </if>
+	    <if test="ftpUserPw !=null and ftpUserPw !=''">
+	    	and FTP_USER_PW = #{ftpUserPw,jdbcType=VARCHAR}
+	    </if>
+	    <if test="ftpAls !=null and ftpAls !=''">
+	    	and FTP_ALS = #{ftpAls,jdbcType=VARCHAR}
+	    </if>
+	    <if test="rmk != null and rmk !=''">
+	    	and RMK = #{rmk,jdbcType=VARCHAR}
+	    </if>
+	    <if test="bizSysCode != null and bizSysCode !=''">
+	    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+	    </if>
+	    <if test="cacheTypeCd !=null and cacheTypeCd !=''">
+	    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+	    </if>
+	    <if test="cacheDataTypeCd !=null and cacheDataTypeCd !=''">
+	    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+	    </if>
+	    <if test="pushAlertFlag !=null and pushAlertFlag !=''">
+	    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+	    </if>
+	    <if test="grpCacheKeyVal !=null and grpCacheKeyVal !=''">
+	    	and GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR}
+	    </if>
+	    <if test="alsCacheKeyVal !=null and alsCacheKeyVal !=''">
+	    	and ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+	    </if>
+    </where> 
+  </delete>
+  <insert id="saveRnfsCfg" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
+    insert into t_op_rnfs_cfg 
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    	<if test="rnfsGrpNm != null and rnfsGrpNm !=''" >
+        	RNFS_GRP_NM,
+      	</if>
+    	<if test="rootPath != null and rootPath !=''" >
+        	ROOT_PATH,
+      	</if>
+    	<if test="rnfsAddrPrtnum != null and rnfsAddrPrtnum !=''" >
+        	RNFS_ADDR_PRTNUM,
+      	</if>
+    	<if test="uploadDwnldModeCd != null and uploadDwnldModeCd !=''" >
+        	UPLOAD_DWNLD_MODE_CD,
+      	</if>
+    	<if test="ftpPrtnum != null and ftpPrtnum !=''" >
+        	FTP_PRTNUM,
+      	</if>
+    	<if test="ftpUserNm != null and ftpPrtnum !=''" >
+        	FTP_USER_NM,
+      	</if>
+    	<if test="ftpUserPw != null and ftpUserPw !=''" >
+        	FTP_USER_PW,
+      	</if>
+    	<if test="ftpAls != null and ftpAls !=''" >
+        	FTP_ALS,
+      	</if>
+    	<if test="rmk != null and rmk !=''" >
+        	RMK,
+      	</if>
+    	<if test="bizSysCode != null and bizSysCode !=''" >
+        	BIZ_SYS_CODE,
+      	</if>
+    	<if test="crtUserId != null and crtUserId !=''" >
+        	CRT_USER_ID,
+      	</if>
+    	<if test="crtTime != null" >
+        	CRT_TIME,
+      	</if>
+    	<if test="crtAppSysId != null and crtAppSysId !=''" >
+        	CRT_APP_SYS_ID,
+      	</if>
+      	<if test="cacheTypeCd !=null and cacheTypeCd !=''">
+	    	CACHE_TYPE_CD,
+	    </if>
+      	<if test="validFlag !=null and validFlag !=''">
+	    	VALID_FLAG,
+	    </if>
+	    <if test="cacheDataTypeCd !=null and cacheDataTypeCd !=''">
+	    	CACHE_DATA_TYPE_CD,
+	    </if>
+	    <if test="pushAlertFlag !=null and pushAlertFlag !=''">
+	    	PUSH_ALERT_FLAG,
+	    </if>
+	    <if test="grpCacheKeyVal !=null and grpCacheKeyVal !=''">
+	    	GRP_CACHE_KEY_VAL,
+	    </if>
+	    <if test="alsCacheKeyVal !=null and alsCacheKeyVal !=''">
+	    	ALS_CACHE_KEY_VAL
+	    </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      	<if test="rnfsGrpNm != null and rnfsGrpNm !=''" >
+        	#{rnfsGrpNm,jdbcType=VARCHAR},
+      	</if>
+      	<if test="rootPath != null and rootPath !=''" >
+        	#{rootPath,jdbcType=VARCHAR},
+      	</if>
+      	<if test="rnfsAddrPrtnum != null and rnfsAddrPrtnum !=''" >
+        	#{rnfsAddrPrtnum,jdbcType=VARCHAR},
+      	</if>
+      	<if test="uploadDwnldModeCd != null and uploadDwnldModeCd !=''" >
+        	#{uploadDwnldModeCd,jdbcType=VARCHAR},
+      	</if>
+      	<if test="ftpPrtnum != null and ftpPrtnum !=''" >
+        	#{ftpPrtnum,jdbcType=VARCHAR},
+      	</if>
+      	<if test="ftpUserNm != null and ftpPrtnum !=''" >
+        	#{ftpUserNm,jdbcType=VARCHAR},
+      	</if>
+      	<if test="ftpUserPw != null and ftpUserPw !=''" >
+        	#{ftpUserPw,jdbcType=VARCHAR},
+      	</if>
+      	<if test="ftpAls != null and ftpAls !=''" >
+        	#{ftpAls,jdbcType=VARCHAR},
+      	</if>
+      	<if test="rmk != null and rmk !=''" >
+        	#{rmk,jdbcType=VARCHAR},
+      	</if>
+      	<if test="bizSysCode != null and bizSysCode !=''" >
+        	#{bizSysCode,jdbcType=VARCHAR},
+      	</if>
+      	<if test="crtUserId != null and crtUserId !=''" >
+        	#{crtUserId,jdbcType=VARCHAR},
+      	</if>
+      	<if test="crtTime != null" >
+        	#{crtTime,jdbcType=TIMESTAMP},
+      	</if>
+      	<if test="crtAppSysId != null and crtAppSysId !=''" >
+        	#{crtAppSysId,jdbcType=VARCHAR},
+      	</if>
+      	<if test="cacheTypeCd != null and cacheTypeCd !=''" >
+        	#{cacheTypeCd,jdbcType=VARCHAR},
+      	</if>
+      	<if test="validFlag != null and validFlag !=''" >
+        	#{validFlag,jdbcType=VARCHAR},
+      	</if>
+      	<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''" >
+        	#{cacheDataTypeCd,jdbcType=VARCHAR},
+      	</if>
+      	<if test="pushAlertFlag != null and pushAlertFlag !=''" >
+        	#{pushAlertFlag,jdbcType=VARCHAR},
+      	</if>
+      	<if test="grpCacheKeyVal != null and grpCacheKeyVal !=''" >
+        	#{grpCacheKeyVal,jdbcType=VARCHAR},
+      	</if>
+      	<if test="alsCacheKeyVal != null and alsCacheKeyVal !=''" >
+        	#{alsCacheKeyVal,jdbcType=VARCHAR},
+      	</if>
+    </trim>
+  </insert>
+  <update id="updateRnfsCfg" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
+    update t_op_rnfs_cfg
+    <set> 
+    	<if test="rnfsGrpNm != null">
+    		RNFS_GRP_NM = #{rnfsGrpNm,jdbcType=VARCHAR},
+    	</if>
+    	<if test="rootPath != null">
+    		ROOT_PATH = #{rootPath,jdbcType=VARCHAR},
+    	</if>
+    	<if test="rnfsAddrPrtnum != null">
+    		RNFS_ADDR_PRTNUM = #{rnfsAddrPrtnum,jdbcType=VARCHAR},
+    	</if>
+    	<if test="uploadDwnldModeCd != null">
+    		UPLOAD_DWNLD_MODE_CD = #{uploadDwnldModeCd,jdbcType=VARCHAR},
+    	</if>
+    	<if test="ftpPrtnum != null">
+    		FTP_PRTNUM = #{ftpPrtnum,jdbcType=VARCHAR},
+    	</if>
+    	<if test="ftpUserNm != null">
+    		FTP_USER_NM = #{ftpUserNm,jdbcType=VARCHAR},
+    	</if>
+    	<if test="ftpUserPw != null">
+    		FTP_USER_PW = #{ftpUserPw,jdbcType=VARCHAR},
+    	</if>
+    	<if test="ftpAls != null">
+    		FTP_ALS = #{ftpAls,jdbcType=VARCHAR},
+    	</if>
+    	<if test="rmk != null">
+    		RMK = #{rmk,jdbcType=VARCHAR},
+    	</if>
+    	<if test="bizSysCode != null">
+    		BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR},
+    	</if>
+    	<if test="modfUserId != null">
+    		MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
+    	</if>
+    	<if test="modfTime != null">
+    		MODF_TIME = #{modfTime,jdbcType=TIMESTAMP},
+    	</if>
+    	<if test="modfAppSysId != null">
+    		MODF_APP_SYS_ID = #{modfAppSysId,jdbcType=VARCHAR},
+    	</if>
+    	<if test="cacheTypeCd != null">
+    		CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
+    	</if>
+    	<if test="validFlag != null">
+    		VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+    	</if>
+    	<if test="cacheDataTypeCd != null">
+    		CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR},
+    	</if>
+    	<if test="pushAlertFlag != null">
+    		PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR},
+    	</if>
+    	<if test="grpCacheKeyVal !=null and grpCacheKeyVal !=''">
+	   		GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR},
+	    </if>
+	    <if test="alsCacheKeyVal !=null and alsCacheKeyVal !=''">
+	    	ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+	    </if>
+    </set>
+    <where>
+    <if test="configId !=null and configId !=''">
+		CONFIG_ID = #{configId,jdbcType=BIGINT}
+	</if>
+	<if test="grpCacheKeyVal !=null and grpCacheKeyVal !=''">
+   		and GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR}
+    </if>
+    <if test="alsCacheKeyVal !=null and alsCacheKeyVal !=''">
+    	and ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+    </if>
+	</where>
+  </update>
+  <select id="getRnfsCfg" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
+    select CONFIG_ID, RNFS_GRP_NM, ROOT_PATH, RNFS_ADDR_PRTNUM, UPLOAD_DWNLD_MODE_CD, 
+    FTP_PRTNUM, FTP_USER_NM, FTP_USER_PW, FTP_ALS, RMK, BIZ_SYS_CODE, CRT_USER_ID, 
+    CRT_TIME, CRT_APP_SYS_ID, MODF_USER_ID, MODF_TIME, MODF_APP_SYS_ID, CACHE_TYPE_CD, 
+    VALID_FLAG, CACHE_DATA_TYPE_CD, PUSH_ALERT_FLAG, GRP_CACHE_KEY_VAL, ALS_CACHE_KEY_VAL
+    from t_op_rnfs_cfg
+    <where>
+    <if test="rnfsGrpNm!=null and nfsGrpNm!=''">
+    	RNFS_GRP_NM = #{nfsGrpNm,jdbcType=VARCHAR}
+    </if>
+    <if test="rootPath!=null and rootPath!=''">
+    	and ROOT_PATH = #{rootPath,jdbcType=VARCHAR}
+    </if>
+    <if test="rnfsAddrPrtnum!=null and rnfsAddrPrtnum!=''">
+    	and RNFS_ADDR_PRTNUM = #{rnfsAddrPrtnum,jdbcType=VARCHAR}
+    </if>
+    <if test="uploadDwnldModeCd!=null and uploadDwnldModeCd!=''">
+    	and UPLOAD_DWNLD_MODE_CD = #{uploadDwnldModeCd,jdbcType=VARCHAR}
+    </if>
+    <if test="ftpPrtnum!=null and ftpPrtnum!=''">
+    	and FTP_PRTNUM = #{ftpPrtnum,jdbcType=VARCHAR}
+    </if>
+    <if test="ftpUserNm!=null and ftpUserNm!=''">
+    	and FTP_USER_NM = #{ftpUserNm,jdbcType=VARCHAR}
+    </if>
+    <if test="ftpUserPw!=null and ftpUserPw!=''">
+    	and FTP_USER_PW = #{ftpUserPw,jdbcType=VARCHAR}
+    </if>
+    <if test="ftpAls!=null and ftpAls!=''">
+    	and FTP_ALS = #{ftpAls,jdbcType=VARCHAR}
+    </if>
+    <if test="rmk!=null and rmk!=''">
+    	and RMK = #{rmk,jdbcType=VARCHAR}
+    </if>
+    <if test="bizSysCode!=null and bizSysCode!=''">
+    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
+    </if>
+    <if test="cacheTypeCd!=null and cacheTypeCd!=''">
+    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
+    </if>
+    <if test="cacheDataTypeCd!=null and cacheDataTypeCd!=''">
+    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
+    </if>
+    <if test="pushAlertFlag!=null and pushAlertFlag!=''">
+    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
+    </if>
+    <if test="grpCacheKeyVal !=null and grpCacheKeyVal !=''">
+   		and GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR}
+    </if>
+    <if test="alsCacheKeyVal !=null and alsCacheKeyVal !=''">
+    	and ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+    </if>
+    and VALID_FLAG = '1'
+    </where> 
+  </select>
+</mapper>

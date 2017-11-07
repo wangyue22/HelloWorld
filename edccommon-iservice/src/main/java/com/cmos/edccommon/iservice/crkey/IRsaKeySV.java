@@ -2,9 +2,7 @@ package com.cmos.edccommon.iservice.crkey;
 
 import java.util.List;
 
-import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
-import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
-import com.cmos.edccommon.beans.crkey.RsaKeyInDTO;
+import com.cmos.edccommon.beans.crkey.RsaKeyDO;
 
 /**
  * 根据手机号得到对应的省端编码
@@ -12,7 +10,7 @@ import com.cmos.edccommon.beans.crkey.RsaKeyInDTO;
  * @author xdx
  *
  */
-public interface IKeyInfoSV {
+public interface IRsaKeySV {
 
 
     /**
@@ -21,37 +19,37 @@ public interface IKeyInfoSV {
      * @throws Exception
      * @date 2017-10-17 17:00:00
      */
-    public  CoRsaKeyDO getRsaKey(KeyInfoDTO inParam);
+    public RsaKeyDO getRsaKeyByDto(RsaKeyDO inParam);
     /**
      * 获取初始化缓存数据
      * @param cacheTypeCd
      * @param cacheDataTypeCd
      * @return
      */
-    List<CoRsaKeyDO> getKeyByType(String cacheTypeCd, String cacheDataTypeCd);
+    List<RsaKeyDO> getKeyByType(String cacheTypeCd, String cacheDataTypeCd);
 
     /**查询db密钥
      * @param dto
      * @return
      */
-    public List<CoRsaKeyDO> getRsaKey(RsaKeyInDTO dto);
+    public List<RsaKeyDO> getRsaKey(RsaKeyDO rsaKey);
 
     /**新增db密钥
      * @param dto
      */
-    public void insertRsaKey(RsaKeyInDTO dto);
+    public void saveRsaKey(RsaKeyDO rsaKey);
 
     /**删除db密钥
      * @param dto
      */
-    public void deleteRsaKey(RsaKeyInDTO dto);
+    public void deleteRsaKey(RsaKeyDO rsaKey);
 
     /**更新db密钥
      * @param dto
      */
-    public void updateRsaKey(RsaKeyInDTO dto);
+    public void updateRsaKey(RsaKeyDO rsaKey);
     /**
      * 根据数据库key 获取秘钥
      */
-    CoRsaKeyDO getKeyByCacheKey(String cacheKeyVal);
+    RsaKeyDO getKeyByCacheKey(String cacheKeyVal);
 }

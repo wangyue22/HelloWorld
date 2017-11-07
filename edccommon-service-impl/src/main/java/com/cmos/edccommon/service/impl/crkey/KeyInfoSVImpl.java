@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
-import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
-import com.cmos.edccommon.beans.crkey.RsaKeyInDTO;
-import com.cmos.edccommon.dao.crkey.CoRsaKeyDAO;
-import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
+import com.cmos.edccommon.beans.crkey.RsaKeyDO;
+import com.cmos.edccommon.dao.crkey.RsaKeyDAO;
+import com.cmos.edccommon.iservice.crkey.IRsaKeySV;
 
 /**
  * 根据请求源编码，秘钥类型，和省编码获取秘钥
@@ -21,9 +19,9 @@ import com.cmos.edccommon.iservice.crkey.IKeyInfoSV;
  *
  */
 @Service(group = "edcco")
-public  class KeyInfoSVImpl implements  IKeyInfoSV {
+public  class KeyInfoSVImpl implements  IRsaKeySV {
     @Autowired
-    private CoRsaKeyDAO keyDAO;
+    private RsaKeyDAO keyDAO;
 
     Logger logger = LoggerFactory.getActionLog(KeyInfoSVImpl.class);
 
@@ -31,41 +29,41 @@ public  class KeyInfoSVImpl implements  IKeyInfoSV {
      * 获取RSA秘钥
      */
     @Override
-    public CoRsaKeyDO getRsaKey(KeyInfoDTO inParam) {
+    public RsaKeyDO getRsaKeyByDto(RsaKeyDO inParam) {
 
-        CoRsaKeyDO result = keyDAO.selectKey(inParam);
+        RsaKeyDO result = keyDAO.selectKey(inParam);
         if (result != null) {
             logger.debug("key=" + result.getPrtkey());
         }
         return result;
     }
     @Override
-    public List<CoRsaKeyDO> getKeyByType(String cacheTypeCd, String cacheDataTypeCd) {
+    public List<RsaKeyDO> getKeyByType(String cacheTypeCd, String cacheDataTypeCd) {
         return keyDAO.getKeyByType(cacheTypeCd,cacheDataTypeCd);
     }
 
     @Override
-    public List<CoRsaKeyDO> getRsaKey(RsaKeyInDTO dto) {
-        return keyDAO.select(dto);
+    public List<RsaKeyDO> getRsaKey(RsaKeyDO rsaKey) {
+        return keyDAO.getRsaKey(rsaKey);
     }
 
     @Override
-    public void insertRsaKey(RsaKeyInDTO dto) {
-        keyDAO.insert(dto);
+    public void saveRsaKey(RsaKeyDO rsaKey) {
+        keyDAO.saveRsaKey(rsaKey);
     }
 
     @Override
-    public void deleteRsaKey(RsaKeyInDTO dto) {
-        keyDAO.delete(dto);
+    public void deleteRsaKey(RsaKeyDO rsaKey) {
+        keyDAO.deleteRsaKey(rsaKey);
     }
 
     @Override
-    public void updateRsaKey(RsaKeyInDTO dto) {
-        keyDAO.update(dto);
+    public void updateRsaKey(RsaKeyDO rsaKey) {
+        keyDAO.updateRsaKey(rsaKey);
     }
 
     @Override
-    public CoRsaKeyDO getKeyByCacheKey(String cacheKeyVal) {
+    public RsaKeyDO getKeyByCacheKey(String cacheKeyVal) {
         return keyDAO.getKeyByCacheKey(cacheKeyVal);
     }
 

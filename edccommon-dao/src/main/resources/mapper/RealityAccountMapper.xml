@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.cmos.edccommon.dao.realityAccount.TOpRealityAccountDAO" >
-  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO" >
+<mapper namespace="com.cmos.edccommon.dao.realityAccount.RealityAccountDAO" >
+  <resultMap id="BaseResultMap" type="com.cmos.edccommon.beans.realityAccount.RealityAccountDO" >
     <id column="REAL_ACCT_ID" property="realAcctId" jdbcType="BIGINT" />
     <result column="REQST_SRC_CODE" property="reqstSrcCode" jdbcType="VARCHAR" />
     <result column="REQST_SRC_NM" property="reqstSrcNm" jdbcType="VARCHAR" />
@@ -32,7 +32,7 @@
     delete from t_op_reality_account
     where REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
   </delete>
-  <update id="updateByPrimaryKey" parameterType="com.cmos.edccommon.beans.realityAccount.TOpRealityAccountDO" >
+  <update id="updateByPrimaryKey" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO" >
     update t_op_reality_account
     set REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR},
       REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR},
@@ -80,7 +80,7 @@
 		from t_op_reality_account
 		where CACHE_KEY_VAL =#{cacheKeyVal,jdbcType=VARCHAR}
 	</select>
-  <select id="select" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
+  <select id="getRealityAccount" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO">
   	select REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, USER_NM, PW, AES_KEY, DES_KEY, 
     INTF_PRIV_CODE, VALID_FLAG, CACHE_TYPE_CD, BIZ_SYS_CODE, CRT_USER_ID, CRT_TIME, CRT_APP_SYS_ID, 
     MODF_USER_ID, MODIFY_TIME, MODIFY_APP_SYS_ID, CACHE_DATA_TYPE_CD, PUSH_ALERT_FLAG,CACHE_KEY_VAL
@@ -128,110 +128,51 @@
     and VALID_FLAG = '1'
     </where> 
   </select>
-  <insert id="insert" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
+  <insert id="saveRealityAccount" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO">
   	insert into t_op_reality_account
-  	<trim prefix="(" suffix=")" suffixOverrides="," >
-  		<if test="reqstSrcCode != null and reqstSrcCode !=''">
-  			REQST_SRC_CODE,
-  		</if>
-  		<if test="reqstSrcNm != null and reqstSrcNm !=''">
-  			REQST_SRC_NM,
-  		</if>
-  		<if test="userNm != null and userNm !=''">
-  			USER_NM,
-  		</if>
-  		<if test="pw != null and pw !=''">
-  			PW,
-  		</if>
-  		<if test="aesKey != null and aesKey !=''">
-  			AES_KEY,
-  		</if>
-  		<if test="desKey != null and desKey !=''">
-  			DES_KEY,
-  		</if>
-  		<if test="intfPrivCode != null and intfPrivCode !=''">
-  			INTF_PRIV_CODE,
-  		</if>
-  		<if test="validFlag != null and validFlag !=''">
-  			VALID_FLAG,
-  		</if>
-  		<if test="cacheTypeCd != null and cacheTypeCd !=''">
-  			CACHE_TYPE_CD,
-  		</if>
-  		<if test="bizSysCode != null and bizSysCode !=''">
-  			BIZ_SYS_CODE,
-  		</if>
-  		<if test="crtUserId != null and crtUserId !=''">
-  			CRT_USER_ID,
-  		</if>
-  		<if test="crtTime != null and crtTime !=''">
-  			CRT_TIME,
-  		</if>
-  		<if test="crtAppSysId != null and crtAppSysId !=''">
-  			CRT_APP_SYS_ID,
-  		</if>
-		<if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-			CACHE_DATA_TYPE_CD,
-  		</if>
-  		<if test="pushAlertFlag != null and pushAlertFlag !=''">
-  			PUSH_ALERT_FLAG,
-  		</if>
-  		<if test="cacheKeyVal != null and cacheKeyVal !=''">
-  			CACHE_KEY_VAL
-  		</if>
-  	</trim>
-  	<trim prefix="values (" suffix=")" suffixOverrides=",">
-  		<if test="reqstSrcCode != null and reqstSrcCode !=''">
-    		#{reqstSrcCode,jdbcType=VARCHAR},
-    	</if>
-	    <if test="reqstSrcNm != null and reqstSrcNm !=''">
-	    	#{reqstSrcNm,jdbcType=VARCHAR},
-	    </if>
-	    <if test="userNm != null and userNm !=''">
-	    	#{userNm,jdbcType=VARCHAR},
-	    </if>
-	    <if test="pw != null and pw !=''">
-	    	#{pw,jdbcType=VARCHAR},
-	    </if>
-	    <if test="aesKey != null and aesKey !=''">
-	   		#{aesKey,jdbcType=VARCHAR},
-	    </if>
-	    <if test="desKey != null and desKey !=''">
-	    	#{desKey,jdbcType=VARCHAR},
-	    </if>
-	    <if test="intfPrivCode != null and intfPrivCode !=''">
-	    	#{intfPrivCode,jdbcType=VARCHAR},
-	    </if>
-	    <if test="validFlag != null and validFlag !=''">
-	    	#{validFlag,jdbcType=VARCHAR},
-	    </if>
-	    <if test="cacheTypeCd != null and cacheTypeCd !=''">
-	    	#{cacheTypeCd,jdbcType=VARCHAR},
-	    </if>
-	    <if test="bizSysCode != null and bizSysCode !=''">
-	    	#{bizSysCode,jdbcType=VARCHAR},
-	    </if>
-	    <if test="crtUserId != null and crtUserId !=''">
-	    	#{crtUserId,jdbcType=VARCHAR},
-	    </if>
-	    <if test="crtTime != null and crtTime !=''">
-	    	#{crtTime,jdbcType=TIMESTAMP},
-	    </if>
-	    <if test="crtAppSysId != null and crtAppSysId !=''">
-	    	#{crtAppSysId,jdbcType=VARCHAR},
-	    </if>
-   	    <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-	    	#{cacheDataTypeCd,jdbcType=VARCHAR},
-	    </if>
-	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
-	    	#{pushAlertFlag,jdbcType=VARCHAR},
-	    </if>
-	    <if test="cacheKeyVal != null and cacheKeyVal !=''">
-	    	#{cacheKeyVal,jdbcType=VARCHAR}
-	    </if>
-  	</trim>
+  	(REQST_SRC_CODE,
+		REQST_SRC_NM,
+		USER_NM,
+		PW,
+		AES_KEY,
+		DES_KEY,
+		INTF_PRIV_CODE,
+		VALID_FLAG,
+		CACHE_TYPE_CD,
+		BIZ_SYS_CODE,
+		CRT_USER_ID,
+		CRT_TIME,
+		CRT_APP_SYS_ID,
+		MODF_USER_ID,
+		MODIFY_TIME,
+		MODIFY_APP_SYS_ID,
+		CACHE_DATA_TYPE_CD,
+		PUSH_ALERT_FLAG,
+		CACHE_KEY_VAL
+  	)
+  	values(
+  	    #{reqstSrcCode,jdbcType=VARCHAR},
+  	    #{reqstSrcNm,jdbcType=VARCHAR},
+  	    #{userNm,jdbcType=VARCHAR},
+  	    #{pw,jdbcType=VARCHAR},
+  	    #{aesKey,jdbcType=VARCHAR},
+  	    #{desKey,jdbcType=VARCHAR},
+  	    #{intfPrivCode,jdbcType=VARCHAR},
+  	    #{validFlag,jdbcType=VARCHAR},
+  	    #{cacheTypeCd,jdbcType=VARCHAR},
+  	    #{bizSysCode,jdbcType=VARCHAR},
+  	    #{crtUserId,jdbcType=VARCHAR},
+  	    #{crtTime,jdbcType=TIMESTAMP},
+  	    #{crtAppSysId,jdbcType=VARCHAR},
+  	    #{modfUserId,jdbcType=VARCHAR},
+  	    #{modifyTime,jdbcType=TIMESTAMP},
+  	    #{modifyAppSysId,jdbcType=VARCHAR},
+  	    #{cacheDataTypeCd,jdbcType=VARCHAR},
+  	    #{pushAlertFlag,jdbcType=VARCHAR},
+  	    #{cacheKeyVal,jdbcType=VARCHAR}
+  	)
   </insert>
-  <delete id="delete" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
+  <delete id="deleteRealityAccount" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO">
   	update t_op_reality_account
   	set VALID_FLAG = '0'
   	and MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR}
@@ -279,7 +220,7 @@
 	    </if>
     </where> 
   </delete>
-  <update id="update" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountInDTO">
+  <update id="updateRealityAccount" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO">
   	update t_op_reality_account
   	<set>
   		<if test="reqstSrcCode != null and reqstSrcCode !=''">
@@ -303,6 +244,9 @@
 	    <if test="intfPrivCode != null and intfPrivCode !=''">
 	    	INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR},
 	    </if>
+	    <if test="validFlag != null and validFlag !=''">
+	    	VALID_FLAG = #{validFlag,jdbcType=VARCHAR},
+	    </if>
 	    <if test="cacheTypeCd != null and cacheTypeCd !=''">
 	    	CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR},
 	    </if>
@@ -312,7 +256,7 @@
 	    <if test="modfUserId != null and modfUserId !=''">
 	    	MODF_USER_ID = #{modfUserId,jdbcType=VARCHAR},
 	    </if>
-	    <if test="modifyTime != null and modifyTime !=''">
+	    <if test="modifyTime != null">
 	    	MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
 	    </if>
 	    <if test="modifyAppSysId != null and modifyAppSysId !=''">
@@ -331,39 +275,6 @@
   	<where>
   	    <if test="realAcctId != null and realAcctId !=''">
     		REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
-	    </if>
-	    <if test="reqstSrcCode != null and reqstSrcCode !=''">
-	    	and REQST_SRC_CODE = #{reqstSrcCode,jdbcType=VARCHAR}
-	    </if>
-	    <if test="reqstSrcNm != null and reqstSrcNm !=''">
-	    	and REQST_SRC_NM = #{reqstSrcNm,jdbcType=VARCHAR}
-	    </if>
-	    <if test="userNm != null and userNm !=''">
-	    	and USER_NM = #{userNm,jdbcType=VARCHAR}
-	    </if>
-	    <if test="pw != null and pw !=''">
-	    	and PW = #{pw,jdbcType=VARCHAR}
-	    </if>
-	    <if test="aesKey != null and aesKey !=''">
-	    	and AES_KEY = #{aesKey,jdbcType=VARCHAR}
-	    </if>
-	    <if test="desKey != null and desKey !=''">
-	    	and DES_KEY = #{desKey,jdbcType=VARCHAR}
-	    </if>
-	    <if test="intfPrivCode != null and intfPrivCode !=''">
-	    	and INTF_PRIV_CODE = #{intfPrivCode,jdbcType=VARCHAR}
-	    </if>
-	    <if test="cacheTypeCd != null and cacheTypeCd !=''">
-	    	and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
-	    </if>
-	    <if test="bizSysCode != null and bizSysCode !=''">
-	    	and BIZ_SYS_CODE = #{bizSysCode,jdbcType=VARCHAR}
-	    </if>
-	    <if test="cacheDataTypeCd != null and cacheDataTypeCd !=''">
-	    	and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
-	    </if>
-	    <if test="pushAlertFlag != null and pushAlertFlag !=''">
-	    	and PUSH_ALERT_FLAG = #{pushAlertFlag,jdbcType=VARCHAR}
 	    </if>
 	    <if test="cacheKeyVal != null and cacheKeyVal !=''">
 	    	and CACHE_KEY_VAL = #{cacheKeyVal,jdbcType=VARCHAR}

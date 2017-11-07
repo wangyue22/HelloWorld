@@ -7,7 +7,7 @@ import com.cmos.common.bean.GenericBean;
 public class RnfsCfgOutDTO extends GenericBean {
     private static final long serialVersionUID = 1L;
 
-    private List<TOpRnfsCfgDO> beans;
+    private List<RnfsCfgDO> beans;
 
     private String returnCode;
 
@@ -30,11 +30,11 @@ public class RnfsCfgOutDTO extends GenericBean {
         this.returnMessage = returnMessage;
     }
 
-    public List<TOpRnfsCfgDO> getBeans() {
+    public List<RnfsCfgDO> getBeans() {
         return beans;
     }
 
-    public void setBeans(List<TOpRnfsCfgDO> beans) {
+    public void setBeans(List<RnfsCfgDO> beans) {
         this.beans = beans;
     }
 }

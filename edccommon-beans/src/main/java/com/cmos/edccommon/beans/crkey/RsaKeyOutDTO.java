@@ -7,17 +7,17 @@ import com.cmos.common.bean.GenericBean;
 public class RsaKeyOutDTO extends GenericBean {
     private static final long serialVersionUID = 1L;
 
-    private List<CoRsaKeyDO> beans;
+    private List<RsaKeyDO> beans;
 
     private String returnCode;
 
     private String returnMessage;
 
-    public List<CoRsaKeyDO> getBeans() {
+    public List<RsaKeyDO> getBeans() {
         return beans;
     }
 
-    public void setBeans(List<CoRsaKeyDO> beans) {
+    public void setBeans(List<RsaKeyDO> beans) {
         this.beans = beans;
     }
 
