@@ -49,7 +49,7 @@ public class CacheFatctoryUtil {
     * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
     * @return String 表名字
     */
-    public String getStringFromDB (String key) throws GeneralException{
+    public String getStringFromDB (String key) {
     	 if(StringUtils.isEmpty(key)){
     		 logger.error("传入key值不能为空");
     		 return "";
@@ -81,7 +81,7 @@ public class CacheFatctoryUtil {
     * @param Key ，type 解析key值，并根据key值从数据库中捞取数据（type是数据类型，acms，开关表是String类型的，rnsf表有Map，和List类型）
     * @return String 表名字
     */
-    public Map getMapFromDB (String key) throws GeneralException{
+    public Map getMapFromDB (String key){
     	Map<String, String> rnfsData = new HashMap<String, String>(); 
 
     	if(StringUtils.isEmpty(key)){
@@ -139,7 +139,7 @@ public class CacheFatctoryUtil {
     * @return List 表名字
     */
     @SuppressWarnings("unchecked")
-	public List getListFromDB(String key) throws GeneralException{
+	public List getListFromDB(String key){
         List resultList = new ArrayList();
         if(StringUtils.isEmpty(key)){
     		logger.error("传入key值不能为空");
@@ -174,12 +174,12 @@ public class CacheFatctoryUtil {
      *
      * @param Key 从JVM缓存中获取数据
      * @return String 缓存数据
-     * @throws GeneralException
      */
-    public String getJVMString(String cacheKey) throws GeneralException {
+    public String getJVMString(String cacheKey){
         String resultString="";
         if(StringUtils.isEmpty(cacheKey)){
-        	throw new GeneralException("传入值不可为空");
+        	logger.error("传入key不符合规范");
+	   		return "";
         }
         
         try{
@@ -198,9 +198,8 @@ public class CacheFatctoryUtil {
     *
     * @param Key 从redis缓存中获取数据
     * @return String 缓存数据
-    * @throws GeneralException
     */
-    public String getRedisString(String cacheKey) throws GeneralException {
+    public String getRedisString(String cacheKey){
        String resultString="";
        try{
            resultString = redisCacheDataUtil.getStringCache(cacheKey);
@@ -214,9 +213,8 @@ public class CacheFatctoryUtil {
     *
     * @param Key 从redis缓存中获取数据
     * @return Map 缓存数据
-    * @throws GeneralException
     */
-    public Map getRedisMap(String cacheKey) throws GeneralException {
+    public Map getRedisMap(String cacheKey){
   	   Map resultMap=new HashMap();
        try{
     	   resultMap = redisCacheDataUtil.getMapCache(cacheKey);
@@ -230,9 +228,8 @@ public class CacheFatctoryUtil {
     *
     * @param Key 从JVM缓存中获取数据
     * @return Map 缓存数据
-    * @throws GeneralException
     */
-	public Map getJVMMap(String cacheKey) throws GeneralException {
+	public Map getJVMMap(String cacheKey){
   	   Map resultMap=new HashMap();
        try{
     	   resultMap = JVMCacheDataUtil.getMapCache(cacheKey);
@@ -250,9 +247,8 @@ public class CacheFatctoryUtil {
     *
     * @param Key 从Redis缓存中获取数据
     * @return List 缓存数据
-    * @throws GeneralException
     */
-	public List getRedisList(String cacheKey) throws GeneralException {
+	public List getRedisList(String cacheKey){
 	    List resultList = new ArrayList();
         try{
         	resultList = redisCacheDataUtil.getListCache(cacheKey);
@@ -266,9 +262,8 @@ public class CacheFatctoryUtil {
     *
     * @param Key 从JVM缓存中获取数据
     * @return List 缓存数据
-    * @throws GeneralException
     */
-	public List getJVMList(String cacheKey) throws GeneralException {
+	public List getJVMList(String cacheKey){
 	    List resultList = new ArrayList();
         try{
         	resultList = JVMCacheDataUtil.getListCache(cacheKey);
@@ -285,54 +280,78 @@ public class CacheFatctoryUtil {
     /**
     * @param inMap 将string对象存入JVM缓存,数据格式为{key ,value}
     * @return boolean  缓存数据
-    * @throws GeneralException
     */
-    public boolean putJVMStringData( Map<String,String> inMap) throws GeneralException {
-        return JVMCacheDataUtil.putStringCache(inMap);
+    public boolean putJVMStringData( Map<String,String> inMap){
+        try {
+			return JVMCacheDataUtil.putStringCache(inMap);
+		} catch (Exception e) {
+            logger.error("存入缓存异常",e);
+			return false;
+		}
     }
     
     /**
     * @param inMap 将string对象存入redis缓存,数据格式为{key ,value}
     * @return Map  缓存数据
-    * @throws GeneralException
     */
-    public boolean putRedisStringData( Map<String,String> inMap) throws GeneralException {
-        return redisCacheDataUtil.putStringCache(inMap);
+    public boolean putRedisStringData( Map<String,String> inMap){
+        try {
+			return redisCacheDataUtil.putStringCache(inMap);
+		} catch (GeneralException e) {
+            logger.error("存入缓存异常",e);
+			return false;
+		}
     }
     
     /**
     * @param inMap 将map 存入JVM缓存 数据格式为{key ,value} 
     * @return boolean
-    * @throws GeneralException
     */
-    public boolean putJVMMapData(Map<String,Map<String,String>> inMap) throws GeneralException {
-        return JVMCacheDataUtil.putMapCache(inMap);
+    public boolean putJVMMapData(Map<String,Map<String,String>> inMap){
+        try {
+			return JVMCacheDataUtil.putMapCache(inMap);
+		} catch (Exception e) {
+            logger.error("存入缓存异常",e);
+            return false;
+		}
     }
     
     /**
     * @param inMap 将map 存入Redis缓存 数据格式为{key ,value} 
     * @return boolean
-    * @throws GeneralException
     */
-    public boolean putRedisMapData(Map<String,Map<String,String>> inMap) throws GeneralException {
-        return redisCacheDataUtil.putMapCache(inMap);
+    public boolean putRedisMapData(Map<String,Map<String,String>> inMap){
+        try {
+			return redisCacheDataUtil.putMapCache(inMap);
+		} catch (Exception e) {
+            logger.error("存入缓存异常",e);
+            return false;
+		}
     }
     
     /**
     * @param inMap 将List存入JVM缓存 数据格式为{key ,value} 
     * @return boolean
-    * @throws GeneralException
     */
-    public boolean putJVMListData(Map<String,List> inMap) throws GeneralException {
-        return JVMCacheDataUtil.putListCache(inMap);
+    public boolean putJVMListData(Map<String,List> inMap){
+        try {
+			return JVMCacheDataUtil.putListCache(inMap);
+		} catch (Exception e) {
+			 logger.error("存入缓存异常",e);
+	         return false;
+		}
     }
     
     /**
     * @param inMap 将List存入Redis缓存 数据格式为{key ,value} 
     * @return boolean
-    * @throws GeneralException
     */
-    public boolean putRedisListData(Map<String,List> inMap) throws GeneralException {
-        return redisCacheDataUtil.putListCache(inMap);
+    public boolean putRedisListData(Map<String,List> inMap){
+        try {
+			return redisCacheDataUtil.putListCache(inMap);
+		} catch (Exception e) {
+			logger.error("存入缓存异常",e);
+            return false;
+		}
     }
 }
