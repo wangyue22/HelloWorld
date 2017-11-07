@@ -8,15 +8,18 @@ import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
 import com.cmos.edccommon.beans.facelive.FaceLiveInDTO;
 import com.cmos.edccommon.utils.Base64;
-import com.cmos.edccommon.utils.BsStaticDataUtil;
-import com.cmos.edccommon.utils.FileUtil;
 import com.cmos.edccommon.utils.HttpUtil;
-import com.cmos.edccommon.utils.IOUtils;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.CacheConsts;
+import com.cmos.edccommon.utils.consts.MqConstants;
+import com.cmos.edccommon.utils.des.MsDesPlus;
+import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
+import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -24,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,13 +41,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/co")
 public class FaceLiveController {
-	private Logger log=LoggerFactory.getActionLog(FaceLiveController.class);
+	@Autowired
+	private CacheFatctoryUtil cacheFactory;
+	
+	@Autowired
+	private FileUpDownUtil fileUpDownUtil;
+	
+	private Logger log = LoggerFactory.getActionLog(FaceLiveController.class);
 	
 	@RequestMapping(value = "/facelive", method = RequestMethod.POST)
-	public EdcCoOutDTO getFaceLive(@RequestBody FaceLiveInDTO inParam ) throws GeneralException {
-		log.info("****************************"+inParam.toString());
-	
-		return faceLive(inParam);
+	public EdcCoOutDTO getFaceLive(@RequestBody FaceLiveInDTO inParam) {
+		EdcCoOutDTO outParam = new EdcCoOutDTO();
+		if (inParam != null) {
+			log.info("****************************" + inParam.getPicRPath());
+		} else {
+			outParam.setReturnCode("2999");
+			outParam.setReturnMessage("参数异常");
+			return outParam;
+		}
+
+		try {
+			outParam = faceLive(inParam);
+		} catch (Exception e) {
+			log.info("静默活体执行失败", e);
+			outParam.setReturnCode("2999");
+			outParam.setReturnMessage(e.getMessage());
+		}
+		return outParam;
 	}	
 	/**
 	 * 静默调用服务
@@ -53,121 +77,128 @@ public class FaceLiveController {
 	 * @throws GeneralException 
 	 */
 	@SuppressWarnings("rawtypes")
-	public EdcCoOutDTO faceLive(FaceLiveInDTO inParam) throws GeneralException {
+	public EdcCoOutDTO faceLive(FaceLiveInDTO inParam) throws GeneralException{
 		EdcCoOutDTO out = new EdcCoOutDTO();
-		out.setReturnCode("0000");//默认调用成功
-		out.setReturnCode("success");//默认调用成功
-		
+		out.setReturnCode("2999");//默认调用不成功
+		out.setReturnMessage("调用静默活体失败");//默认调用不成功		
 		Map<String, String> returnMap = new HashMap<String, String>();
-		Map<String, String> logMap =  new HashMap<String, String>();
-		logMap.put("rspCode", "0000");//默认调用成功
-		logMap.put("rspInfoCntt", "success");//默认调用成功
-		InputStream picR = null;
+		
+		boolean faceLiveFlag = false;
 		String picRStr = null;
+		String picRStrBase64 = null;
 		String resultNum = null;
 		String idntifResult;//识别结果
 		String reqstSrcCode = inParam.getReqstSrcCode();
+		String crkey = inParam.getCrkey();
 		String picRPath = inParam.getPicRPath();
 		String swftno = inParam.getSwftno();
 		String bizTypeCode = inParam.getBizTypeCode();
 		String faceliveScore = inParam.getFaceLiveScore();
 		
-		// 活体检测分省控制开关
-		String provCode = BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "FACE_LIVE_BY_PROVCODE_WORKORDER_NFCNEW", "JVM");
-		if (!provCode.contains("," + reqstSrcCode + ",")) {
-			log.info("    ##########  请求源：" + reqstSrcCode + " 暂未开启活体检测开关，不进行活体检测 #########");
-			out.setReturnCode("2999");
-			out.setReturnCode("暂未开启活体检测服务 ");
-			return out;
-		}
+//		// 活体检测分省控制开关
+//		String provCode = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_BY_PROVCODE);
+////		String provCode = BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "FACE_LIVE_BY_PROVCODE_WORKORDER_NFCNEW", "JVM");
+//		if (StringUtil.isBlank(provCode) || !provCode.contains("," + reqstSrcCode + ",")) {
+//			log.info("    ##########  请求源：" + reqstSrcCode + " 暂未开启活体检测开关，不进行活体检测 #########");
+//			out.setReturnCode("2999");
+//			out.setReturnMessage("暂未开启活体检测服务 ");
+//			return out;
+//		}
 		// 活体检测服务器地址
-		String sendUrl = BsStaticDataUtil.getCodeValue("OL_WEB_FETCH", "FACE_LIVE_URL", "JVM");
+		String sendUrl = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_URL);
+//		String sendUrl = "http://192.168.100.139:8885/api/v2/faceverify/detect";
 		Map<String, String> paraMap = new HashMap<String, String>();
 
 		// 1 获取人像照片
 		try {
-			picR = FileUtil.download(picRPath);
-			picRStr = Base64.encode(IOUtils.toByteArray(picR));
-		} catch (Exception e) {
-			picRStr = null;
-			log.error("人像比对服务下载人像图片异常", e);
-		} finally {
-			if (null != picR) {
-				try {
-					picR.close();
-				} catch (Exception e1) {
-				}
+			picRStr = downloadPic(picRPath);
+			if (StringUtil.isNotEmpty(picRStr)) {
+				MsDesPlus Ms = new MsDesPlus(crkey);
+				String picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串
+				picRStrBase64 = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
 			}
-		}
-		//获取图片为空，直接存表返回
-		if (StringUtil.isEmpty(picRStr)) {
-			log.error("人像照片下载异常");
-			out.setReturnCode("9999");
-			out.setReturnCode("人像照片下载异常");
-			logMap.put("rspCode", "9999");
-			logMap.put("rspInfoCntt", "人像照片下载异常");
-			try{
+		} catch (Exception e) {
+			picRStrBase64 = null;
+			log.error("人像照片解密异常",e);
+		}	
+		
+		Map<String, String> logMap = new HashMap<String, String>();
+		if (StringUtil.isBlank(picRStrBase64)) {
+			out.setReturnCode("2999");
+			out.setReturnMessage("人像照片获取异常");
+			log.error("人像照片为空");
+			// 获取图片为空，直接存表返回
+			logMap .put("rspCode", "2999");
+			logMap.put("rspInfoCntt", "人像照片获取异常");
+			try {
 				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap);
-			}catch(Exception e) {
-				picRStr = null;
+			} catch (Exception e) {
 				log.error("人像比对服务下载人像图片异常", e);
 			}
 			return out;
 		}
+		
 		// 2 调用静默活体检测服务 并比对分值
-		paraMap.put("image", picRStr);
+		paraMap.put("image", picRStrBase64);
 		paraMap.put("face_fields", ",faceliveness");
 		String jsonString = JsonUtil.convertObject2Json(paraMap);
 		log.info("    ##########  静默服务调用  URL：" + sendUrl);
-		log.info("    ##########  静默服务调用  reqjson：" + jsonString);
+		log.info("    ##########  静默服务调用  reqjson大小：" + jsonString.length());
 		String rtnJson = HttpUtil.sendHttpPostEntity(sendUrl, jsonString);
 		
 		//调用成功，将调用响应报文存表
-		logMap.put("backtoMsgCntt", jsonString);
+		logMap.put("backtoMsgCntt", rtnJson);
 		
 		log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
-		Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);
-		if (rtnMap != null && rtnMap.containsKey("result_num")) {
-			resultNum = String.valueOf(rtnMap.get("result_num"));
-		}
-		returnMap.put("faceQty", resultNum);//识别出的人脸数
-		
-		if (StringUtil.isNotEmpty(resultNum) && Integer.parseInt(resultNum) > 0){
-			List resultList = (List) rtnMap.get("result");
-			if (resultList != null && resultList.size() > 0) {
-				Map resultMap = (Map) resultList.get(0);
-				String faceliveness = String.valueOf(resultMap.get("faceliveness"));
-				returnMap.put("faceScore", faceliveness);// 识别出的人脸分值
-
-				float faceScore = Float.parseFloat(faceliveness);
-				//获取默认静默活体检测分值
-				if (StringUtil.isEmpty(faceliveScore)) {
-					faceliveScore = BsStaticDataUtil.getCodeValue("FACE_LIVE", "DEFAULT_SCORE", "JVM");
-				}
-				if (faceScore < Float.parseFloat(faceliveScore)) {
-					log.info("#0000:真人检测失败：未检测到活体");
-					idntifResult = "1";// 识别结果 0为成功，1为失败；
-				}else{
-					idntifResult = "0";// 识别结果 0为成功，1为失败；
-				}
-			}else{
-				idntifResult = "1";// 识别结果 0为成功，1为失败；
-				returnMap.put("faceScore", "不存在");// 识别出的人脸分值
+		if (rtnJson != null) {
+			Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);
+			if (rtnMap != null && rtnMap.containsKey("result_num")) {
+				resultNum = String.valueOf(rtnMap.get("result_num"));
 			}
-		} else {
-			idntifResult = "1";// 识别结果 0为成功，1为失败；
-			log.info("2999:活体检测调用服务超时");
-		}
-		returnMap.put("idntifResult", idntifResult);// 识别出的结果
-		out.setBean(returnMap);
-		// 3 保存调用记录
-		try{
-			logMap.put("faceliveScore", faceliveScore);
-			logMap.putAll(returnMap);
-			sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap);
-		}catch(Exception e) {
-			picRStr = null;
-			log.error("静默活体发送消息队列异常", e);
+			returnMap.put("faceQty", resultNum);// 识别出的人脸数
+
+			if (StringUtil.isNotBlank(resultNum) && Integer.parseInt(resultNum) > 0) {
+				List resultList = (List) rtnMap.get("result");
+				if (resultList != null && resultList.size() > 0) {
+					Map resultMap = (Map) resultList.get(0);
+					String faceliveness = String.valueOf(resultMap.get("faceliveness"));
+					returnMap.put("faceScore", faceliveness);// 识别出的人脸分值
+
+					float faceScore = Float.parseFloat(faceliveness);
+					// 获取默认静默活体检测分值
+					if (StringUtil.isEmpty(faceliveScore)) {
+						faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
+
+						if (StringUtil.isEmpty(faceliveScore)) {
+							faceliveScore = "90";
+						}
+					}
+					if (faceScore < Float.parseFloat(faceliveScore)) {
+						log.info("#0000:真人检测失败：未检测到活体");
+						idntifResult = "1";// 识别结果 0为成功，1为失败；
+					} else {
+						idntifResult = "0";// 识别结果 0为成功，1为失败；
+					}
+				} else {
+					idntifResult = "1";// 识别结果 0为成功，1为失败；
+					returnMap.put("faceScore", "不存在");// 识别出的人脸分值
+				}
+			} else {
+				idntifResult = "1";// 识别结果 0为成功，1为失败；
+				log.info("2999:活体检测调用服务超时");
+			}
+			returnMap.put("idntifResult", idntifResult);// 识别出的结果
+			out.setReturnCode("0000");//默认调用成功
+			out.setReturnMessage("success");//默认调用成功	
+			out.setBean(returnMap);
+			// 3 保存调用记录
+			try {
+				logMap.put("faceliveScore", faceliveScore);
+				logMap.putAll(returnMap);
+				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap);
+			} catch (Exception e) {
+				log.error("静默活体发送消息队列异常", e);
+			}
 		}
 		return out; 
 	}
@@ -179,7 +210,7 @@ public class FaceLiveController {
 	 */
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String,String> logMap) throws MsgException, JsonFormatException{
 		String Msg = saveFaceLiveInfo(requestSource, busiType, transactionId, logMap);
-		MsgProducerClient.getRocketMQProducer().send("EDCCO_FACELIVE", Msg);
+		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 	}
 	
 	/**
@@ -207,5 +238,30 @@ public class FaceLiveController {
 		
 		String resultStr = infoBean.toJSON().toString();
 		return resultStr;
+	}
+	
+	/**
+	 * 下载业务图片
+	 * @param picPath
+	 * @return
+	 */
+	private String downloadPic(String picPath) {
+		InputStream picInputStream = null;
+		String picStr = null;
+		try {
+			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
+		} catch (Exception e) {
+			picStr = null;
+			log.error("人像比对服务下载图片异常", e);
+		} finally {
+			if (null != picInputStream) {
+				try {
+					picInputStream.close();
+				} catch (IOException e1) {
+					log.error("人像比对服务关闭图片流异常", e1);
+				}
+			}
+		}
+		return picStr;
 	}
 }

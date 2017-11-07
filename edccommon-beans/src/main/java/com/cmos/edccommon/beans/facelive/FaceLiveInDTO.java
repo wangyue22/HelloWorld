@@ -29,10 +29,18 @@ public class FaceLiveInDTO extends GenericBean implements UserResult {
 	 * 人像图片路径
 	 */
 	private String picRPath;
+	
+	/**
+	 * 人像图片解密秘钥
+	 */
+	private String crkey;
+	
 	/**
 	 * 静默活体判定分值
 	 */
 	private String faceLiveScore;
+	
+	
 	
 	public String getReqstSrcCode() {
 		return reqstSrcCode;
@@ -63,6 +71,12 @@ public class FaceLiveInDTO extends GenericBean implements UserResult {
 	}
 	public void setFaceLiveScore(String faceLiveScore) {
 		this.faceLiveScore = faceLiveScore;
+	}
+	public String getCrkey() {
+		return crkey;
+	}
+	public void setCrkey(String crkey) {
+		this.crkey = crkey;
 	}
 
 }

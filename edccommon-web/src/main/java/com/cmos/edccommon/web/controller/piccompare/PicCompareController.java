@@ -23,12 +23,12 @@ import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
 import com.cmos.edccommon.beans.piccompare.PicCompareInDTO;
 import com.cmos.edccommon.beans.piccompare.PicDoubleCompareInDTO;
 import com.cmos.edccommon.utils.Base64;
-import com.cmos.edccommon.utils.BsStaticDataUtil;
 import com.cmos.edccommon.utils.HttpUtil;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.CoConstants;
+import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
@@ -72,38 +72,6 @@ public class PicCompareController {
 		log.info("****************************"+inParam);
 	
 		return picCompare(inParam);
-	}
-
-	@RequestMapping(value = "/testSendMq", method = RequestMethod.POST)
-	public EdcCoOutDTO testSendMq(@RequestBody PicCompareInDTO inParam ) {
-		log.info("****************************"+inParam);
-		EdcCoOutDTO outParam = new EdcCoOutDTO();
-		String swftno = inParam.getSwftno();
-		String reqstSrcCode = inParam.getReqstSrcCode();
-		String bizTypeCode = inParam.getBizTypeCode();
-
-		String picRPath = inParam.getPhotoPath();
-		String picTPath = inParam.getPicTPath();
-		String picRType = inParam.getPhotoType();
-		String picTType = inParam.getPicTType();
-		
-		try {
-			Map<String, Object> logMap = new HashMap<String, Object>();
-			// 发送消息队列的内容
-			logMap.put("picRPath", picRPath);
-			logMap.put("picTPath", picTPath);
-			logMap.put("picRType", picRType);
-			logMap.put("picTPath", picTType);
-			EdcCoOutDTO out = new EdcCoOutDTO();
-			out.setReturnCode("0");
-			out.setReturnMessage("TEST_MQ");
-			sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
-		} catch (Exception e) {
-			log.error("MQ保存消费信息出错");
-			outParam.setReturnCode("2999");
-		}
-		outParam.setReturnCode("0000");
-		return outParam;
 	}
 	
 	/**
@@ -324,7 +292,7 @@ public class PicCompareController {
 				logMap.put("picTPath", picTType);
 				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
 			} catch (Exception e) {
-				log.error("MQ保存消费信息出错");
+				log.error("MQ保存消费信息出错", e );
 			}
 		}
 		return out;
@@ -704,7 +672,7 @@ public class PicCompareController {
 				// 显示对比分数
 				String score = returnInfo.get("similarity");
 				if (StringUtil.isEmpty(rangeStr)) {
-					rangeStr = BsStaticDataUtil.getCodeValue("CHECK_PERSON_CRD_SCORE_RANGE", "DEFAULT_VALUE", "JVM");
+					rangeStr = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
 				}
 				verifyState = checkInRange(rangeStr, score, "0", "1");// 是否是同一人// 0是 1否
 				returnMap.put("similarityScore", score);
@@ -838,8 +806,7 @@ public class PicCompareController {
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String, Object> compareResult,
 			EdcCoOutDTO out) throws MsgException, JsonFormatException {
 		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
-		MsgProducerClient.getRocketMQProducer().send(CoConstants.MQ_TOPIC.PIC_COMPARE_TEST, Msg);
-		MsgProducerClient.getRocketMQProducer().send(CoConstants.MQ_TOPIC.PIC_COMPARE, Msg);
+		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 	}
 
 }
