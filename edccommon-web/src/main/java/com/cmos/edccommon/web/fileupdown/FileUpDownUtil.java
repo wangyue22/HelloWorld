@@ -124,7 +124,11 @@ public class FileUpDownUtil {
             // 如果是rnfs，则根据路径获取文件服务器地址并上传
             Map<String, String> map = getGztRnfsServerNameByPath(path);
             String rnfsServerName = map.get("rnfsServerName");
+            String lastServerName = map.get("lastServerName");
             inputByte = downGztFileByRnfs(path, rnfsServerName);
+            if(inputByte==null && StringUtil.isNotBlank(lastServerName)){
+                inputByte = downGztFileByRnfs(path, lastServerName);
+            }
         }
         if(inputByte == null){
             // 如果仍然下载失败，使用default节点下载
