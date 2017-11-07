@@ -2,7 +2,6 @@ package com.cmos.edccommon.web.cache;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.crkey.CoRsaKeyDO;
@@ -83,7 +82,6 @@ public class CacheFatctoryUtil {
     */
     public Map getMapFromDB (String key){
     	Map<String, String> rnfsData = new HashMap<String, String>(); 
-
     	if(StringUtils.isEmpty(key)){
     		logger.error("传入key值不能为空");
 	        return rnfsData;
@@ -106,6 +104,7 @@ public class CacheFatctoryUtil {
 		  	        	rnfsData.put("ftpUserPw", opRnfsDo.getFtpUserPw());
 		  	        	rnfsData.put("ftpAls", opRnfsDo.getFtpAls());
 	  	            }
+	  	        	return rnfsData;
 	  	        case "REALACC" :
                     TOpRealityAccountDO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
 	  	        	if(null != realityDto){
@@ -297,7 +296,7 @@ public class CacheFatctoryUtil {
     public boolean putRedisStringData( Map<String,String> inMap){
         try {
 			return redisCacheDataUtil.putStringCache(inMap);
-		} catch (GeneralException e) {
+		} catch (Exception e) {
             logger.error("存入缓存异常",e);
 			return false;
 		}
