@@ -115,10 +115,10 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         //获取Rnfs配置表的初始化数据
         String cacheTypeCd = "";
         String cacheDataTypeCd = "";
-        Map<String, String> rnfsData = new HashMap<String, String>();
         Map<String, Map<String, String>> returnMap = new HashMap<String, Map<String, String>>();
         List<RnfsCfgDO> rnfsList = opRnfsCfgSV.getRnfsGrpNmByType(cacheTypeCd, cacheDataTypeCd);
         for(int i=0;i<rnfsList.size();i++){
+            Map<String, String> rnfsData = new HashMap<String, String>();
             String key = rnfsList.get(i).getAlsCacheKeyVal();
             rnfsData.put("rnfsGrpNm", rnfsList.get(i).getRnfsGrpNm());
             rnfsData.put("rootPath", rnfsList.get(i).getRootPath());
@@ -132,10 +132,10 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         }
 
         //获取实名账户表的初始化数据
-        Map<String, String> realityData = new HashMap<String, String>();
         List<RealityAccountDO> realityAccountList = opRealityAccountSV.getRealityAccountByType(cacheTypeCd,
             cacheDataTypeCd);
         for(int i=0;i<realityAccountList.size();i++){
+            Map<String, String> realityData = new HashMap<String, String>();
             String key = realityAccountList.get(i).getCacheKeyVal();
             realityData.put("userNm", realityAccountList.get(i).getUserNm());
             realityData.put("pw", realityAccountList.get(i).getPw());
@@ -145,9 +145,9 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         }
 
         //获取rsa密钥表的初始化数据
-        Map<String, String> coRsaKeyData = new HashMap<String, String>();
         List<RsaKeyDO> coRsaKeylist = keyInfoSV.getKeyByType(cacheTypeCd, cacheDataTypeCd);
         for(int i=0;i<coRsaKeylist.size();i++){
+            Map<String, String> coRsaKeyData = new HashMap<String, String>();
             String key = coRsaKeylist.get(i).getCacheKeyVal();
             coRsaKeyData.put("pbkey", coRsaKeylist.get(i).getPbkey());
             coRsaKeyData.put("prtkey", coRsaKeylist.get(i).getPrtkey());
@@ -168,9 +168,9 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         String cacheDataTypeCd = "";
         String key = "";
         Map returnMap = new HashMap<String, List>();
-        List returnList = new ArrayList();
         List<List<RnfsCfgDO>> rnfsList = opRnfsCfgSV.getRnfsGrpNmByrnfsGrpNm(cacheTypeCd, cacheDataTypeCd);
         for(int i=0;i<rnfsList.size();i++){
+            List returnList = new ArrayList();
             List<RnfsCfgDO> rnfsData = rnfsList.get(i);
             for(int j=0;j<rnfsData.size();j++){
                 key = rnfsData.get(j).getGrpCacheKeyVal();
