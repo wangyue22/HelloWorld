@@ -120,7 +120,7 @@ public class FileUpDownUtil {
             inputByte = downloadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path);
         }
         if ("false".equals(onestSwitch) || inputByte==null) {
-            // 如果onest未开启，或者如果下载失败，使用rnfs下载
+            // 如果onest优先未开启，或者如果下载失败，使用rnfs下载
             // 如果是rnfs，则根据路径获取文件服务器地址并上传
             Map<String, String> map = getGztRnfsServerNameByPath(path);
             String rnfsServerName = map.get("rnfsServerName");
@@ -129,11 +129,15 @@ public class FileUpDownUtil {
             if(inputByte==null && StringUtil.isNotBlank(lastServerName)){
                 inputByte = downGztFileByRnfs(path, lastServerName);
             }
+            if(inputByte == null){
+                // 如果仍然下载失败，使用default节点下载
+                String defaultRnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_DEFAULT);
+                inputByte = downGztFileByRnfs(path, defaultRnfsServerName);
+            }
         }
-        if(inputByte == null){
-            // 如果仍然下载失败，使用default节点下载
-            String rnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_DEFAULT);
-            inputByte = downGztFileByRnfs(path, rnfsServerName);
+        if("false".equals(onestSwitch) && inputByte==null){
+            //如果onest优先未开启，然后使用rnfs下载失败，则使用onset下载
+            inputByte = downloadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path);
         }
         return inputByte;
     }
