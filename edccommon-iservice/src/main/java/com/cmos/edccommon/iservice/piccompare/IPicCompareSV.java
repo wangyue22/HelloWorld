@@ -1,7 +1,6 @@
 package com.cmos.edccommon.iservice.piccompare;
 
 import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
-import com.cmos.msg.common.IConsumerProcessor;
 
 /**
  * 人像比对
@@ -10,7 +9,7 @@ import com.cmos.msg.common.IConsumerProcessor;
  * @since 1.0
  */
 
-public interface IPicCompareSV extends IConsumerProcessor{
+public interface IPicCompareSV{
 	/**
 	 * 保存人像比对记录
 	 * @param param

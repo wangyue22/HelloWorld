@@ -70,7 +70,6 @@ public class PicCompareController {
 	@RequestMapping(value = "/picCompare", method = RequestMethod.POST)
 	public EdcCoOutDTO getPicCompare(@RequestBody PicCompareInDTO inParam ) {
 		log.info("****************************"+inParam);
-	
 		return picCompare(inParam);
 	}
 	
@@ -808,5 +807,4 @@ public class PicCompareController {
 		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
 		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 	}
-
 }

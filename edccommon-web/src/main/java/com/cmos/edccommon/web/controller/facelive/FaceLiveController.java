@@ -210,7 +210,7 @@ public class FaceLiveController {
 	 */
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String,String> logMap) throws MsgException, JsonFormatException{
 		String Msg = saveFaceLiveInfo(requestSource, busiType, transactionId, logMap);
-		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
+		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.FACE_LIVE, Msg);
 	}
 	
 	/**

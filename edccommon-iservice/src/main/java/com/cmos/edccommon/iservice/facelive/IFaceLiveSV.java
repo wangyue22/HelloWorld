@@ -1,7 +1,6 @@
 package com.cmos.edccommon.iservice.facelive;
 
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
-import com.cmos.msg.common.IConsumerProcessor;
 
 
 /**
@@ -11,7 +10,7 @@ import com.cmos.msg.common.IConsumerProcessor;
  * @since 1.0
  */
 
-public interface IFaceLiveSV extends IConsumerProcessor{
+public interface IFaceLiveSV{
 	/**
 	 * 保存静默活体检测记录
 	 * @param param
