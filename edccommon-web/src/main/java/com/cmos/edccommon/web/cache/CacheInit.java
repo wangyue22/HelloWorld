@@ -52,9 +52,7 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
         Map<String, String> jvmStringData = new HashMap<String, String>();
         Map<String, Map<String, String>> jvmMapData = new HashMap<String, Map<String,String>>();
         Map<String, List> jvmListData = new HashMap<String, List>();
-        Map<String, String> redisStringData = new HashMap<String, String>();
-        Map<String, Map<String, String>> redisMapData = new HashMap<String, Map<String,String>>();
-        Map<String, List> redisListData = new HashMap<String, List>();
+
         try {
             //获取需要在JVM中初始化的String类型数据
             jvmStringData = getJvmStringCacheDate();
@@ -64,15 +62,6 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
 
             //获取需要在JVM中初始化的List类型数据
             jvmListData = getJvmListCacheDate();
-
-            //获取需要在redis中初始化的String类型数据
-            redisStringData = getRedisStringCacheDate();
-
-            //获取需要在JVM中初始化的Map类型数据
-            redisMapData = getRedisMapCacheDate();
-
-            //获取需要在JVM中初始化的List类型数据
-            redisListData = getRedisListCacheDate();
 
             cacheFatctoryUtil.putJVMStringData(jvmStringData);
             cacheFatctoryUtil.putJVMMapData(jvmMapData);

@@ -1,7 +1,5 @@
 package com.cmos.edccommon.web.controller;
 
-import io.swagger.annotations.ApiOperation;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +69,9 @@ public class CacheManageController{
      * @return boolean
      * @throws Exception
      */
-    @SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
-    @ApiOperation(value="String类型缓存增加和修改")
-    @RequestMapping(value = "/addCache",method = RequestMethod.POST)
-    public boolean addCache(CacheInDTO dataDto){
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CacheOutDTO addCache(CacheInDTO dataDto){
+        CacheOutDTO outData = new CacheOutDTO();
         String key = dataDto.getKey();
         String cacheType = dataDto.getCacheType();
         String valueType = dataDto.getValueType();
@@ -83,46 +80,53 @@ public class CacheManageController{
         Map dataMap = new HashMap();
         //校验入参不可为空
         if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType) || StringUtils.isEmpty(valueType)){
-            return false;
+        	outData.setReturnCode("9999");
+        	outData.setReturnMessage("key值，缓存类型，数据类型不可为空");
+        	return  outData;
         }
 
         try{
             switch(valueType){
-            case "1":
-                dataMap.put(key, dataDto.getStringValue());//数据类型是string
-                switch(cacheType){
-                case "1":
-                    result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
-                    break;
-                case "2":
-                    result = redisCacheDataUtil.putStringCache(dataMap);//redis
-                    break;
-                }
-            case "2":
-                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
-                switch(cacheType){
-                case "1":
-                    result = JVMCacheDataUtil.putStringCache(dataMap);
-                    break;
-                case "2":
-                    result = redisCacheDataUtil.putStringCache(dataMap);
-                    break;
-                }
-            case "3":
-                dataMap.put(key, dataDto.getListValue());//数据类型是List
-                switch(cacheType){
-                case "1":
-                    result = JVMCacheDataUtil.putStringCache(dataMap);
-                    break;
-                case "2":
-                    result = redisCacheDataUtil.putStringCache(dataMap);
-                    break;
-                }
+	            case "1":
+	                dataMap.put(key, dataDto.getStringValue());//数据类型是string
+	                switch(cacheType){
+		                case "1":
+		                    result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
+		                    break;
+		                case "2":
+		                    result = redisCacheDataUtil.putStringCache(dataMap);//redis
+		                    break;
+	                }
+	            case "2":
+	                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
+	                switch(cacheType){
+		                case "1":
+		                    result = JVMCacheDataUtil.putStringCache(dataMap);
+		                    break;
+		                case "2":
+		                    result = redisCacheDataUtil.putStringCache(dataMap);
+		                    break;
+	                }
+	            case "3":
+	                dataMap.put(key, dataDto.getListValue());//数据类型是List
+	                switch(cacheType){
+		                case "1":
+		                    result = JVMCacheDataUtil.putStringCache(dataMap);
+		                    break;
+		                case "2":
+		                    result = redisCacheDataUtil.putStringCache(dataMap);
+		                    break;
+	                }
             }
         }catch(Exception e){
-            log.error("存入缓存出错");
+            log.error("存入缓存出错",e);
         }
-        return result;
+        if(result == true ){
+        	outData.setReturnCode("0000");
+        }else{
+        	outData.setReturnCode("9999");
+        }
+        return outData;
     }
 
     /**
@@ -131,28 +135,34 @@ public class CacheManageController{
      * @return boolean
      * @throws Exception
      */
-    @SuppressWarnings("static-access")
-    public boolean deleteCache(CacheInDTO dataDto){
+    public CacheOutDTO deleteCache(CacheInDTO dataDto){
+        CacheOutDTO outData = new CacheOutDTO();
         String key = dataDto.getKey();
         String cacheType = dataDto.getCacheType();
 
         //校验入参不可为空
         if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType)){
-            return false;
+        	outData.setReturnCode("9999");
+            return outData;
         }
 
         boolean result = false;
         try{
             switch(cacheType){
-            case "1":
-                result = JVMCacheDataUtil.delCache(key);
-            case "2":
-                result = redisCacheDataUtil.delCache(key);
-            }
+	            case "1":
+	                result = JVMCacheDataUtil.delCache(key);
+	            case "2":
+	                result = redisCacheDataUtil.delCache(key);
+	            }
         }catch(Exception e){
-            log.error("存入缓存出错");
+            log.error("存入缓存出错",e);
         }
-        return result;
+        if(result == true){
+        	outData.setReturnCode("0000");
+        }else{
+        	outData.setReturnCode("9999");
+        }
+        return outData;
     }
 
     /**
@@ -161,29 +171,51 @@ public class CacheManageController{
      * @return boolean
      * @throws Exception
      */
-    @SuppressWarnings("static-access")
-    public CacheOutDTO queryJvmCache(CacheInDTO dataDto){
+    @SuppressWarnings("unchecked")
+	public CacheOutDTO queryJvmCache(CacheInDTO dataDto){
         CacheOutDTO outData = new CacheOutDTO();
         String key = dataDto.getKey();
         String cacheType = dataDto.getCacheType();
+        String dataType = dataDto.getValueType();
 
         //校验入参不可为空
-        if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType)){
-            outData.setReturnMessage("key值和缓存类型不可为空");
+        if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType) || StringUtils.isEmpty(dataType)){
+        	outData.setReturnCode("9999");
+        	outData.setReturnMessage("key值,数据类型，缓存类型不可为空");
             return outData;
         }
-
-        Object value = null;
+        
+        outData.setReturnCode("0000");
         try {
             switch(cacheType){
-            case "1":
-                value = JVMCacheDataUtil.getObjectCache(key);
-            case "2":
-                value = redisCacheDataUtil.getObjectCache(key);
+	            case "1":
+	            	switch(dataType){
+	            		case "1" : 
+	            			outData.setStringValue(JVMCacheDataUtil.getStringCache(key));
+	            			return outData;
+	            		case "2" :
+	            			outData.setMapValue(JVMCacheDataUtil.getMapCache(key));
+	            			return outData;
+	            		case "3" :
+	            			outData.setListValue(JVMCacheDataUtil.getListCache(key));
+	            			return outData;
+	            	}
+	            case "2":
+	            	switch(dataType){
+	            		case "1" : 
+	            			outData.setStringValue(redisCacheDataUtil.getStringCache(key));
+	            			return outData;
+	            		case "2" :
+	            			outData.setMapValue(redisCacheDataUtil.getMapCache(key));
+	            			return outData;
+	            		case "3" :
+	            			outData.setListValue(redisCacheDataUtil.getListCache(key));
+	            			return outData;
+            	    }
             }
-            outData.setObjectValue(value);
         }catch(Exception e){
-            log.error("查询缓存出错");
+            log.error("查询缓存出错",e);
+        	outData.setReturnCode("9999");
         }
         return outData;
     }
