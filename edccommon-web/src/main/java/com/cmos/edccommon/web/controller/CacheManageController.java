@@ -1,8 +1,10 @@
 package com.cmos.edccommon.web.controller;
 
+
 import io.swagger.annotations.ApiOperation;
 
 import java.sql.Timestamp;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,36 +95,36 @@ public class CacheManageController{
 
         try{
             switch(valueType){
-            case "1":
-                dataMap.put(key, dataDto.getStringValue());//数据类型是string
-                switch(cacheType){
-                case "1":
-                    result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
-                    break;
-                case "2":
-                    result = redisCacheDataUtil.putStringCache(dataMap);//redis
-                    break;
-                }
-            case "2":
-                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
-                switch(cacheType){
-                case "1":
-                    result = JVMCacheDataUtil.putStringCache(dataMap);
-                    break;
-                case "2":
-                    result = redisCacheDataUtil.putStringCache(dataMap);
-                    break;
-                }
-            case "3":
-                dataMap.put(key, dataDto.getListValue());//数据类型是List
-                switch(cacheType){
-                case "1":
-                    result = JVMCacheDataUtil.putStringCache(dataMap);
-                    break;
-                case "2":
-                    result = redisCacheDataUtil.putStringCache(dataMap);
-                    break;
-                }
+	            case "1":
+	                dataMap.put(key, dataDto.getStringValue());//数据类型是string
+	                switch(cacheType){
+		                case "1":
+		                    result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
+		                    break;
+		                case "2":
+		                    result = redisCacheDataUtil.putStringCache(dataMap);//redis
+		                    break;
+	                }
+	            case "2":
+	                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
+	                switch(cacheType){
+		                case "1":
+		                    result = JVMCacheDataUtil.putStringCache(dataMap);
+		                    break;
+		                case "2":
+		                    result = redisCacheDataUtil.putStringCache(dataMap);
+		                    break;
+	                }
+	            case "3":
+	                dataMap.put(key, dataDto.getListValue());//数据类型是List
+	                switch(cacheType){
+		                case "1":
+		                    result = JVMCacheDataUtil.putStringCache(dataMap);
+		                    break;
+		                case "2":
+		                    result = redisCacheDataUtil.putStringCache(dataMap);
+		                    break;
+	                }
             }
         }catch(Exception e){
             log.error("存入缓存出错",e);
