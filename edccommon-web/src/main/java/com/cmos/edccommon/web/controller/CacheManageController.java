@@ -2,15 +2,18 @@ package com.cmos.edccommon.web.controller;
 
 import io.swagger.annotations.ApiOperation;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -41,6 +44,7 @@ import com.cmos.edccommon.web.cache.RedisCacheDataUtil;
  * @author 任林达
  */
 
+@RestController
 public class CacheManageController{
     private Logger log = LoggerFactory.getActionLog(CacheManageController.class);
     /**
@@ -71,10 +75,9 @@ public class CacheManageController{
      * @return boolean
      * @throws Exception
      */
-    @SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
-    @ApiOperation(value="String类型缓存增加和修改")
-    @RequestMapping(value = "/addCache",method = RequestMethod.POST)
-    public boolean addCache(CacheInDTO dataDto){
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CacheOutDTO addCache(CacheInDTO dataDto){
+        CacheOutDTO outData = new CacheOutDTO();
         String key = dataDto.getKey();
         String cacheType = dataDto.getCacheType();
         String valueType = dataDto.getValueType();
@@ -83,7 +86,9 @@ public class CacheManageController{
         Map dataMap = new HashMap();
         //校验入参不可为空
         if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType) || StringUtils.isEmpty(valueType)){
-            return false;
+        	outData.setReturnCode("9999");
+        	outData.setReturnMessage("key值，缓存类型，数据类型不可为空");
+        	return  outData;
         }
 
         try{
@@ -120,9 +125,14 @@ public class CacheManageController{
                 }
             }
         }catch(Exception e){
-            log.error("存入缓存出错");
+            log.error("存入缓存出错",e);
         }
-        return result;
+        if(result == true ){
+        	outData.setReturnCode("0000");
+        }else{
+        	outData.setReturnCode("9999");
+        }
+        return outData;
     }
 
     /**
@@ -131,28 +141,34 @@ public class CacheManageController{
      * @return boolean
      * @throws Exception
      */
-    @SuppressWarnings("static-access")
-    public boolean deleteCache(CacheInDTO dataDto){
+    public CacheOutDTO deleteCache(CacheInDTO dataDto){
+        CacheOutDTO outData = new CacheOutDTO();
         String key = dataDto.getKey();
         String cacheType = dataDto.getCacheType();
 
         //校验入参不可为空
         if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType)){
-            return false;
+        	outData.setReturnCode("9999");
+            return outData;
         }
 
         boolean result = false;
         try{
             switch(cacheType){
-            case "1":
-                result = JVMCacheDataUtil.delCache(key);
-            case "2":
-                result = redisCacheDataUtil.delCache(key);
-            }
+	            case "1":
+	                result = JVMCacheDataUtil.delCache(key);
+	            case "2":
+	                result = redisCacheDataUtil.delCache(key);
+	            }
         }catch(Exception e){
-            log.error("存入缓存出错");
+            log.error("存入缓存出错",e);
         }
-        return result;
+        if(result == true){
+        	outData.setReturnCode("0000");
+        }else{
+        	outData.setReturnCode("9999");
+        }
+        return outData;
     }
 
     /**
@@ -161,29 +177,51 @@ public class CacheManageController{
      * @return boolean
      * @throws Exception
      */
-    @SuppressWarnings("static-access")
-    public CacheOutDTO queryJvmCache(CacheInDTO dataDto){
+    @SuppressWarnings("unchecked")
+	public CacheOutDTO queryJvmCache(CacheInDTO dataDto){
         CacheOutDTO outData = new CacheOutDTO();
         String key = dataDto.getKey();
         String cacheType = dataDto.getCacheType();
+        String dataType = dataDto.getValueType();
 
         //校验入参不可为空
-        if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType)){
-            outData.setReturnMessage("key值和缓存类型不可为空");
+        if(StringUtils.isEmpty(key) || StringUtils.isEmpty(cacheType) || StringUtils.isEmpty(dataType)){
+        	outData.setReturnCode("9999");
+        	outData.setReturnMessage("key值,数据类型，缓存类型不可为空");
             return outData;
         }
-
-        Object value = null;
+        
+        outData.setReturnCode("0000");
         try {
             switch(cacheType){
-            case "1":
-                value = JVMCacheDataUtil.getObjectCache(key);
-            case "2":
-                value = redisCacheDataUtil.getObjectCache(key);
+	            case "1":
+	            	switch(dataType){
+	            		case "1" : 
+	            			outData.setStringValue(JVMCacheDataUtil.getStringCache(key));
+	            			return outData;
+	            		case "2" :
+	            			outData.setMapValue(JVMCacheDataUtil.getMapCache(key));
+	            			return outData;
+	            		case "3" :
+	            			outData.setListValue(JVMCacheDataUtil.getListCache(key));
+	            			return outData;
+	            	}
+	            case "2":
+	            	switch(dataType){
+	            		case "1" : 
+	            			outData.setStringValue(redisCacheDataUtil.getStringCache(key));
+	            			return outData;
+	            		case "2" :
+	            			outData.setMapValue(redisCacheDataUtil.getMapCache(key));
+	            			return outData;
+	            		case "3" :
+	            			outData.setListValue(redisCacheDataUtil.getListCache(key));
+	            			return outData;
+            	    }
             }
-            outData.setObjectValue(value);
         }catch(Exception e){
-            log.error("查询缓存出错");
+            log.error("查询缓存出错",e);
+        	outData.setReturnCode("9999");
         }
         return outData;
     }
@@ -195,13 +233,17 @@ public class CacheManageController{
      * @return ServiceSwitchOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/addSwitchDb", method = RequestMethod.POST)
-    public ServiceSwitchOutDTO addSwitchDb(@RequestBody ServiceSwitchInDTO inDto) {
+    @RequestMapping(value = "/saveSwitchDb", method = RequestMethod.POST)
+    public ServiceSwitchOutDTO saveSwitchDb(@RequestBody ServiceSwitchInDTO inDto) {
         ServiceSwitchOutDTO dto = new ServiceSwitchOutDTO();
         ServiceSwitchDO bean = new ServiceSwitchDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setCrtTime(timestamp);
             serviceSwitch.saveServiceSwitch(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");
@@ -221,9 +263,13 @@ public class CacheManageController{
     public ServiceSwitchOutDTO updateSwitchDb(@RequestBody ServiceSwitchInDTO inDto) {
         ServiceSwitchOutDTO dto = new ServiceSwitchOutDTO();
         ServiceSwitchDO bean = new ServiceSwitchDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setModfTime(timestamp);
             serviceSwitch.updateServiceSwitch(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");
@@ -239,16 +285,17 @@ public class CacheManageController{
      * @return ServiceSwitchOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/querySwitchDb", method = RequestMethod.POST)
-    public ServiceSwitchOutDTO querySwitchDb(@RequestBody ServiceSwitchInDTO inDto) {
+    @PostMapping(value = "/getSwitchDb")
+    public ServiceSwitchOutDTO getSwitchDb(@RequestBody ServiceSwitchInDTO inDto) {
         ServiceSwitchOutDTO dto = new ServiceSwitchOutDTO();
         ServiceSwitchDO bean = new ServiceSwitchDO();
         try {
-            log.info("dto信息:" + bean.toJSONString());
+            log.info("dto信息:" + inDto.toJSONString());
             BeanUtils.copyProperties(bean, inDto);
             List<ServiceSwitchDO> list = serviceSwitch.getServiceSwitch(bean);
             if (list.size() > 0) {
                 dto.setBeans(list);
+                dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
             } else {
                 dto.setReturnCode("2999");
@@ -268,8 +315,8 @@ public class CacheManageController{
      * @return RnfsCfgOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/queryRnfsCfgDb", method = RequestMethod.POST)
-    public RnfsCfgOutDTO querySwitchDb(@RequestBody RnfsCfgInDTO inDto) {
+    @RequestMapping(value = "/getRnfsCfgDb", method = RequestMethod.POST)
+    public RnfsCfgOutDTO getRnfsCfgDb(@RequestBody RnfsCfgInDTO inDto) {
         RnfsCfgOutDTO dto = new RnfsCfgOutDTO();
         RnfsCfgDO bean = new RnfsCfgDO();
         try {
@@ -277,6 +324,7 @@ public class CacheManageController{
             List<RnfsCfgDO> list = rnfsCfg.getRnfsCfg(bean);
             if (list.size() > 0) {
                 dto.setBeans(list);
+                dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
             } else {
                 dto.setReturnCode("2999");
@@ -300,9 +348,13 @@ public class CacheManageController{
     public RnfsCfgOutDTO updateRnfsCfgDb(@RequestBody RnfsCfgInDTO inDto) {
         RnfsCfgOutDTO dto = new RnfsCfgOutDTO();
         RnfsCfgDO bean = new RnfsCfgDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setModfTime(timestamp);
             rnfsCfg.updateRnfsCfg(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");
@@ -318,13 +370,17 @@ public class CacheManageController{
      * @return ServiceSwitchDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/addRnfsCfgDb", method = RequestMethod.POST)
-    public RnfsCfgOutDTO addRnfsCfgDb(@RequestBody RnfsCfgInDTO inDto) {
+    @RequestMapping(value = "/saveRnfsCfgDb", method = RequestMethod.POST)
+    public RnfsCfgOutDTO saveRnfsCfgDb(@RequestBody RnfsCfgInDTO inDto) {
         RnfsCfgOutDTO dto = new RnfsCfgOutDTO();
         RnfsCfgDO bean = new RnfsCfgDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setCrtTime(timestamp);
             rnfsCfg.saveRnfsCfg(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");
@@ -340,8 +396,8 @@ public class CacheManageController{
      * @return RealityAccountOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/queryRealityAccount", method = RequestMethod.POST)
-    public RealityAccountOutDTO queryRealityAccount(@RequestBody RealityAccountInDTO inDto) {
+    @RequestMapping(value = "/getRealityAccount", method = RequestMethod.POST)
+    public RealityAccountOutDTO getRealityAccount(@RequestBody RealityAccountInDTO inDto) {
         RealityAccountOutDTO dto = new RealityAccountOutDTO();
         RealityAccountDO bean = new RealityAccountDO();
         try {
@@ -349,6 +405,7 @@ public class CacheManageController{
             List<RealityAccountDO> list = realityAccount.getRealityAccount(bean);
             if (list.size() > 0) {
                 dto.setBeans(list);
+                dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
             } else {
                 dto.setReturnCode("2999");
@@ -371,10 +428,16 @@ public class CacheManageController{
     public RealityAccountOutDTO updateRealityAccountDb(@RequestBody RealityAccountInDTO inDto) {
         RealityAccountOutDTO dto = new RealityAccountOutDTO();
         RealityAccountDO bean = new RealityAccountDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
+            log.info("入参indto:" + inDto.toJSONString());
             BeanUtils.copyProperties(bean, inDto);
+            bean.setModifyTime(timestamp);
             realityAccount.updaterealityAccount(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
+            log.info("出参dto:" + dto.toJSONString());
         } catch (Exception e) {
             dto.setReturnCode("9999");
             dto.setReturnMessage("修改失败");
@@ -388,13 +451,17 @@ public class CacheManageController{
      * @return RealityAccountOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/addRealityAccountDb", method = RequestMethod.POST)
-    public RealityAccountOutDTO addRealityAccountDb(@RequestBody RealityAccountInDTO inDto) {
+    @RequestMapping(value = "/saveRealityAccountDb", method = RequestMethod.POST)
+    public RealityAccountOutDTO saveRealityAccountDb(@RequestBody RealityAccountInDTO inDto) {
         RealityAccountOutDTO dto = new RealityAccountOutDTO();
         RealityAccountDO bean = new RealityAccountDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setCrtTime(timestamp);
             realityAccount.saveRealityAccount(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");
@@ -410,8 +477,8 @@ public class CacheManageController{
      * @return RsaKeyOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/queryRsaKeyDb", method = RequestMethod.POST)
-    public RsaKeyOutDTO queryRsaKeyDb(@RequestBody RsaKeyInDTO inDto) {
+    @RequestMapping(value = "/getRsaKeyDb", method = RequestMethod.POST)
+    public RsaKeyOutDTO getRsaKeyDb(@RequestBody RsaKeyInDTO inDto) {
         RsaKeyOutDTO dto = new RsaKeyOutDTO();
         RsaKeyDO bean = new RsaKeyDO();
         try {
@@ -419,6 +486,7 @@ public class CacheManageController{
             List<RsaKeyDO> list = rsaKey.getRsaKey(bean);
             if (list.size() > 0) {
                 dto.setBeans(list);
+                dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
             } else {
                 dto.setReturnCode("2999");
@@ -441,9 +509,13 @@ public class CacheManageController{
     public RsaKeyOutDTO updateRsaKeyDb(@RequestBody RsaKeyInDTO inDto) {
         RsaKeyOutDTO dto = new RsaKeyOutDTO();
         RsaKeyDO bean = new RsaKeyDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setModfTime(timestamp);
             rsaKey.updateRsaKey(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");
@@ -458,13 +530,17 @@ public class CacheManageController{
      * @return RsaKeyOutDTO
      * @throws Exception
      */
-    @RequestMapping(value = "/addRsaKeyDb", method = RequestMethod.POST)
-    public RsaKeyOutDTO addRsaKeyDb(@RequestBody RsaKeyInDTO inDto) {
+    @RequestMapping(value = "/saveRsaKeyDb", method = RequestMethod.POST)
+    public RsaKeyOutDTO saveRsaKeyDb(@RequestBody RsaKeyInDTO inDto) {
         RsaKeyOutDTO dto = new RsaKeyOutDTO();
         RsaKeyDO bean = new RsaKeyDO();
+        Long time = System.currentTimeMillis();
+        Timestamp timestamp = new Timestamp(time);
         try {
             BeanUtils.copyProperties(bean, inDto);
+            bean.setCrtTime(timestamp);
             rsaKey.saveRsaKey(bean);
+            dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
             dto.setReturnCode("9999");

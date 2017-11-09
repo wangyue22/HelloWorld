@@ -3,6 +3,7 @@ package com.cmos.edccommon.beans.serviceSwitch;
 import java.sql.Timestamp;
 
 import com.cmos.common.bean.GenericBean;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**开关表
  * @author wangfei
@@ -44,6 +45,7 @@ public class ServiceSwitchDO extends GenericBean {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp crtTime;
 
     /**
@@ -59,6 +61,7 @@ public class ServiceSwitchDO extends GenericBean {
     /**
      * 修改时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Timestamp modfTime;
 
     /**

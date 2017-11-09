@@ -34,6 +34,7 @@ public interface ServiceSwitchDAO {
     /**新增开关
      * @param dto
      */
+
     void saveServiceSwitch(ServiceSwitchDO serviceSwitch);
 
     /**删除开关，将标志位置为0

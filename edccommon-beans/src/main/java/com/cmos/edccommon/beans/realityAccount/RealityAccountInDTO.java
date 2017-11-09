@@ -1,6 +1,6 @@
 package com.cmos.edccommon.beans.realityAccount;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 
@@ -75,7 +75,7 @@ public class RealityAccountInDTO extends GenericBean {
     /**
      * 创建时间
      */
-    private Timestamp crtTime;
+    private Date crtTime;
 
     /**
      * 创建应用系统ID
@@ -90,7 +90,7 @@ public class RealityAccountInDTO extends GenericBean {
     /**
      * 修改时间
      */
-    private Timestamp modifyTime;
+    private Date modifyTime;
 
     /**
      * 修改应用系统ID
@@ -232,11 +232,11 @@ public class RealityAccountInDTO extends GenericBean {
         this.crtUserId = crtUserId == null ? null : crtUserId.trim();
     }
 
-    public Timestamp getCrtTime() {
+    public Date getCrtTime() {
         return crtTime;
     }
 
-    public void setCrtTime(Timestamp crtTime) {
+    public void setCrtTime(Date crtTime) {
         this.crtTime = crtTime;
     }
 
@@ -256,11 +256,11 @@ public class RealityAccountInDTO extends GenericBean {
         this.modfUserId = modfUserId == null ? null : modfUserId.trim();
     }
 
-    public Timestamp getModifyTime() {
+    public Date getModifyTime() {
         return modifyTime;
     }
 
-    public void setModifyTime(Timestamp modifyTime) {
+    public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
 
