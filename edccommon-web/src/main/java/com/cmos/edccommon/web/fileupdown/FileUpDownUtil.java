@@ -82,7 +82,7 @@ public class FileUpDownUtil {
         resMap.put("onestUploadResult", onestUploadResult);
         return resMap;
     }
-    
+
     /**
      * 根据路径下载国政通图片，并转换为base64字符串返回
      * @param inPath
@@ -111,7 +111,7 @@ public class FileUpDownUtil {
         }else{
             path = path.substring(path.indexOf("cert"));
         }
-        
+
         // 获取onest开关，onest是否开放优先使用
         String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
         // 根据路径下载图片
@@ -399,7 +399,8 @@ public class FileUpDownUtil {
             path.replaceAll("//", "/");
 
             try {
-                return uploadBusiByOnest(env.getProperty("onest.gztfile.bucketname"), path, content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
+                return uploadBusiByOnest(env.getProperty("onest.busifile.bucketname"), path,
+                    content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
             } catch (Exception e) {
                 logger.error("onest upload getBytes error:", e);
             }
