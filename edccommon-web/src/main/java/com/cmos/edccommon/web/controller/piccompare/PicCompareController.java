@@ -493,7 +493,7 @@ public class PicCompareController {
 	public EdcCoOutDTO picCompareBase64(@RequestBody PicCompareBase64InDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
 		try {
-			log.info("****************************" + inParam);
+			log.info("****************************" + inParam.toJSONString());
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();
 			String bizTypeCode = inParam.getBizTypeCode();
