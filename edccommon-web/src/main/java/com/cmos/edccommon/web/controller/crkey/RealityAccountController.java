@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmos.common.exception.GeneralException;
+import com.cmos.core.logger.Logger;
+import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 //import com.cmos.edccommon.iservice.crkey.IRealityAccountSV;
 import com.cmos.edccommon.utils.StringUtil;
@@ -25,7 +27,7 @@ import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 @RequestMapping(value = "realityAccount")
 @Api(description = "通用功能获取密钥服务")
 public class RealityAccountController {
-
+	private static Logger log=LoggerFactory.getActionLog(RealityAccountController.class);
     @Autowired
     private CacheFatctoryUtil cacheFatctoryUtil;
 
@@ -33,6 +35,7 @@ public class RealityAccountController {
     @RequestMapping(value = "/getRealityAccount", method = RequestMethod.POST)
     public EdcCoOutDTO getBySourceCode(@RequestParam String reqstSrcCode) throws GeneralException {
         EdcCoOutDTO outParam = new EdcCoOutDTO();
+        log.info("RealityAccountController reqstSrcCode= " + reqstSrcCode);
         outParam.setReturnCode("2999");
         outParam.setReturnMessage("未能查到该用户名");
         if (StringUtil.isEmpty(reqstSrcCode)) {
@@ -40,7 +43,10 @@ public class RealityAccountController {
         }
         String cacheKey = "CO_REALACC:" + reqstSrcCode;
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
+        log.info("RealityAccountController cacheKey= " + cacheKey);
+     
         if (bean != null) {
+        	log.info("RealityAccountController bean = " + bean.toString());
             outParam.setBean(bean);
             outParam.setReturnCode("0000");
             outParam.setReturnMessage("success");

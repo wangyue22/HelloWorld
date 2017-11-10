@@ -50,6 +50,11 @@
 			<groupId>com.cmos</groupId>
 			<artifactId>cmos-onest</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.cmos</groupId>
+			<artifactId>cmos-sequence</artifactId>
+			<version> 1.0.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${cmos.control-finalName}</finalName>

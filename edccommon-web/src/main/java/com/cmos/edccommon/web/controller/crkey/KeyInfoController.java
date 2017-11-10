@@ -13,7 +13,8 @@ import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
-import com.cmos.edccommon.beans.crkey.RsaKeyDO;
+import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
+import com.cmos.edccommon.utils.consts.KeyInfoConstants;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.github.pagehelper.StringUtil;
 
@@ -37,8 +38,9 @@ public class KeyInfoController {
      * @return
      * @throws GeneralException
      */
-    @RequestMapping(value = "/getRsaKey", method = RequestMethod.POST)
-    public EdcCoOutDTO getRsaKey(@RequestBody RsaKeyDO inParam) throws GeneralException {
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getRsaKey", method = RequestMethod.POST)
+    public EdcCoOutDTO getRsaKey(@RequestBody KeyInfoDTO inParam) throws GeneralException {
         EdcCoOutDTO outParam = new EdcCoOutDTO();
 
         if (inParam == null || StringUtil.isEmpty(inParam.getReqstSrcCode())) {
@@ -46,7 +48,14 @@ public class KeyInfoController {
         }
         String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
         String bizTypeCd = inParam.getBizTypeCd();// 业务类型
-        String cacheKey = "CO_RSAKEY:371";
+        
+		if (StringUtil.isNotEmpty(bizTypeCd)) {
+			bizTypeCd = KeyInfoConstants.CACHEKEY.SEPARATOR + bizTypeCd;
+		} else {
+			bizTypeCd = "";
+		}
+		String cacheKey = KeyInfoConstants.CACHEKEY.CO_RSAKEY_PREFIX + reqstSrcCode + bizTypeCd;
+		
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
         outParam.setBean(bean);
         outParam.setReturnCode("0000");
@@ -54,8 +63,9 @@ public class KeyInfoController {
         return outParam;
     }
 
-    @RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
-    public EdcCoOutDTO getDesKey(@RequestBody RsaKeyDO inParam) throws GeneralException {
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
+    public EdcCoOutDTO getDesKey(@RequestBody KeyInfoDTO inParam) throws GeneralException {
         EdcCoOutDTO outParam = new EdcCoOutDTO();
         outParam.setReturnCode("2999");
         outParam.setReturnMessage("未能查到该秘钥");
@@ -65,11 +75,11 @@ public class KeyInfoController {
         String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
         String reqstSrcNm = inParam.getBizTypeCd();// 业务类型
         if (StringUtil.isNotEmpty(reqstSrcNm)) {
-            reqstSrcNm = "_" + reqstSrcNm;
+            reqstSrcNm = KeyInfoConstants.CACHEKEY.SEPARATOR  + reqstSrcNm;
         } else {
             reqstSrcNm = "";
         }
-        String cacheKey = "CO_REALACC:" + reqstSrcCode + reqstSrcNm;
+        String cacheKey = KeyInfoConstants.CACHEKEY.CO_REALACC_PREFIX + reqstSrcCode + reqstSrcNm;
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
 
         if (bean != null) {
