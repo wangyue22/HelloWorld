@@ -18,6 +18,7 @@ import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
+import com.cmos.sequence.util.SequenceUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -219,6 +220,21 @@ public class FaceLiveController {
 	private String saveFaceLiveInfo(String requestSource, String busiType, String transactionId, Map<String,String> logMap) throws JsonFormatException {
 
 		CoFaceLiveInfoDO infoBean = new CoFaceLiveInfoDO();
+		String uniqueSequence = null;
+		try {
+			uniqueSequence = SequenceUtils.getSequence("PicCompare", 6);
+		} catch (Exception e) {
+			log.error("生成主键异常", e);
+		}
+		
+		if (uniqueSequence != null) {
+			if (uniqueSequence.length() > 18) {
+				uniqueSequence = uniqueSequence.substring(uniqueSequence.length() - 18, uniqueSequence.length());
+			}
+			Long detctnId = Long.parseLong(uniqueSequence);
+			infoBean.setDetctnId(detctnId);
+		}
+		
 		infoBean.setCrtTime(new Timestamp(new Date().getTime()));
 		infoBean.setRspCode(requestSource);
 		infoBean.setBizTypeCode(busiType);

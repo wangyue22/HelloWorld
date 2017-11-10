@@ -12,8 +12,6 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
 import com.cmos.edccommon.dao.facelive.CoFaceLiveInfoDAO;
 import com.cmos.edccommon.iservice.facelive.IFaceLiveSV;
-import com.cmos.edccommon.utils.StringUtil;
-import com.cmos.sequence.util.SequenceUtils;
 
 
 /**
@@ -40,23 +38,23 @@ public class FaceLiveSVImpl implements IFaceLiveSV {
 		Date nowTime = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");
 		String dateString = dateFormat.format(nowTime);
+		Long detctnId = resultBean.getDetctnId();
 		String uniqueSequence;
-		try {
-			uniqueSequence = SequenceUtils.getSequence("PicCompare", 6);
-		} catch (Exception e) {
-			log.error("生成主键异常", e);
-			uniqueSequence = dateString + System.currentTimeMillis() + getRandomCode(6);
-		}
+		if (detctnId == null) {
+			uniqueSequence = System.currentTimeMillis() + getRandomCode(5);
+			log.error("生成主键为空，使用默认主键:" + uniqueSequence);
+			if (uniqueSequence.length() > 18) {
+				uniqueSequence = uniqueSequence.substring(uniqueSequence.length() - 18, uniqueSequence.length());
 
-		if (StringUtil.isBlank(uniqueSequence)) {
-			log.error("生成主键为空，使用默认主键");
-			uniqueSequence = dateString + System.currentTimeMillis() + getRandomCode(6);
+			}
+			detctnId = Long.parseLong(uniqueSequence);
+			resultBean.setDetctnId(detctnId);
 		}
-
-		long cmprId = Long.parseLong(uniqueSequence);
-		resultBean.setDetctnId(cmprId);// 主键
 		resultBean.setCrtUserId("test");
 		resultBean.setModfTime(nowTime);
+		if (resultBean.getCrtTime() == null) {
+			resultBean.setCrtTime(nowTime);
+		}
 		resultBean.setCrtAppSysId("test");
 		resultBean.setSplitName(dateString);
 
