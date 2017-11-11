@@ -1,7 +1,7 @@
 package com.cmos.edccommon.beans.cache;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.cmos.common.bean.GenericBean;
 
@@ -12,7 +12,6 @@ import com.cmos.common.bean.GenericBean;
  * @author: 任林达
  * @date:   2017年10月30日 上午11:25:39
  */
-@SuppressWarnings("rawtypes")
 public class CacheInDTO  extends GenericBean{
     private static final long serialVersionUID = 1L;
     /**
@@ -27,12 +26,19 @@ public class CacheInDTO  extends GenericBean{
     /**
      * 缓存value(存放map类型值 )
      */
-    private Map<String,String> mapValue;
+    private HashMap<String,String> mapValue;
     
     /**
      * 缓存value(存放list类型值 )
      */
+	@SuppressWarnings("rawtypes")
 	private List listValue;
+	
+	
+    /**
+     * 缓存value(存放list类型值 )
+     */
+	private String listStringValue;
     
     /**
      * 缓存类型（1:JVM 2:redis)
@@ -60,22 +66,6 @@ public class CacheInDTO  extends GenericBean{
 		this.stringValue = stringValue;
 	}
 
-	public Map<String,String> getMapValue() {
-		return mapValue;
-	}
-
-	public void setMapValue(Map<String,String> mapValue) {
-		this.mapValue = mapValue;
-	}
-
-	public List getListValue() {
-		return listValue;
-	}
-
-	public void setListValue(List listValue) {
-		this.listValue = listValue;
-	}
-
 	public String getCacheType() {
 		return cacheType;
 	}
@@ -90,5 +80,30 @@ public class CacheInDTO  extends GenericBean{
 
 	public void setValueType(String valueType) {
 		this.valueType = valueType;
-	} 
+	}
+
+	public HashMap<String,String> getMapValue() {
+		return mapValue;
+	}
+
+	public void setMapValue(HashMap<String,String> mapValue) {
+		this.mapValue = mapValue;
+	}
+
+	public List getListValue() {
+		return listValue;
+	}
+
+	public void setListValue(List listValue) {
+		this.listValue = listValue;
+	}
+
+	public String getListStringValue() {
+		return listStringValue;
+	}
+
+	public void setListStringValue(String listStringValue) {
+		this.listStringValue = listStringValue;
+	}
+
 }
