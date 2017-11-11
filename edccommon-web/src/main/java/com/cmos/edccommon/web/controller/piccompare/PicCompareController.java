@@ -155,7 +155,7 @@ public class PicCompareController {
 						logMap.put("picRPath", picRPath);
 						logMap.put("picTPath", picTPath);
 						logMap.put("picRType", picRType);
-						logMap.put("picTPath", CoConstants.PIC_TYPE.PIC_GZT);
+						logMap.put("picTType", CoConstants.PIC_TYPE.PIC_GZT);
 						sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
 					} catch (Exception e) {
 						log.error("MQ保存信息出错");
@@ -341,7 +341,7 @@ public class PicCompareController {
 				logMap.put("picRPath", picRPath);
 				logMap.put("picTPath", picTPath);
 				logMap.put("picRType", picRType);
-				logMap.put("picTPath", picTType);
+				logMap.put("picTType", picTType);
 				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
 			} catch (Exception e) {
 				log.error("MQ保存消费信息出错", e);
@@ -467,7 +467,7 @@ public class PicCompareController {
 					logMap.put("picRPath", picRPath);
 					logMap.put("picTPath", picTPath);
 					logMap.put("picRType", picRType);
-					logMap.put("picTPath", picTType);
+					logMap.put("picTType", picTType);
 					sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
 				} catch (Exception e) {
 					log.error("MQ保存消费信息出错", e );
@@ -493,7 +493,7 @@ public class PicCompareController {
 	public EdcCoOutDTO picCompareBase64(@RequestBody PicCompareBase64InDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
 		try {
-			log.info("****************************" + inParam.toJSONString());
+			log.info("****************************" + inParam());
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();
 			String bizTypeCode = inParam.getBizTypeCode();
@@ -523,12 +523,12 @@ public class PicCompareController {
 				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 				if (compareMap != null) {
 					String verifyState = compareMap.get("verifyState");
-					if (StringUtil.isNotEmpty(verifyState) && "0".equals(verifyState)) {
+					if (StringUtil.isNotEmpty(verifyState)) {
 						out.setReturnCode("0000");
 						out.setReturnMessage("人像比对成功");
 					} else {
 						out.setReturnCode("2999");
-						out.setReturnMessage("人像比对不通过");
+						out.setReturnMessage("人像比对发生异常");
 					}
 					out.setBean(compareMap);
 				}
@@ -536,7 +536,7 @@ public class PicCompareController {
 				try {
 					// 发送消息队列的内容
 					logMap.put("picRType", picRType);
-					logMap.put("picTPath", picTType);
+					logMap.put("picTType", picTType);
 					sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
 				} catch (Exception e) {
 					log.error("MQ保存消费信息出错", e);
@@ -829,7 +829,7 @@ public class PicCompareController {
 		infoBean.setReqstSrcCode(requestSource);
 		infoBean.setBizTypeCode(busiType);
 		infoBean.setSwftno(transactionId);
-		
+		//生成主键
 		String uniqueSequence = null;
 		try {
 			uniqueSequence = SequenceUtils.getSequence("PicCompare", 6);
@@ -850,13 +850,14 @@ public class PicCompareController {
 		infoBean.setRspCode(returnCode);
 		infoBean.setRspInfoCntt(returnMessage);
 
-		infoBean.setPhotoPath((String) compareResult.get("picRPath"));
-		infoBean.setPicTPath((String) compareResult.get("picTPath"));
-		infoBean.setPhotoType((String) compareResult.get("picRType"));
-		infoBean.setPicTType((String) compareResult.get("picTPath"));
-
+		
 		// 如果比对结果不为空 保存比对结果
 		if (null != compareResult) {
+			infoBean.setPhotoPath((String) compareResult.get("picRPath"));
+			infoBean.setPicTPath((String) compareResult.get("picTPath"));
+			infoBean.setPhotoType((String) compareResult.get("picRType"));
+			infoBean.setPicTType((String) compareResult.get("picTPath"));
+
 			String resultType = (String) compareResult.get("resultType");
 			infoBean.setCmprRslt(resultType);// 0成功 1手持证件照无人像 3 公安部照片无人像 -1调用失败
 			Map<String, String> returnInfo = ((Map<String, String>) compareResult.get("returnInfo"));
