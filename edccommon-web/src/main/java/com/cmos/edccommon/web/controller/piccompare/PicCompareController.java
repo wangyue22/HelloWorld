@@ -856,7 +856,7 @@ public class PicCompareController {
 			infoBean.setPhotoPath((String) compareResult.get("picRPath"));
 			infoBean.setPicTPath((String) compareResult.get("picTPath"));
 			infoBean.setPhotoType((String) compareResult.get("picRType"));
-			infoBean.setPicTType((String) compareResult.get("picTPath"));
+			infoBean.setPicTType((String) compareResult.get("picTType"));
 
 			String resultType = (String) compareResult.get("resultType");
 			infoBean.setCmprRslt(resultType);// 0成功 1手持证件照无人像 3 公安部照片无人像 -1调用失败
