@@ -40,9 +40,22 @@ public class HlrInfoController {
 		try {
 			log.info("getProvCodeByPhoneNum方法入参为:" + phoneNum);
 			String provCode = null;
-
+			if(StringUtil.isBlank(phoneNum)){
+				hlrInfoDTO.setReturnCode("2999");
+				hlrInfoDTO.setReturnMessage("调用手机号获取对应的省端编码入参为空");
+				log.info("调用手机号获取对应的省端编码入参为空");
+				return hlrInfoDTO;
+			}
 			try {
-				provCode = hlrInfoSV.getProvCodeByPhoneNum(phoneNum);
+				String phoneNumCut = phoneNum;
+				if (phoneNum.length() == 13) {
+					phoneNumCut = phoneNum.substring(0, 8);
+				} else {
+					if (phoneNum.length() >= 7) {
+						phoneNumCut = phoneNum.substring(0, 7);
+					}
+				}
+				provCode = hlrInfoSV.getProvCodeByPhoneNum(phoneNumCut);
 				log.info("省端编码provCode:" + provCode);
 				if (StringUtils.isBlank(provCode)) {
 					hlrInfoDTO.setReturnCode("2999");
@@ -82,11 +95,13 @@ public class HlrInfoController {
 			return hlrInfoDTO;
 		}
 		try {
-			String phoneNumCut;
+			String phoneNumCut = phoneNum;
 			if (phoneNum.length() == 13) {
 				phoneNumCut = phoneNum.substring(0, 8);
 			} else {
-				phoneNumCut = phoneNum.substring(0, 7);
+				if (phoneNum.length() >= 7) {
+					phoneNumCut = phoneNum.substring(0, 7);
+				}
 			}
 			
 			hlrType = hlrInfoSV.getHlrTypeByPhoneNum(phoneNumCut);

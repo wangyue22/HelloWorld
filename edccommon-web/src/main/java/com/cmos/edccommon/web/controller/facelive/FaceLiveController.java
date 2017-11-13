@@ -14,11 +14,11 @@ import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
+import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
-import com.cmos.sequence.util.SequenceUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,8 +48,16 @@ public class FaceLiveController {
 	@Autowired
 	private FileUpDownUtil fileUpDownUtil;
 	
+	@Autowired
+	private BasicUtil basicUtil;
+	
 	private Logger log = LoggerFactory.getActionLog(FaceLiveController.class);
 	
+	/**
+	 * 静默活体
+	 * @param inParam
+	 * @return
+	 */
 	@RequestMapping(value = "/facelive", method = RequestMethod.POST)
 	public EdcCoOutDTO getFaceLive(@RequestBody FaceLiveInDTO inParam) {
 		EdcCoOutDTO outParam = new EdcCoOutDTO();
@@ -84,7 +92,6 @@ public class FaceLiveController {
 		out.setReturnMessage("调用静默活体失败");//默认调用不成功		
 		Map<String, String> returnMap = new HashMap<String, String>();
 		
-		boolean faceLiveFlag = false;
 		String picRStr = null;
 		String picRStrBase64 = null;
 		String resultNum = null;
@@ -171,7 +178,7 @@ public class FaceLiveController {
 						faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
 
 						if (StringUtil.isEmpty(faceliveScore)) {
-							faceliveScore = "90";
+							faceliveScore = "98.4";
 						}
 					}
 					if (faceScore < Float.parseFloat(faceliveScore)) {
@@ -222,14 +229,14 @@ public class FaceLiveController {
 		CoFaceLiveInfoDO infoBean = new CoFaceLiveInfoDO();
 		String uniqueSequence = null;
 		try {
-			uniqueSequence = SequenceUtils.getSequence("PicCompare", 6);
+			uniqueSequence = basicUtil.getSequence(MqConstants.MQ_TOPIC.FACE_LIVE);
 		} catch (Exception e) {
-			log.error("生成主键异常", e);
+			log.error("静默活体生成主键异常", e);
 		}
 		
 		if (uniqueSequence != null) {
-			if (uniqueSequence.length() > 18) {
-				uniqueSequence = uniqueSequence.substring(uniqueSequence.length() - 18, uniqueSequence.length());
+			if (uniqueSequence.length() > 19) {
+				uniqueSequence = uniqueSequence.substring(uniqueSequence.length() - 19);
 			}
 			Long detctnId = Long.parseLong(uniqueSequence);
 			infoBean.setDetctnId(detctnId);
@@ -242,7 +249,7 @@ public class FaceLiveController {
 		String rspCode = logMap.get("rspCode");
 //		String idntifResult = logMap.get("idntifResult");
 		String rspInfoCntt = logMap.get("rspInfoCntt");
-		String idntifFaceCnt = logMap.get("rspCode");
+		String idntifFaceCnt = logMap.get("backtoMsgCntt");
 		String idntifScore = logMap.get("faceScore");
 		infoBean.setRspCode(rspCode);
 		infoBean.setRspInfoCntt(rspInfoCntt);
@@ -268,13 +275,13 @@ public class FaceLiveController {
 			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
-			log.error("人像比对服务下载图片异常", e);
+			log.error("静默活体服务下载图片异常", e);
 		} finally {
 			if (null != picInputStream) {
 				try {
 					picInputStream.close();
 				} catch (IOException e1) {
-					log.error("人像比对服务关闭图片流异常", e1);
+					log.error("静默活体服务关闭图片流异常", e1);
 				}
 			}
 		}

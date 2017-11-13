@@ -51,8 +51,8 @@ public class PicCompareSVImpl implements IPicCompareSV {
 			resultBean.setCmprId(cmprId);
 		}
 
-		resultBean.setCrtUserId("edccommon");
-		resultBean.setCrtAppSysId("edccommon");
+		resultBean.setCrtUserId("EDCCOMMON");
+		resultBean.setCrtAppSysId("EDCCOMMON");
 
 		if (resultBean.getCrtTime() == null) {
 			resultBean.setCrtTime(nowTime);

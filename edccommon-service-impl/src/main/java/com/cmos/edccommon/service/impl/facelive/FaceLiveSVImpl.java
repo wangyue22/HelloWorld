@@ -50,12 +50,12 @@ public class FaceLiveSVImpl implements IFaceLiveSV {
 			detctnId = Long.parseLong(uniqueSequence);
 			resultBean.setDetctnId(detctnId);
 		}
-		resultBean.setCrtUserId("test");
+		resultBean.setCrtUserId("EDCCOMMON");
 		resultBean.setModfTime(nowTime);
 		if (resultBean.getCrtTime() == null) {
 			resultBean.setCrtTime(nowTime);
 		}
-		resultBean.setCrtAppSysId("test");
+		resultBean.setCrtAppSysId("EDCCOMMON");
 		resultBean.setSplitName(dateString);
 
 		dao.insert(resultBean);

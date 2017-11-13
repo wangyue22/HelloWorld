@@ -34,6 +34,7 @@ import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.CoConstants;
 import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
+import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
@@ -58,6 +59,9 @@ public class PicCompareController {
 	
 	@Autowired
 	private FileUpDownUtil fileUpDownUtil;
+	
+	@Autowired
+	private BasicUtil basicUtil;
 	
 	private static Logger log=LoggerFactory.getActionLog(PicCompareController.class);
 
@@ -829,14 +833,14 @@ public class PicCompareController {
 		//生成主键
 		String uniqueSequence = null;
 		try {
-			uniqueSequence = SequenceUtils.getSequence("PicCompare", 6);
+			uniqueSequence = basicUtil.getSequence(MqConstants.MQ_TOPIC.PIC_COMPARE);
 		} catch (Exception e) {
 			log.error("生成主键异常", e);
 		}
 		
 		if (uniqueSequence != null) {
-			if (uniqueSequence.length() > 18) {
-				uniqueSequence = uniqueSequence.substring(uniqueSequence.length() - 18, uniqueSequence.length());
+			if (uniqueSequence.length() > 19) {
+				uniqueSequence = uniqueSequence.substring(uniqueSequence.length() - 19);
 			}
 			Long cmprId = Long.parseLong(uniqueSequence);
 			infoBean.setCmprId(cmprId);
