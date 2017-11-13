@@ -6,7 +6,6 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
-import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
 import com.cmos.edccommon.iservice.facelive.IFaceLiveSV;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.msg.common.IConsumerProcessor;
@@ -23,7 +22,7 @@ import com.cmos.msg.exception.MsgException;
 public class FaceLiveConsumer implements IConsumerProcessor {
 	
 	@Reference(group = "edcco")
-	private IFaceLiveSV msgPicComSV;
+	private IFaceLiveSV msgFaceLiveSV;
 	
 	
 	private Logger log=LoggerFactory.getActionLog(FaceLiveConsumer.class);
@@ -31,8 +30,8 @@ public class FaceLiveConsumer implements IConsumerProcessor {
 	public void process(MsgFMessage msg) throws MsgException {
 		String msgContent = (String) msg.getMsg();
 		log.info("**************************MQ消费进程开始执行"+msgContent);
-		CoFaceLiveInfoDO logBean = (CoFaceLiveInfoDO) JsonUtil.convertJson2Object(msgContent,CoPicCompareInfoDO.class);
-		msgPicComSV.saveFaceLiveLog(logBean);
+		CoFaceLiveInfoDO logBean = (CoFaceLiveInfoDO) JsonUtil.convertJson2Object(msgContent,CoFaceLiveInfoDO.class);
+		msgFaceLiveSV.saveFaceLiveLog(logBean);
 	}
 
 }

@@ -382,7 +382,6 @@ public class PicCompareController {
 			String picTStr = null;
 			String picRBase64Str = null;
 			String picTBase64Str = null;
-			Map<String, String> rtnMap = new HashMap<String, String>();
 			// 1 获取人像照片
 			picRStr = downloadPic(picRPath);
 			if (StringUtil.isEmpty(picRStr)) {
@@ -445,18 +444,16 @@ public class PicCompareController {
 			}
 			// 3 调用人像比对服务
 			String compareResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
+			out.setReturnCode("0000");
 			// 4 人像比对分值判定
-			rtnMap.put("compareResult", compareResult);
 			if (StringUtil.isNotEmpty(compareResult)) {
 				Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult, Map.class);
 				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 				if (compareMap != null) {
 					String verifyState = compareMap.get("verifyState");
-					if (StringUtil.isNotEmpty(verifyState) && "0".equals(verifyState)) {
-						out.setReturnCode("0000");
-						out.setReturnMessage("人像比对成功");
+					if (StringUtil.isNotEmpty(verifyState) && "0".equals(verifyState)) {					
+						out.setReturnMessage("人像比对通过");
 					}else{
-						out.setReturnCode("2999");
 						out.setReturnMessage("人像比对不通过");
 					}
 					out.setBean(compareMap);
@@ -472,7 +469,7 @@ public class PicCompareController {
 				} catch (Exception e) {
 					log.error("MQ保存消费信息出错", e );
 				}
-			}		
+			}
 		} catch (Exception e) {
 			log.error("人像比对调用异常", e);
 			out.setReturnCode("2999");
@@ -704,7 +701,7 @@ public class PicCompareController {
 		log.info("*********************"+svUrl);
 		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PORTRAIT_SCORE);
 		if (StringUtil.isEmpty(timeOutConf)) {
-			timeOutConf = "12000";
+			timeOutConf = "20";
 		}
 		int timeOut = Integer.parseInt(timeOutConf);
 		try {

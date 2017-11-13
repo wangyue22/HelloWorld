@@ -32,7 +32,7 @@ public class ConsumerMsgRun implements CommandLineRunner {
 		try {
 			log.info("*************ConsumerMsgRun is running********************");
 			MsgConsumerClient.getRocketMQConsumer().subscribe(MqConstants.MQ_TOPIC.PIC_COMPARE, picCompareConsumer);
-			MsgConsumerClient.getRocketMQConsumer().subscribe(MqConstants.MQ_TOPIC.PIC_COMPARE, faceLiveConsumer);
+			MsgConsumerClient.getRocketMQConsumer().subscribe(MqConstants.MQ_TOPIC.FACE_LIVE, faceLiveConsumer);
 		} catch (MsgException e) {
 			log.error("ConsumerMsgRun exception:", e);
 		}	
