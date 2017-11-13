@@ -201,6 +201,8 @@ public class FaceLiveController {
 			out.setBean(returnMap);
 			// 3 保存调用记录
 			try {
+				logMap.put("rspCode", "0000");
+				logMap.put("rspInfoCntt", "success");
 				logMap.put("faceliveScore", faceliveScore);
 				logMap.putAll(returnMap);
 				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap);
@@ -243,22 +245,22 @@ public class FaceLiveController {
 		}
 		
 		infoBean.setCrtTime(new Timestamp(new Date().getTime()));
-		infoBean.setRspCode(requestSource);
+		infoBean.setReqstSrcCode(requestSource);
 		infoBean.setBizTypeCode(busiType);
 		infoBean.setSwftno(transactionId);
 		String rspCode = logMap.get("rspCode");
-//		String idntifResult = logMap.get("idntifResult");
 		String rspInfoCntt = logMap.get("rspInfoCntt");
-		String idntifFaceCnt = logMap.get("backtoMsgCntt");
+		String idntifFaceCnt = logMap.get("faceQty");
+		String backtoMsgCntt = logMap.get("backtoMsgCntt");
 		String idntifScore = logMap.get("faceScore");
-		infoBean.setRspCode(rspCode);
-		infoBean.setRspInfoCntt(rspInfoCntt);
-		infoBean.setIdntifFaceCnt(idntifFaceCnt);
-		infoBean.setIdntifScore(idntifScore);
 		
-//		infoBean.setIdntifResult(idntifResult);
-//		infoBean.setFaceliveScore(faceliveScore);
 		
+		infoBean.setBacktoMsgCntt(backtoMsgCntt);//返回报文内容
+		infoBean.setRspCode(rspCode);//返回码
+		infoBean.setRspInfoCntt(rspInfoCntt);//返回信息
+		infoBean.setIdntifFaceCnt(idntifFaceCnt);//识别人脸数
+		infoBean.setIdntifScore(idntifScore);//分数
+
 		String resultStr = infoBean.toJSON().toString();
 		return resultStr;
 	}

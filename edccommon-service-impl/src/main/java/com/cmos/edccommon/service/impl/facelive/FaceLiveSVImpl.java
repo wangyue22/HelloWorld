@@ -12,6 +12,7 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
 import com.cmos.edccommon.dao.facelive.CoFaceLiveInfoDAO;
 import com.cmos.edccommon.iservice.facelive.IFaceLiveSV;
+import com.cmos.edccommon.utils.StringUtil;
 
 
 /**
@@ -49,6 +50,11 @@ public class FaceLiveSVImpl implements IFaceLiveSV {
 			}
 			detctnId = Long.parseLong(uniqueSequence);
 			resultBean.setDetctnId(detctnId);
+		}
+		
+		String idntifScore = resultBean.getIdntifScore();
+		if (StringUtil.isNotBlank(idntifScore) && idntifScore.length() > 10) {
+			resultBean.setIdntifScore(idntifScore.substring(0, 10));
 		}
 		resultBean.setCrtUserId("EDCCOMMON");
 		resultBean.setModfTime(nowTime);
