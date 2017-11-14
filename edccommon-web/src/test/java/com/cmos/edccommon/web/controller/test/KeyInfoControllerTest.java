@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
+import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
 import com.cmos.edccommon.beans.crkey.RsaKeyDO;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.web.BaseUnitTest;
@@ -23,38 +24,51 @@ public class KeyInfoControllerTest extends BaseUnitTest {
 
     @Test
     /**
-     * http://localhost:18080/co/getDesKey
+     * http://localhost:18080/edccommon/co/getDesKey
      * @throws Exception
      */
     public void getDesKeyTest() throws Exception{
-        RsaKeyDO keyInfoDTO = new RsaKeyDO();
-
+    	KeyInfoDTO keyInfoDTO = new KeyInfoDTO();
+  
+        keyInfoDTO.setReqstSrcCode("371");
         logger.info("入参："+JsonUtil.convertObject2Json(keyInfoDTO));
         MvcResult result = mockMvc.perform(
-            MockMvcRequestBuilders.post("/co/getDesKey").accept("application/json")
-            .contentType(MediaType.APPLICATION_JSON_VALUE).param("reqstSrcCode", "371")
+            MockMvcRequestBuilders.post("/getDesKey").accept("application/json")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(keyInfoDTO))
                 /* content("371")*/)
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        logger.info(""+result);
+		logger.info("" + result.getResponse().getContentAsString());
     }
 
 
     @Test
     /**
-     * http://localhost:18080/co/getRsaKey
+     * http://localhost:18080/edccommon/co/getRsaKey
      * @throws Exception
      */
     public void getRsaKeyTest() throws Exception{
-        RsaKeyDO keyInfoDTO = new RsaKeyDO();
+        KeyInfoDTO keyInfoDTO = new KeyInfoDTO();
         keyInfoDTO.setReqstSrcCode("371");
-        keyInfoDTO.setBizTypeCd("DEFAULT");
         logger.info("入参："+JsonUtil.convertObject2Json(keyInfoDTO));
         MvcResult result = mockMvc.perform(
-            MockMvcRequestBuilders.post("/co/getRsaKey").accept("application/json")
+            MockMvcRequestBuilders.post("/getRsaKey").accept("application/json")
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(keyInfoDTO)))
             .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        logger.info(""+result);
+		logger.info("" + result.getResponse().getContentAsString());
     }
 
+    @Test
+    /**
+     * http://localhost:18080/edccommon/realityAccount/getRealityAccount
+     * @throws Exception
+     */
+    public void getRealityAccountTest() throws Exception{
+        MvcResult result = mockMvc.perform(
+            MockMvcRequestBuilders.post("/realityAccount/getRealityAccount").accept("application/json")
+            .contentType(MediaType.APPLICATION_JSON_VALUE).param("reqstSrcCode", "371")
+                /* content("371")*/)
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+		logger.info("" + result.getResponse().getContentAsString());
+    }
 
 }

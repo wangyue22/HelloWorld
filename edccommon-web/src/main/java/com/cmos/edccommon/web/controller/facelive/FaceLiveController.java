@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/co")
 public class FaceLiveController {
+
 	@Autowired
 	private CacheFatctoryUtil cacheFactory;
 	
@@ -178,11 +179,11 @@ public class FaceLiveController {
 						faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
 
 						if (StringUtil.isEmpty(faceliveScore)) {
-							faceliveScore = "98.4";
+							faceliveScore = "0.984";
 						}
 					}
 					if (faceScore < Float.parseFloat(faceliveScore)) {
-						log.info("#0000:真人检测失败：未检测到活体");
+						log.info("真人检测不通过：阈值="+faceliveScore+"，实际比分="+faceScore);
 						idntifResult = "1";// 识别结果 0为成功，1为失败；
 					} else {
 						idntifResult = "0";// 识别结果 0为成功，1为失败；
