@@ -28,7 +28,7 @@ public class RedisCacheDataUtil {
         try {
              re = cacheService.getString(key);
         }catch(Exception e){
-            logger.error("缓存查询异常");
+            logger.error("缓存查询异常",e);
             throw new GeneralException(e.getMessage());
         }
         return re;
@@ -40,7 +40,7 @@ public class RedisCacheDataUtil {
         try {
             reMap = cacheService.getMap(key);
         }catch(Exception e){
-            logger.error("缓存查询异常");
+            logger.error("缓存查询异常",e);
             throw new  GeneralException(e.getMessage());
         }
         return reMap;
@@ -52,7 +52,7 @@ public class RedisCacheDataUtil {
         try {
         	reList = (List)cacheService.getObject(key);
         }catch(Exception e){
-            logger.error("缓存查询异常");
+            logger.error("缓存查询异常",e);
             throw new GeneralException(e.getMessage());
         }
         return reList;
@@ -72,7 +72,7 @@ public class RedisCacheDataUtil {
             try{
                 result = cacheService.setString(entry.getKey().toString(),entry.getValue().toString());
             }catch(Exception e){
-	            logger.error("缓存操作异常");
+	            logger.error("缓存操作异常",e);
 	            throw new GeneralException(e.getMessage());
             }
         }
@@ -85,7 +85,7 @@ public class RedisCacheDataUtil {
             cacheService.del(key);
             result = true;  
         }catch(Exception e){
-            logger.error("缓存操作异常");
+            logger.error("缓存清除异常",e);
             result = false;  
         }
         return result;
@@ -131,7 +131,7 @@ public class RedisCacheDataUtil {
         for(Iterator iterator = map.entrySet().iterator(); iterator.hasNext();){
             Map.Entry entry = (Map.Entry)iterator.next();
             sb.append(entry.getKey().toString()).append( "'").append(null==entry.getValue()?"":
-                    entry.getValue().toString()).append(iterator.hasNext()?"^":"");
+            entry.getValue().toString()).append(iterator.hasNext()?"^":"");
         }
         return sb.toString();
     }

@@ -47,7 +47,7 @@ public class JVMCacheDataUtil {
             map.remove(key);
             result = true;
         }catch(Exception e){
-            logger.error(e.getMessage());
+            logger.error("清除缓存异常",e);
             result=false;
         }
 	    return result;
@@ -61,11 +61,12 @@ public class JVMCacheDataUtil {
         {
             Map.Entry entry = (Map.Entry)iterator.next();
             try{
-            map.put(entry.getKey(),entry.getValue());
-            result = true;
+	            map.put(entry.getKey(),entry.getValue());
+	            result = true;
             }catch(Exception e){
-                logger.error(e.getMessage());
+        	    logger.error("加载缓存异常",e);
                 result=false;
+                break;
             }
         }
         return result;
@@ -81,8 +82,9 @@ public class JVMCacheDataUtil {
                 map.put(entry.getKey(),entry.getValue());
                 result = true;
             }catch(Exception e){
-                logger.error(e.getMessage());
+            	logger.error("加载缓存异常",e);
                 result=false;
+                break;
             }
         }
         return result;
@@ -98,8 +100,9 @@ public class JVMCacheDataUtil {
                 map.put(entry.getKey(),entry.getValue());
                 result = true;
             }catch(Exception e){
-                logger.error("e.getMessage()");
+            	logger.error("加载缓存异常",e);
                 result=false;
+                break;
             }
         }
         return result;

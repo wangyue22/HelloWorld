@@ -202,7 +202,7 @@ public class CacheFatctoryUtil {
         try{
             resultString = JVMCacheDataUtil.getStringCache(cacheKey);
         }catch(Exception e){
-            logger.error(e.getMessage());
+            logger.error("获取缓存异常",e);
         }
 
         if(StringUtils.isEmpty(resultString)){//取值为空的时候从DB中获取数据
@@ -221,7 +221,7 @@ public class CacheFatctoryUtil {
         try{
             resultString = redisCacheDataUtil.getStringCache(cacheKey);
         }catch(Exception e){
-            logger.error(e.getMessage());
+            logger.error("获取缓存异常",e);
         }
         return resultString;
     }
@@ -236,7 +236,7 @@ public class CacheFatctoryUtil {
         try{
             resultMap = redisCacheDataUtil.getMapCache(cacheKey);
         }catch(Exception e){
-            logger.error("缓存获取异常",e);
+            logger.error("获取缓存异常",e);
         }
         return resultMap;
     }
