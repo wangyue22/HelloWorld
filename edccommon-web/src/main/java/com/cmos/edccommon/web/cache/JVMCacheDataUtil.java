@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class JVMCacheDataUtil {
     private static final Logger logger = LoggerFactory.getLogger(JVMCacheDataUtil.class);
         
-	public static Map map = new ConcurrentHashMap();
+	public static final Map map = new ConcurrentHashMap();
 	
     public static String getStringCache(String key){
     	String value = (String) map.get(key);

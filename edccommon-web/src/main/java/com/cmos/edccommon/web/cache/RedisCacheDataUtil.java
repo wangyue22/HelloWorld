@@ -101,7 +101,7 @@ public class RedisCacheDataUtil {
             try{
                 cacheService.putMap(entry.getKey().toString(),value);
             }catch(Exception e){
-                logger.error("缓存操作异常");
+                logger.error("缓存操作异常",e);
                 throw new  GeneralException(e.getMessage());
             }
         }
@@ -118,7 +118,7 @@ public class RedisCacheDataUtil {
             try{
             	result = cacheService.setObject(key, value);
             }catch(Exception e){
-                logger.error("缓存操作异常");
+                logger.error("缓存操作异常",e);
                 throw new GeneralException(e.getMessage());
             }      
         }
@@ -127,7 +127,7 @@ public class RedisCacheDataUtil {
        
     @SuppressWarnings("rawtypes")
 	public static String transMapToString(Map map){
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
         for(Iterator iterator = map.entrySet().iterator(); iterator.hasNext();){
             Map.Entry entry = (Map.Entry)iterator.next();
             sb.append(entry.getKey().toString()).append( "'").append(null==entry.getValue()?"":

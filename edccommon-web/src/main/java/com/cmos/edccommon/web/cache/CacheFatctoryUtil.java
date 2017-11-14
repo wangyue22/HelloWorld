@@ -288,7 +288,7 @@ public class CacheFatctoryUtil {
             logger.error("缓存获取异常",e);
         }
 
-        if(null == resultList || resultList.size() == 0){//取值为空的时候从DB中获取数据
+        if(null == resultList){//取值为空的时候从DB中获取数据
             resultList = getListFromDB(cacheKey);
         }
         return resultList;
