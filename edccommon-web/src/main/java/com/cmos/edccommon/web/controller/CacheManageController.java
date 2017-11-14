@@ -116,18 +116,18 @@ public class CacheManageController{
 
         try{
             switch(valueType){
-            case VALUE_TYPE_STRING:
-                dataMap.put(key, dataDto.getStringValue());//数据类型是string
-                result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
-                break;
-            case VALUE_TYPE_MAP:
-                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
-                result = JVMCacheDataUtil.putStringCache(dataMap);
-                break;
-            case VALUE_TYPE_LIST:
-                dataMap.put(key, list);//数据类型是List
-                result = JVMCacheDataUtil.putStringCache(dataMap);
-                break;
+	            case VALUE_TYPE_STRING:
+	                dataMap.put(key, dataDto.getStringValue());//数据类型是string
+	                result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
+	                break;
+	            case VALUE_TYPE_MAP:
+	                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
+	                result = JVMCacheDataUtil.putStringCache(dataMap);
+	                break;
+	            case VALUE_TYPE_LIST:
+	                dataMap.put(key, list);//数据类型是List
+	                result = JVMCacheDataUtil.putStringCache(dataMap);
+	                break;
             }
             if(result == true ){
                 outData.setReturnCode("0000");
@@ -204,32 +204,18 @@ public class CacheManageController{
             outData.setReturnCode("0000");
             outData.setReturnMessage("获取成功");
             switch(dataType){
-            case VALUE_TYPE_STRING :
-                String value = JVMCacheDataUtil.getStringCache(key);
-                if(StringUtils.isEmpty(value)){
-                    outData.setReturnCode("2999");
-                    outData.setReturnMessage("查询为空");
-                }else{
-                    outData.setStringValue(value);
-                }
-                break;
-            case VALUE_TYPE_MAP :
-                Map mapValue = JVMCacheDataUtil.getMapCache(key);
-                if(null == mapValue){
-                    outData.setReturnCode("2999");
-                    outData.setReturnMessage("查询为空");
-                }else{
-                    outData.setMapValue(mapValue);
-                }
-                break;
-            case VALUE_TYPE_LIST :
-                List list = JVMCacheDataUtil.getListCache(key);
-                if(null == list){
-                    outData.setReturnCode("2999");
-                    outData.setReturnMessage("查询为空");
-                }
-                outData.setListValue(list);
-                break;
+	            case VALUE_TYPE_STRING :
+	                String value = JVMCacheDataUtil.getStringCache(key);
+	                outData.setStringValue(value);
+	            break;
+	            case VALUE_TYPE_MAP :
+	                Map mapValue = JVMCacheDataUtil.getMapCache(key);
+	                outData.setMapValue(mapValue);
+	            break;
+	            case VALUE_TYPE_LIST :
+	                List list = JVMCacheDataUtil.getListCache(key);
+	                outData.setListValue(list);
+	            break;
             }
 
         }catch(Exception e){
