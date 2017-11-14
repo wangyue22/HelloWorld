@@ -116,18 +116,18 @@ public class CacheManageController{
 
         try{
             switch(valueType){
-	            case VALUE_TYPE_STRING:
-	                dataMap.put(key, dataDto.getStringValue());//数据类型是string
-	                result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
-	                break;
-	            case VALUE_TYPE_MAP:
-	                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
-	                result = JVMCacheDataUtil.putStringCache(dataMap);
-	                break;
-	            case VALUE_TYPE_LIST:
-	                dataMap.put(key, list);//数据类型是List
-	                result = JVMCacheDataUtil.putStringCache(dataMap);
-	                break;
+            case VALUE_TYPE_STRING:
+                dataMap.put(key, dataDto.getStringValue());//数据类型是string
+                result = JVMCacheDataUtil.putStringCache(dataMap);//JVM
+                break;
+            case VALUE_TYPE_MAP:
+                dataMap.put(key, dataDto.getMapValue());//数据类型是Map
+                result = JVMCacheDataUtil.putStringCache(dataMap);
+                break;
+            case VALUE_TYPE_LIST:
+                dataMap.put(key, list);//数据类型是List
+                result = JVMCacheDataUtil.putStringCache(dataMap);
+                break;
             }
             if(result == true ){
                 outData.setReturnCode("0000");
@@ -204,18 +204,18 @@ public class CacheManageController{
             outData.setReturnCode("0000");
             outData.setReturnMessage("获取成功");
             switch(dataType){
-	            case VALUE_TYPE_STRING :
-	                String value = JVMCacheDataUtil.getStringCache(key);
-	                outData.setStringValue(value);
-	            break;
-	            case VALUE_TYPE_MAP :
-	                Map mapValue = JVMCacheDataUtil.getMapCache(key);
-	                outData.setMapValue(mapValue);
-	            break;
-	            case VALUE_TYPE_LIST :
-	                List list = JVMCacheDataUtil.getListCache(key);
-	                outData.setListValue(list);
-	            break;
+            case VALUE_TYPE_STRING :
+                String value = JVMCacheDataUtil.getStringCache(key);
+                outData.setStringValue(value);
+                break;
+            case VALUE_TYPE_MAP :
+                Map mapValue = JVMCacheDataUtil.getMapCache(key);
+                outData.setMapValue(mapValue);
+                break;
+            case VALUE_TYPE_LIST :
+                List list = JVMCacheDataUtil.getListCache(key);
+                outData.setListValue(list);
+                break;
             }
 
         }catch(Exception e){
@@ -246,6 +246,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("保存失败");
         }
@@ -272,6 +273,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("修改失败");
         }
@@ -293,7 +295,7 @@ public class CacheManageController{
             log.info("dto信息:" + inDto.toJSONString());
             BeanUtils.copyProperties(bean, inDto);
             List<ServiceSwitchDO> list = serviceSwitch.getServiceSwitch(bean);
-            if (list.size() > 0) {
+            if (list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -302,6 +304,7 @@ public class CacheManageController{
                 dto.setReturnMessage("查询失败");
             }
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("查询失败");
         }
@@ -322,7 +325,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             List<RnfsCfgDO> list = rnfsCfg.getRnfsCfg(bean);
-            if (list.size() > 0) {
+            if (list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -331,6 +334,7 @@ public class CacheManageController{
                 dto.setReturnMessage("查询失败");
             }
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("查询失败");
         }
@@ -357,6 +361,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("修改失败");
         }
@@ -383,6 +388,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("保存失败");
         }
@@ -403,7 +409,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             List<RealityAccountDO> list = realityAccount.getRealityAccount(bean);
-            if (list.size() > 0) {
+            if (list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -412,6 +418,7 @@ public class CacheManageController{
                 dto.setReturnMessage("查询失败");
             }
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("查询失败");
         }
@@ -439,6 +446,7 @@ public class CacheManageController{
             dto.setReturnMessage("修改成功");
             log.info("出参dto:" + dto.toJSONString());
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("修改失败");
         }
@@ -464,6 +472,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("保存失败");
         }
@@ -484,7 +493,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             List<RsaKeyDO> list = rsaKey.getRsaKey(bean);
-            if (list.size() > 0) {
+            if (list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -493,6 +502,7 @@ public class CacheManageController{
                 dto.setReturnMessage("查询失败");
             }
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("查询失败");
         }
@@ -518,6 +528,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("修改成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("修改失败");
         }
@@ -543,6 +554,7 @@ public class CacheManageController{
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
         } catch (Exception e) {
+            log.error("error", e);
             dto.setReturnCode("9999");
             dto.setReturnMessage("保存失败");
         }
