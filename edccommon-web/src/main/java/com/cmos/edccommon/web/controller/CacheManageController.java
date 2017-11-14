@@ -295,7 +295,7 @@ public class CacheManageController{
             log.info("dto信息:" + inDto.toJSONString());
             BeanUtils.copyProperties(bean, inDto);
             List<ServiceSwitchDO> list = serviceSwitch.getServiceSwitch(bean);
-            if (list.isEmpty()) {
+            if (!list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -325,7 +325,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             List<RnfsCfgDO> list = rnfsCfg.getRnfsCfg(bean);
-            if (list.isEmpty()) {
+            if (!list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -409,7 +409,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             List<RealityAccountDO> list = realityAccount.getRealityAccount(bean);
-            if (list.isEmpty()) {
+            if (!list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
@@ -493,7 +493,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             List<RsaKeyDO> list = rsaKey.getRsaKey(bean);
-            if (list.isEmpty()) {
+            if (!list.isEmpty()) {
                 dto.setBeans(list);
                 dto.setReturnCode("0000");
                 dto.setReturnMessage("查询成功");
