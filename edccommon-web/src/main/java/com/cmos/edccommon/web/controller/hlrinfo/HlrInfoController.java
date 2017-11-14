@@ -65,7 +65,7 @@ public class HlrInfoController {
 			} catch (Exception e) {
 				hlrInfoDTO.setReturnCode("9999");
 				hlrInfoDTO.setReturnMessage("调用手机号获取省份通用能力发生异常");
-				log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());
+				log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString(), e);
 			}
 			hlrInfoDTO.getBean().put("provCode", provCode);
 			log.info("getProvCodeByPhoneNum方法回参为:" + hlrInfoDTO.toJSONString());

@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/co")
 public class FaceLiveController {
+
 	@Autowired
 	private CacheFatctoryUtil cacheFactory;
 	
@@ -127,7 +128,7 @@ public class FaceLiveController {
 			}
 		} catch (Exception e) {
 			picRStrBase64 = null;
-			log.error("人像照片解密异常",e);
+			log.error("人像照片解密异常", e);
 		}	
 		
 		Map<String, String> logMap = new HashMap<String, String>();
@@ -165,9 +166,9 @@ public class FaceLiveController {
 			}
 			returnMap.put("faceQty", resultNum);// 识别出的人脸数
 
-			if (StringUtil.isNotBlank(resultNum) && Integer.parseInt(resultNum) > 0) {
+			if (rtnMap != null && StringUtil.isNotBlank(resultNum) && Integer.parseInt(resultNum) > 0) {
 				List resultList = (List) rtnMap.get("result");
-				if (resultList != null && resultList.size() > 0) {
+				if (resultList != null && !resultList.isEmpty()) {
 					Map resultMap = (Map) resultList.get(0);
 					String faceliveness = String.valueOf(resultMap.get("faceliveness"));
 					returnMap.put("faceScore", faceliveness);// 识别出的人脸分值
@@ -178,11 +179,11 @@ public class FaceLiveController {
 						faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
 
 						if (StringUtil.isEmpty(faceliveScore)) {
-							faceliveScore = "98.4";
+							faceliveScore = "0.984";
 						}
 					}
 					if (faceScore < Float.parseFloat(faceliveScore)) {
-						log.info("#0000:真人检测失败：未检测到活体");
+						log.info("真人检测不通过：阈值="+faceliveScore+"，实际比分="+faceScore);
 						idntifResult = "1";// 识别结果 0为成功，1为失败；
 					} else {
 						idntifResult = "0";// 识别结果 0为成功，1为失败；
@@ -271,22 +272,13 @@ public class FaceLiveController {
 	 * @return
 	 */
 	private String downloadPic(String picPath) {
-		InputStream picInputStream = null;
 		String picStr = null;
 		try {
 			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
 			log.error("静默活体服务下载图片异常", e);
-		} finally {
-			if (null != picInputStream) {
-				try {
-					picInputStream.close();
-				} catch (IOException e1) {
-					log.error("静默活体服务关闭图片流异常", e1);
-				}
-			}
-		}
+		} 
 		return picStr;
 	}
 }
