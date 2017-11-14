@@ -185,8 +185,8 @@ public class FileUpDownUtil {
         String onestUploadResult;
         // 如果是onest，上传后返回上传主机，onest方式上传返回onest，rnfs上传返回主机别名
         InputStream in = null;
-        in = new ByteArrayInputStream(inputByte);
         try {
+            in = new ByteArrayInputStream(inputByte);
             ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
             onestUploadResult = FileUpDownConstants.GztFile.ONEST_UPLOAD_SUC;
         } catch (Exception e) {
@@ -362,7 +362,7 @@ public class FileUpDownUtil {
         byte[] resultByte;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] data = new byte[4096];
-        int len = 0;
+        int len;
         while ((len = result.read(data)) != -1) {
             baos.write(data, 0, len);
         }
@@ -376,15 +376,16 @@ public class FileUpDownUtil {
     /**
      *  字符串 文件上传方法
      * @param fileType P图片,W无纸化,V视频
-     * @param relativePath  文件相对目录 例:10085file/371/
+     * @param inRelativePath  文件相对目录 例:10085file/371/
      * @param fileName   上传文件名 例：1008520171031144100098765_Z.jpg
      * @param content  文件ISO8859-1字符串
      * @return 文件记录url 例：aFtp/10085file/371/1008520171031144100098765_Z.jpg
      *
      */
-    public String uploadBusiFileStr(String fileType, String relativePath, String fileName, String content)
+    public String uploadBusiFileStr(String fileType, String inRelativePath, String fileName, String content)
             throws GeneralException {
         String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
+        String relativePath = inRelativePath;
         if ("true".equals(onestFlag)) {
             // 拼装全路径
             // onest上传 开头不用/
@@ -417,16 +418,17 @@ public class FileUpDownUtil {
     /**
      * byte 数组 文件上传方法
      * @param fileType P图片,W无纸化,V视频
-     * @param relativePath 文件相对目录 例:10085file/371/
+     * @param inRelativePath 文件相对目录 例:10085file/371/
      * @param fileName 上传文件名 例：1008520171031144100098765_Z.jpg
      * @param inputByte 文件字节数组
      * @return 文件记录url 例：aFtp/10085file/371/1008520171031144100098765_Z.jpg
      * @throws GeneralException
      */
-    public String uploadBusiFileByte(String fileType, String relativePath, String fileName, byte[] inputByte)
+    public String uploadBusiFileByte(String fileType, String inRelativePath, String fileName, byte[] inputByte)
             throws GeneralException {
 
         String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
+        String relativePath = inRelativePath;
         if ("true".equals(onestFlag)) {
             // 拼装全路径
             // onest上传 开头不用/
@@ -683,8 +685,8 @@ public class FileUpDownUtil {
     private String uploadBusiByOnest(String bucketName, String path, byte[] inputByte) {
         String uploadUrl;
         InputStream in = null;
-        in = new ByteArrayInputStream(inputByte);
         try {
+            in = new ByteArrayInputStream(inputByte);
             ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
             uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "/" + path;
             return uploadUrl;
