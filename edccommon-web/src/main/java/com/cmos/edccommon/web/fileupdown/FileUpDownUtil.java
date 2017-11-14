@@ -387,10 +387,11 @@ public class FileUpDownUtil {
         String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
         if ("true".equals(onestFlag)) {
             // 拼装全路径
-
-            if (!relativePath.startsWith("/")) {
-                relativePath = "/" + relativePath;
+            // onest上传 开头不用/
+            if (relativePath.startsWith("/")) {
+                relativePath = relativePath.replaceFirst("/", "");
             }
+
             if (!relativePath.endsWith("/")) {
                 relativePath = relativePath + "/";
             }
@@ -428,9 +429,11 @@ public class FileUpDownUtil {
         String onestFlag = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.ONEST_UPDOWN_FILE_FALG);
         if ("true".equals(onestFlag)) {
             // 拼装全路径
-            if (!relativePath.startsWith("/")) {
-                relativePath = "/" + relativePath;
+            // onest上传 开头不用/
+            if (relativePath.startsWith("/")) {
+                relativePath = relativePath.replaceFirst("/", "");
             }
+
             if (!relativePath.endsWith("/")) {
                 relativePath = relativePath + "/";
             }
@@ -464,7 +467,7 @@ public class FileUpDownUtil {
         // 判断是否使用onest下载
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             byte[] file = downloadBusiByOnest(env.getProperty("onest.busifile.bucketname"),
-                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX, "").trim());
+                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "/", "").trim());
             try {
                 return new String(file, FileUpDownConstants.FILE_CHAR_SET);
             } catch (Exception e) {
@@ -489,7 +492,7 @@ public class FileUpDownUtil {
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
             try {
                 return downloadBusiByOnest(env.getProperty("onest.busifile.bucketname"),
-                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX, "").trim());
+                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "/", "").trim());
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
             }
@@ -683,7 +686,7 @@ public class FileUpDownUtil {
         in = new ByteArrayInputStream(inputByte);
         try {
             ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
-            uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + path;
+            uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "/" + path;
             return uploadUrl;
         } catch (Exception e) {
             logger.error("ONEST上传异常 onest error:", e);
@@ -1055,4 +1058,7 @@ public class FileUpDownUtil {
     }
     // --------------------------------------------------业务图片上传下载end----------------------------------------------------------------------
 
+    public static void main(String[] args) {
+
+    }
 }
