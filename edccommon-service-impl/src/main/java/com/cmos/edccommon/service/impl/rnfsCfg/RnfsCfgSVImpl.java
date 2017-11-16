@@ -27,7 +27,7 @@ public class RnfsCfgSVImpl implements IRnfsCfgSV {
     public List getRnfsGrpNmByrnfsGrpNm(String cacheTypeCd, String cacheDataTypeCd) {
         List returnList = new ArrayList();
         List<RnfsCfgDO> grpNm = rnfsCfgDAO.getRnfsGrpNm(cacheTypeCd, cacheDataTypeCd);
-        List<RnfsCfgDO> all = new ArrayList<RnfsCfgDO>();
+        List<RnfsCfgDO> all;
         for(int i=0;i<grpNm.size();i++){
             if(grpNm.get(i)!=null) {
                 all = rnfsCfgDAO.getRnfsGrpNmByrnfsGrpNm(grpNm.get(i).getRnfsGrpNm());

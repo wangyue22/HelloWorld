@@ -28,7 +28,7 @@ public class RealityAccountSVImpl implements IRealityAccountSV {
     @Override
     public RealityAccountDO getRealityAccountBycacheKey(String cacheKeyVal) {
         return realityAccountDAO.getRealityAccountBycacheKey(cacheKeyVal);
-    };
+    }
 
     /* 查询实名账户信息 */
     @Override

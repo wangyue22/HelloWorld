@@ -20,7 +20,7 @@ public  class HlrInfoSVImpl implements  IHlrInfoSV {
 	    * @return:String
 	    */
 	public String getProvCodeByPhoneNum(String phoneNum){
-		String provCode=null;
+		String provCode;
 		provCode=hlrInfoDoDao.getProvCodeByPhoneNum(phoneNum);
 		return provCode;
 	}
@@ -30,7 +30,7 @@ public  class HlrInfoSVImpl implements  IHlrInfoSV {
 	   * @return:String
 	   */
 	public String getHlrTypeByPhoneNum(String phoneNum) {
-		String hlrType=null;
+		String hlrType;
 		hlrType=hlrInfoDoDao.getHlrTypeByPhoneNum(phoneNum);
 		return hlrType;
 	}
