@@ -35,7 +35,7 @@ import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
-import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
+import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.edccommon.web.fileupdown.GztFileDownloadUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
@@ -57,7 +57,7 @@ public class PicCompareController {
 	private CacheFatctoryUtil cacheFactory;
 	
 	@Autowired
-	private FileUpDownUtil fileUpDownUtil;
+	private BusiFileUpDownUtil busiFileUpDownUtil;
 	
 	@Autowired
     private GztFileDownloadUtil gztFileDownloadUtil;
@@ -572,7 +572,7 @@ public class PicCompareController {
 	private String downloadPic(String picPath) {
 		String picStr = null;
 		try {
-			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
+			picStr = busiFileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
 			log.error("人像比对服务下载图片异常", e);

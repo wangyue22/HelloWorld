@@ -16,7 +16,7 @@ import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
-import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
+import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
@@ -47,7 +47,7 @@ public class FaceLiveController {
 	private CacheFatctoryUtil cacheFactory;
 	
 	@Autowired
-	private FileUpDownUtil fileUpDownUtil;
+	private BusiFileUpDownUtil busiFileUpDownUtil;
 	
 	@Autowired
 	private BasicUtil basicUtil;
@@ -274,7 +274,7 @@ public class FaceLiveController {
 	private String downloadPic(String picPath) {
 		String picStr = null;
 		try {
-			picStr = fileUpDownUtil.downloadBusiFileStr(picPath);
+			picStr = busiFileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
 			log.error("静默活体服务下载图片异常", e);

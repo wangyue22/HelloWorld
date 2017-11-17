@@ -36,12 +36,12 @@ import com.cmos.onest.ONestUtil;
  * @date:   2017年11月1日 下午5:47:25
  */
 @Component
-public class FileUpDownUtil {
+public class BusiFileUpDownUtil {
 
     @Autowired
     private Environment env;
 
-    private static final Logger logger = LoggerFactory.getActionLog(FileUpDownUtil.class);
+    private static final Logger logger = LoggerFactory.getActionLog(BusiFileUpDownUtil.class);
 
     @Autowired
     private CacheFatctoryUtil cacheUtil;
