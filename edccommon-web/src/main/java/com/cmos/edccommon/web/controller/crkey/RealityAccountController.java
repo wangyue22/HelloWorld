@@ -17,6 +17,7 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 //import com.cmos.edccommon.iservice.crkey.IRealityAccountSV;
 import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 /**
  * author dongzhiqiang
@@ -27,29 +28,39 @@ import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 @RequestMapping(value = "realityAccount")
 @Api(description = "通用功能获取密钥服务")
 public class RealityAccountController {
+
+	/**
+	 * 用户名密码缓存key前缀
+	 */
+    private static final String CACHE_REALACC_PREFIX = "CO_REALACC:";
+    
 	private static Logger log=LoggerFactory.getActionLog(RealityAccountController.class);
     @Autowired
     private CacheFatctoryUtil cacheFatctoryUtil;
 
-    @ApiOperation(value = "根据请求源编码和请求源名称获取密钥")
+    @SuppressWarnings("unchecked")
+	@ApiOperation(value = "根据请求源编码和请求源名称获取密钥")
     @RequestMapping(value = "/getRealityAccount", method = RequestMethod.POST)
-    public EdcCoOutDTO getBySourceCode(@RequestParam String reqstSrcCode) throws GeneralException {
+    public EdcCoOutDTO getBySourceCode(@RequestParam String reqstSrcCode) {
         EdcCoOutDTO outParam = new EdcCoOutDTO();
+    	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+        outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+        
         log.info("RealityAccountController reqstSrcCode= " + reqstSrcCode);
-        outParam.setReturnCode("2999");
-        outParam.setReturnMessage("未能查到该用户名");
         if (StringUtil.isEmpty(reqstSrcCode)) {
-            throw new GeneralException("2999", "参数异常");
+			outParam.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+            return outParam;
         }
-        String cacheKey = "CO_REALACC:" + reqstSrcCode;
+        String cacheKey = CACHE_REALACC_PREFIX + reqstSrcCode;
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
         log.info("RealityAccountController cacheKey= " + cacheKey);
      
         if (bean != null) {
         	log.info("RealityAccountController bean = " + bean.toString());
             outParam.setBean(bean);
-            outParam.setReturnCode("0000");
-            outParam.setReturnMessage("success");
+            outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         }
         return outParam;
     }

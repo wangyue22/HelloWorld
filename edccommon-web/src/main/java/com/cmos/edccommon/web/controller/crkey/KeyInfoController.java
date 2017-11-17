@@ -15,6 +15,7 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 import com.cmos.edccommon.beans.crkey.KeyInfoDTO;
 import com.cmos.edccommon.utils.consts.KeyInfoConstants;
+import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.github.pagehelper.StringUtil;
 
@@ -40,11 +41,14 @@ public class KeyInfoController {
      */
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getRsaKey", method = RequestMethod.POST)
-    public EdcCoOutDTO getRsaKey(@RequestBody KeyInfoDTO inParam) throws GeneralException {
+    public EdcCoOutDTO getRsaKey(@RequestBody KeyInfoDTO inParam){
         EdcCoOutDTO outParam = new EdcCoOutDTO();
-
+    	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+        outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
         if (inParam == null || StringUtil.isEmpty(inParam.getReqstSrcCode())) {
-            throw new GeneralException("2999", "参数异常");
+			outParam.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+            return outParam;
         }
         String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
         String bizTypeCd = inParam.getBizTypeCd();// 业务类型
@@ -57,20 +61,24 @@ public class KeyInfoController {
 		String cacheKey = KeyInfoConstants.CACHEKEY.CO_RSAKEY_PREFIX + reqstSrcCode + bizTypeCd;
 		
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
-        outParam.setBean(bean);
-        outParam.setReturnCode("0000");
-        outParam.setReturnMessage("success");
+		if (bean != null) {
+			outParam.setBean(bean);
+			outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
+		}
         return outParam;
     }
 
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
-    public EdcCoOutDTO getDesKey(@RequestBody KeyInfoDTO inParam) throws GeneralException {
+    public EdcCoOutDTO getDesKey(@RequestBody KeyInfoDTO inParam){
         EdcCoOutDTO outParam = new EdcCoOutDTO();
-        outParam.setReturnCode("2999");
-        outParam.setReturnMessage("未能查到该秘钥");
+    	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+        outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
         if (inParam == null || StringUtil.isEmpty(inParam.getReqstSrcCode())) {
-            throw new GeneralException("2999", "参数异常");
+			outParam.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+            return outParam;
         }
         String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
         String reqstSrcNm = inParam.getBizTypeCd();// 业务类型
@@ -89,8 +97,8 @@ public class KeyInfoController {
                 desKey = desKey.trim();
                 result.put("desKey", desKey);
                 outParam.setBean(result);
-                outParam.setReturnCode("0000");
-                outParam.setReturnMessage("success");
+                outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+                outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             }
         }
         return outParam;

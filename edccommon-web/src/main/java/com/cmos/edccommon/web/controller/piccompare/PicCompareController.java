@@ -522,8 +522,8 @@ public class PicCompareController {
 
 			// 1 校验人像照片，国政通头像or芯片头像 是否为空
 			if (StringUtil.isBlank(picRBase64Str) || StringUtil.isBlank(picTBase64Str)) {
-				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_INPARAM_ERROR.getCode());
-				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_INPARAM_ERROR.getMessage());
+				out.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+				out.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
 				return out;
 			}
 
