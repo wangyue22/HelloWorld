@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 //import com.cmos.edccommon.iservice.crkey.IRealityAccountSV;
 import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.KeyInfoConstants;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 /**
@@ -28,12 +28,7 @@ import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 @RequestMapping(value = "realityAccount")
 @Api(description = "通用功能获取密钥服务")
 public class RealityAccountController {
-
-	/**
-	 * 用户名密码缓存key前缀
-	 */
-    private static final String CACHE_REALACC_PREFIX = "CO_REALACC:";
-    
+	
 	private static Logger log=LoggerFactory.getActionLog(RealityAccountController.class);
     @Autowired
     private CacheFatctoryUtil cacheFatctoryUtil;
@@ -52,7 +47,7 @@ public class RealityAccountController {
 			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
             return outParam;
         }
-        String cacheKey = CACHE_REALACC_PREFIX + reqstSrcCode;
+        String cacheKey = KeyInfoConstants.CACHEKEY.CO_REALACC_PREFIX + reqstSrcCode;
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
         log.info("RealityAccountController cacheKey= " + cacheKey);
      

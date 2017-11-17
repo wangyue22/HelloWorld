@@ -21,8 +21,6 @@ import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
