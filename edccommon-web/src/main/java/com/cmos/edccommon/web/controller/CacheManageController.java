@@ -38,6 +38,7 @@ import com.cmos.edccommon.iservice.IServiceSwitchSV;
 import com.cmos.edccommon.iservice.crkey.IRsaKeySV;
 import com.cmos.edccommon.iservice.realityAccount.IRealityAccountSV;
 import com.cmos.edccommon.iservice.rnfsCfg.IRnfsCfgSV;
+import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.JVMCacheDataUtil;
 import com.cmos.edccommon.web.cache.RedisCacheDataUtil;
 
@@ -58,6 +59,9 @@ public class CacheManageController{
 
     @Autowired
     private JVMCacheDataUtil jvmCacheDataUtil;
+
+    @Autowired
+    private BasicUtil basicUtil;
 
     @Reference(group = "edcco")
     private IServiceSwitchSV serviceSwitch;
@@ -239,9 +243,19 @@ public class CacheManageController{
         ServiceSwitchDO bean = new ServiceSwitchDO();
         Long time = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(time);
+
+        // 生成主键
+        String uniqueSequence = null;
+        try {
+            uniqueSequence = basicUtil.getSequence("t_op_service_switch");
+        } catch (Exception e) {
+            log.error("生成主键异常", e);
+        }
+        Long keyId = Long.parseLong(uniqueSequence);
         try {
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
+            bean.setSwtchId(keyId);
             serviceSwitch.saveServiceSwitch(bean);
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
@@ -372,7 +386,7 @@ public class CacheManageController{
      * 业务db的配置缓存数据增加
      *
      * @param
-     * @return ServiceSwitchDTO
+     * @return RnfsCfgOutDTO
      * @throws Exception
      */
     @RequestMapping(value = "/saveRnfsCfgDb", method = RequestMethod.POST)
@@ -381,9 +395,19 @@ public class CacheManageController{
         RnfsCfgDO bean = new RnfsCfgDO();
         Long time = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(time);
+
+        // 生成主键
+        String uniqueSequence = null;
+        try {
+            uniqueSequence = basicUtil.getSequence("t_op_rnfs_cfg");
+        } catch (Exception e) {
+            log.error("生成主键异常", e);
+        }
+        Long keyId = Long.parseLong(uniqueSequence);
         try {
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
+            bean.setConfigId(keyId);
             rnfsCfg.saveRnfsCfg(bean);
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
@@ -465,9 +489,19 @@ public class CacheManageController{
         RealityAccountDO bean = new RealityAccountDO();
         Long time = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(time);
+
+        // 生成主键
+        String uniqueSequence = null;
+        try {
+            uniqueSequence = basicUtil.getSequence("t_op_reality_account");
+        } catch (Exception e) {
+            log.error("生成主键异常", e);
+        }
+        Long keyId = Long.parseLong(uniqueSequence);
         try {
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
+            bean.setRealAcctId(keyId);
             realityAccount.saveRealityAccount(bean);
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");
@@ -547,9 +581,19 @@ public class CacheManageController{
         RsaKeyDO bean = new RsaKeyDO();
         Long time = System.currentTimeMillis();
         Timestamp timestamp = new Timestamp(time);
+
+        // 生成主键
+        String uniqueSequence = null;
+        try {
+            uniqueSequence = basicUtil.getSequence("t_op_rsa_key");
+        } catch (Exception e) {
+            log.error("生成主键异常", e);
+        }
+        Long keyId = Long.parseLong(uniqueSequence);
         try {
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
+            bean.setCrkeyId(keyId);
             rsaKey.saveRsaKey(bean);
             dto.setReturnCode("0000");
             dto.setReturnMessage("保存成功");

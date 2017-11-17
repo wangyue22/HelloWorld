@@ -227,6 +227,9 @@
   <insert id="saveRsaKey" parameterType="com.cmos.edccommon.beans.crkey.RsaKeyDO">
   	insert into t_op_rsa_key
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="crkeyId != null" >
+        CRKEY_ID,
+      </if>
       <if test="reqstSrcCode != null" >
         REQST_SRC_CODE,
       </if>
@@ -271,6 +274,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="crkeyId != null" >
+        #{crkeyId,jdbcType=BIGINT},
+      </if>
       <if test="reqstSrcCode != null" >
         #{reqstSrcCode,jdbcType=VARCHAR},
       </if>

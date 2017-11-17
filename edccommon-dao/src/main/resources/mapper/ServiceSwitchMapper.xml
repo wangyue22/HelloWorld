@@ -222,6 +222,9 @@
   <insert id="saveServiceSwitch" parameterType="com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO" >
      insert into t_op_service_switch
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="swtchId != null" >
+        SWTCH_ID,
+      </if>
       <if test="bizSysCode != null" >
         BIZ_SYS_CODE,
       </if>
@@ -257,6 +260,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="swtchId != null" >
+        #{swtchId,jdbcType=BIGINT},
+      </if>
       <if test="bizSysCode != null" >
         #{bizSysCode,jdbcType=VARCHAR},
       </if>

@@ -121,6 +121,9 @@
   <insert id="saveRnfsCfg" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
     insert into t_op_rnfs_cfg 
     <trim prefix="(" suffix=")" suffixOverrides="," >
+    	<if test="configId != null and configId !=''" >
+        	CONFIG_ID,
+      	</if>
     	<if test="rnfsGrpNm != null and rnfsGrpNm !=''" >
         	RNFS_GRP_NM,
       	</if>
@@ -180,6 +183,9 @@
 	    </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      	<if test="configId != null and configId !=''" >
+        	#{configId,jdbcType=BIGINT},
+      	</if>
       	<if test="rnfsGrpNm != null and rnfsGrpNm !=''" >
         	#{rnfsGrpNm,jdbcType=VARCHAR},
       	</if>
