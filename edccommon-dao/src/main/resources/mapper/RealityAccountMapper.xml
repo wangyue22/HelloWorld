@@ -130,7 +130,7 @@
   </select>
   <insert id="saveRealityAccount" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO">
   	insert into t_op_reality_account
-  	(REAL_ACCT_ID
+  	(REAL_ACCT_ID,
   		REQST_SRC_CODE,
 		REQST_SRC_NM,
 		USER_NM,
