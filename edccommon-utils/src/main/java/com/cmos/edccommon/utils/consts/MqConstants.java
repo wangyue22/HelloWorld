@@ -6,8 +6,6 @@ package com.cmos.edccommon.utils.consts;
 public final class MqConstants {
     //MQ的主题
 	public interface MQ_TOPIC {
-		/** 测试MQ */
-		String PIC_COMPARE_TEST = "EDCCO_PICCOMPARE_TEST";
 		/** 异步保存人像比对 */
 		String PIC_COMPARE = "EDCCO_PICCOMPARE";
 		/** 异步保存静默活体 */

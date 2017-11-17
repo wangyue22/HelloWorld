@@ -1,8 +1,7 @@
 package com.cmos.edccommon.web.controller.piccompare;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -814,10 +813,17 @@ public class PicCompareController {
 		infoBean.setReqstSrcCode(requestSource);
 		infoBean.setBizTypeCode(busiType);
 		infoBean.setSwftno(transactionId);
+		
+		//生成分表字段
+		Date nowTime = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");
+		String dateString = dateFormat.format(nowTime);
+		infoBean.setSplitName(dateString);
+		
 		//生成主键
 		String uniqueSequence = null;
 		try {
-			uniqueSequence = basicUtil.getSequence(MqConstants.MQ_TOPIC.PIC_COMPARE);
+			uniqueSequence = basicUtil.getSequence(CoConstants.DB_NAME.PIC_COMPARE + dateFormat);
 		} catch (Exception e) {
 			log.error("生成主键异常", e);
 		}
@@ -829,13 +835,11 @@ public class PicCompareController {
 			Long cmprId = Long.parseLong(uniqueSequence);
 			infoBean.setCmprId(cmprId);
 		}
-
 		String returnCode = out.getReturnCode();
 		String returnMessage = out.getReturnMessage();
 		infoBean.setRspCode(returnCode);
 		infoBean.setRspInfoCntt(returnMessage);
 
-		
 		// 如果比对结果不为空 保存比对结果
 		if (null != compareResult) {
 			infoBean.setPhotoPath((String) compareResult.get("picRPath"));

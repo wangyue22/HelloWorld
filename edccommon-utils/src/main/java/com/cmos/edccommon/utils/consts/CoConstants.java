@@ -5,37 +5,47 @@ package com.cmos.edccommon.utils.consts;
  */
 public final class CoConstants {
 
+	// 存放密钥类型
+	public interface CR_KEY_TYPE {
+		String DES = "DES";
+		String AES = "AES";
+		String RSA = "RSA";
+	}
 
-    //存放密钥类型 
-    public interface CR_KEY_TYPE {
-		String DES="DES";
-		String AES="AES";
-		String RSA="RSA";
-    }
-    
-    //存放业务类型
-    public interface BIZ_TYPE{
-		String KSJ="KSJ";
-		String DEFAULT="DEFAULT";
-    }
-   
-    //存放人像比对图片类型
-    public interface PIC_TYPE{
-    	/**
-    	 * 国政通头像
-    	 */
-		String PIC_GZT="g";
+	// 存放业务类型
+	public interface BIZ_TYPE {
+		String KSJ = "KSJ";
+		String DEFAULT = "DEFAULT";
+	}
+
+	// 存放人像比对图片类型
+	public interface PIC_TYPE {
 		/**
-    	 * 芯片头像
-    	 */
-		String PIC_STOIN="x";
+		 * 国政通头像
+		 */
+		String PIC_GZT = "g";
 		/**
-    	 * 手持证件照人像
-    	 */
-		String PHOTO_R="r";
+		 * 芯片头像
+		 */
+		String PIC_STOIN = "x";
 		/**
-    	 * 非手持证件照人像
-    	 */
-		String PHOTO_T="t";
-    }
+		 * 手持证件照人像
+		 */
+		String PHOTO_R = "r";
+		/**
+		 * 非手持证件照人像
+		 */
+		String PHOTO_T = "t";
+	}
+
+	/**
+	 * 数据表名常量类
+	 */
+	public interface DB_NAME {
+		/** 人像比对 */
+		String PIC_COMPARE = "T_CO_PIC_COMPARE_INFO_";
+		/** 静默活体 */
+		String FACE_LIVE = "T_CO_FACE_LIVE_INFO_";
+	}
+
 }

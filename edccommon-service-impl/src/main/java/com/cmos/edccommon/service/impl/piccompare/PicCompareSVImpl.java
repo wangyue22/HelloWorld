@@ -1,9 +1,5 @@
 package com.cmos.edccommon.service.impl.piccompare;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -36,17 +32,14 @@ public class PicCompareSVImpl implements IPicCompareSV {
 	public void savePicCompareLog(CoPicCompareInfoDO resultBean) {
 
 		Date nowTime = new Date();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");
-		String dateString = dateFormat.format(nowTime);
-
 		resultBean.setCrtUserId("EDCCOMMON");
 		resultBean.setCrtAppSysId("EDCCOMMON");
 
 		if (resultBean.getCrtTime() == null) {
+			log.error("创建时间为空，请及时查看");
 			resultBean.setCrtTime(nowTime);
 		}
 		resultBean.setModfTime(nowTime);
-		resultBean.setSplitName(dateString);
 		dao.insert(resultBean);
 	}
 }
