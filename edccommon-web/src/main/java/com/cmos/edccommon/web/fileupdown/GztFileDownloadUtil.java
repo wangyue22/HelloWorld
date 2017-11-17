@@ -12,14 +12,17 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.cmos.common.exception.GeneralException;
+import com.cmos.common.remote.Response;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
+import com.cmos.edccommon.beans.common.GetGztPhotoDTO;
 import com.cmos.edccommon.utils.Base64;
 import com.cmos.edccommon.utils.HttpMultiPartUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.FileUpDownConstants;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
+import com.cmos.edccommon.web.remote.IRemoteGztFileSV;
 import com.cmos.onest.ONestUtil;
 
 /**
@@ -30,45 +33,18 @@ import com.cmos.onest.ONestUtil;
 * @date:   2017年11月16日 下午5:47:25
 */
 @Component
-public class GztFileUpDownUtil {
+public class GztFileDownloadUtil {
     @Autowired
     private Environment env;
+    
+    @Autowired
+    private IRemoteGztFileSV remoteSV;
 
-    private static final Logger logger = LoggerFactory.getActionLog(GztFileUpDownUtil.class);
+    private static final Logger logger = LoggerFactory.getActionLog(GztFileDownloadUtil.class);
 
     @Autowired
     private CacheFatctoryUtil cacheUtil;
 
-    /**
-     * 上传国政通头像
-     * @param path
-     * @param base64Str
-     * @param doubleWriteFlag
-     * @return
-     * @throws GeneralException
-     */
-    public Map<String,String> uploadGztPic(String path, String base64Str) throws GeneralException {
-        Map<String,String> resMap = new HashMap<String,String>();
-        // 获取onest开关，onest是否开放优先使用
-        String onestSwitch = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_ONEST_SWITCH);
-        String onestUploadResult = FileUpDownConstants.GztFile.ONEST_NOT_UPLOAD;
-        byte[] inputByte = Base64.decode(base64Str);
-        if ("true".equals(onestSwitch)) {
-            onestUploadResult = uploadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path, inputByte);
-            resMap.put("uploadType", FileUpDownConstants.GztFile.ONEST);
-        }
-        if ("false".equals(onestSwitch) || FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED.equals(onestUploadResult)) {
-            String serverName = uploadGztFileByRnfs(path, inputByte);
-            if(StringUtil.isNotBlank(serverName)){
-                resMap.put("uploadType", FileUpDownConstants.GztFile.RNFS);
-                resMap.put("rnfsServerName", serverName);
-            }else{
-                resMap.put("uploadType", FileUpDownConstants.GztFile.UPLOAD_FAILED);
-            }
-        }
-        resMap.put("onestUploadResult", onestUploadResult);
-        return resMap;
-    }
 
     /**
      * 根据路径下载国政通图片，并转换为base64字符串返回
@@ -76,10 +52,11 @@ public class GztFileUpDownUtil {
      * @return
      * @throws GeneralException
      */
-    public String downloadGztPicBase64Str(String inPath) throws GeneralException{
+    public String downloadGztPicBase64Str(String inPath, String provCode, String sourceCode, String sourceSys,
+        String swftNo) throws GeneralException {
         String base64Str = null;
-        byte[] bt = dowdloadGztPic(inPath);
-        if(bt!=null){
+        byte[] bt = dowdloadGztPic(inPath, provCode, sourceCode, sourceSys, swftNo);
+        if (bt != null) {
             base64Str = Base64.encode(bt);
         }
         return base64Str;
@@ -87,15 +64,21 @@ public class GztFileUpDownUtil {
 
     /**
      * 下载国政通头像
-     * @param path
+     * @param inPath 国政通头像路径
+     * @param provCode 省编码
+     * @param requestSource 请求源
+     * @param sourceSys 来源系统名称
+     * @param swftNo 流水号
      * @return
      * @throws GeneralException
      */
-    public byte[] dowdloadGztPic(String inPath) throws GeneralException {
+    @SuppressWarnings("rawtypes")
+    public byte[] dowdloadGztPic(String inPath, String provCode, String sourceCode, String sourceSys, String swftNo)
+        throws GeneralException {
         String path = inPath;
-        if(StringUtil.isBlank(path)){
-            throw new GeneralException("2999","下载路径不能为空！");
-        }else{
+        if (StringUtil.isBlank(path)) {
+            throw new GeneralException("2999", "下载路径不能为空！");
+        } else {
             path = path.substring(path.indexOf("cert"));
         }
 
@@ -106,90 +89,37 @@ public class GztFileUpDownUtil {
         if ("true".equals(onestSwitch)) {
             inputByte = downloadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path);
         }
-        if ("false".equals(onestSwitch) || inputByte==null) {
-            // 如果onest优先未开启，或者如果下载失败，使用rnfs下载
-            // 如果是rnfs，则根据路径获取文件服务器地址并上传
-            Map<String, String> map = getGztRnfsServerNameByPath(path);
-            String rnfsServerName = map.get("rnfsServerName");
-            String lastServerName = map.get("lastServerName");
-            inputByte = downGztFileByRnfs(path, rnfsServerName);
-            if(inputByte==null && StringUtil.isNotBlank(lastServerName)){
-                inputByte = downGztFileByRnfs(path, lastServerName);
+
+        try {
+            if ("false".equals(onestSwitch) || inputByte == null) {
+                // 如果onest优先未开启，或者如果下载失败，使用rnfs下载
+                // 如果是rnfs，则根据路径获取文件服务器地址并上传
+                Map<String, String> map = getGztRnfsServerNameByPath(path);
+                String rnfsServerName = map.get("rnfsServerName");
+                String lastServerName = map.get("lastServerName");
+                inputByte = downGztFileByRnfs(path, rnfsServerName);
+                if (inputByte == null && StringUtil.isNotBlank(lastServerName)) {
+                    inputByte = downGztFileByRnfs(path, lastServerName);
+                }
             }
-            if(inputByte == null){
-                // 如果仍然下载失败，使用default节点下载
-                String defaultRnfsServerName = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_SERVER_DEFAULT);
-                inputByte = downGztFileByRnfs(path, defaultRnfsServerName);
-            }
+        } catch (Exception e) {
+            logger.error("*******downGztFileByRnfs error******");
         }
-        if("false".equals(onestSwitch) && inputByte==null){
-            //如果onest优先未开启，然后使用rnfs下载失败，则使用onset下载
-            inputByte = downloadGztFileByOnest(env.getProperty("onest.gztfile.bucketname"), path);
+        
+        if (inputByte == null) {
+            GetGztPhotoDTO paramDto = new GetGztPhotoDTO();
+            paramDto.setGztUrl(path);
+            paramDto.setProvCode(provCode);
+            paramDto.setReqstSrcCode(sourceCode);
+            paramDto.setSourceSystem(sourceSys);
+            paramDto.setSwftno(swftNo);
+            Response response = remoteSV.getGztPhotoByPath(paramDto);
+            String gztBase64Str = (String) response.getResult().getBean().get("gztBase64Str");
+            if(StringUtil.isNotBlank(gztBase64Str)){
+                inputByte = Base64.decode(gztBase64Str);
+            }
         }
         return inputByte;
-    }
-
-    /**
-     * 使用rnfs上传国政通头像
-     * @param path
-     * @param inputByte
-     * @return
-     * @throws GeneralException
-     */
-    @SuppressWarnings("rawtypes")
-    public String uploadGztFileByRnfs(String path, byte[] inputByte) throws GeneralException {
-        long begin = System.currentTimeMillis();
-        // 如果是rnfs，则根据路径获取文件服务器地址并上传
-        Map<String, String> map = getGztRnfsServerNameByPath(path);
-        String rnfsServerName = map.get("rnfsServerName");
-        // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
-        Map serverInfoMap = cacheUtil.getJVMMap(CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX+rnfsServerName);
-        String ipPort = (String)serverInfoMap.get("rnfsAddrPrtnum");
-        String rootPath = (String)serverInfoMap.get("rootPath");
-        String remotePath = rootPath + "/" + path;
-        if (!remotePath.startsWith("/")) {
-            remotePath = "/" + remotePath;
-        }
-        remotePath = remotePath.replaceAll("//", "/");// 将两个斜杠替换为一个
-        String resStr = uploadByRnfs(inputByte, ipPort, remotePath);
-
-        if ("0000".equals(resStr)) {
-            long end = System.currentTimeMillis();
-            logger.error(String.format("GZTFILE_UPLOAD_RNFS serverName=%s path=%s time=%s",rnfsServerName, path, String.valueOf(end - begin)));
-            return rnfsServerName;
-        }else{
-            return null;
-        }
-    }
-
-    /**
-     * 使用onest方式上传文件
-     * @param bucketName
-     * @param path
-     * @param inputByte
-     * @return
-     */
-    public String uploadGztFileByOnest(String bucketName, String path, byte[] inputByte) {
-        String onestUploadResult;
-        // 如果是onest，上传后返回上传主机，onest方式上传返回onest，rnfs上传返回主机别名
-        InputStream in = null;
-        try {
-            in = new ByteArrayInputStream(inputByte);
-            ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
-            onestUploadResult = FileUpDownConstants.GztFile.ONEST_UPLOAD_SUC;
-        } catch (Exception e) {
-            logger.error("ONEST上传异常 onest error:", e);
-            onestUploadResult = FileUpDownConstants.GztFile.ONEST_UPLOAD_FAILED;
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (Exception e2) {
-                logger.error("close inputstream error:", e2);
-            }
-        }
-        return onestUploadResult;
     }
 
 
@@ -226,50 +156,6 @@ public class GztFileUpDownUtil {
         serverMap.put("lastServerName", lastServerName);
         return serverMap;
     }
-
-    /**
-     * 使用rnfs方式上传文件
-     * @param inputByte
-     * @param ipPort
-     * @param remotePath
-     * @return
-     * @throws GeneralException
-     */
-    private String uploadByRnfs(byte[] inputByte, String ipPort, String remotePath) throws GeneralException {
-        Map<String, byte[]> fileMap = new HashMap<String, byte[]>();
-        fileMap.put(remotePath, inputByte);
-
-        if (StringUtil.isBlank(ipPort)) {
-            throw new GeneralException("2999", "上传时未找到可用的服务，remotePathAndName=" + remotePath);
-        }
-        String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.UPLOAD, FileUpDownConstants.RNFS_URL_PARAM);
-        logger.info("upload urlStr=" + urlStr + "  remotePathAndName=" + remotePath);
-        String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
-        if (timeOut != null && timeOut.trim().length() > 0) {
-            HttpMultiPartUtil.setConnection_timeout(timeOut);
-            HttpMultiPartUtil.setSo_timeout(timeOut);
-            logger.info("upload timeOut=" + timeOut);
-        } else {
-            HttpMultiPartUtil.setConnection_timeout(FileUpDownConstants.RNFS_TIME_OUT);
-            HttpMultiPartUtil.setSo_timeout(FileUpDownConstants.RNFS_TIME_OUT);
-            logger.info("upload timeOut=" + FileUpDownConstants.RNFS_TIME_OUT);
-        }
-        String resStr = null;
-        byte[] res = HttpMultiPartUtil.upDownPost(urlStr, null, fileMap);
-        if (res != null) {
-            resStr = new String(res);
-            logger.error("upload res:" + resStr);
-        } else {
-            logger.error("upload res:is null; remotePath="+remotePath);
-        }
-        return resStr;
-    }
-
-
-
-
-
-
 
     /**
      * 使用onest方式下载文件

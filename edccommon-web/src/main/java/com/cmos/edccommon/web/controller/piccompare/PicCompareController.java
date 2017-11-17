@@ -36,7 +36,7 @@ import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.FileUpDownUtil;
-import com.cmos.edccommon.web.fileupdown.GztFileUpDownUtil;
+import com.cmos.edccommon.web.fileupdown.GztFileDownloadUtil;
 import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
@@ -60,7 +60,7 @@ public class PicCompareController {
 	private FileUpDownUtil fileUpDownUtil;
 	
 	@Autowired
-    private GztFileUpDownUtil gztFileUpDownUtil;
+    private GztFileDownloadUtil gztFileDownloadUtil;
 	
 	@Autowired
 	private BasicUtil basicUtil;
@@ -82,6 +82,7 @@ public class PicCompareController {
 			log.info("****************************" + inParam);
 			String swftno = inParam.getSwftno();// 流水号
 			String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
+			String provCode = reqstSrcCode.substring(0, 3);
 			String bizTypeCode = inParam.getBizTypeCode();// 业务类型
 			String picRPath = inParam.getPhotoPath();
 			String picTPath = inParam.getPicStoinPath();
@@ -128,7 +129,7 @@ public class PicCompareController {
 			}
 
 			// 2.1 获取国政通头像
-			String picTGStr = downloadGZTPic(picTGPath);
+			String picTGStr = downloadGZTPic(picTGPath,provCode,reqstSrcCode,"EDCCOMMON",swftno);
 			picGZTBase64Str = picTGStr;
 			if (StringUtil.isEmpty(picGZTBase64Str)) {
 				log.info("国政通图片获取失败");
@@ -272,6 +273,8 @@ public class PicCompareController {
 			log.info("****************************" + inParam);
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();
+			String provCode = reqstSrcCode.substring(0,3);
+			
 			String bizTypeCode = inParam.getBizTypeCode();
 			String picRPath = inParam.getPhotoPath();
 			String picTPath = inParam.getPicTPath();
@@ -311,7 +314,7 @@ public class PicCompareController {
 			try {
 				String picRDecStr;
 				if (CoConstants.PIC_TYPE.PIC_GZT.equalsIgnoreCase(picTType)) {
-					picTStr = downloadGZTPic(picTPath);
+					picTStr = downloadGZTPic(picTPath,provCode,reqstSrcCode,"EDCCOMMON",swftno);
 					if (StringUtil.isEmpty(picTStr)) {
 						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
@@ -382,6 +385,7 @@ public class PicCompareController {
 			log.info("****************************" + inParam);
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();
+			String provCode = reqstSrcCode.substring(0, 3);
 			String bizTypeCode = inParam.getBizTypeCode();
 
 			String picRPath = inParam.getPhotoPath();
@@ -422,7 +426,7 @@ public class PicCompareController {
 
 			try {
 				if (CoConstants.PIC_TYPE.PIC_GZT.equalsIgnoreCase(picTType)) {
-					picTStr = downloadGZTPic(picTPath);
+					picTStr = downloadGZTPic(picTPath,provCode,reqstSrcCode,"EDCCOMMON",swftno);
 					if (StringUtil.isEmpty(picTStr)) {
 						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
@@ -577,21 +581,22 @@ public class PicCompareController {
 	}
 	
 	
-	/**
-	 * 下载国政通图片
-	 * @param picPath
-	 * @return
-	 */
-	private String downloadGZTPic(String picPath) {
-		String picGZTBase64Str = null;
-		try {
-			picGZTBase64Str = gztFileUpDownUtil.downloadGztPicBase64Str(picPath);
-		} catch (Exception e) {
-			picGZTBase64Str = null;
-			log.error("人像比对服务下载国政通图片异常", e);
-		}
-		return picGZTBase64Str;
-	}
+    /**
+     * 下载国政通图片
+     * @param picPath
+     * @return
+     */
+    private String downloadGZTPic(String picPath, String provCode, String sourceCode, String sourceSys, String swftNo) {
+        String picGZTBase64Str = null;
+        try {
+            picGZTBase64Str = gztFileDownloadUtil.downloadGztPicBase64Str(picPath, provCode, sourceCode, sourceSys,
+                swftNo);
+        } catch (Exception e) {
+            picGZTBase64Str = null;
+            log.error("人像比对服务下载国政通图片异常", e);
+        }
+        return picGZTBase64Str;
+    }
 	
 
 	

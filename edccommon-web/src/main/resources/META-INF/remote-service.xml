@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<services activeProfile="development">
+    <profile name="development">
+        <endpoint name="getGztPhotoByPath" type="HTTP" method="POST">
+            <entry version="DEFAULT" url="@remote.url.edcacms@/getGztPhotoByPath" />
+        </endpoint>
+    </profile>
+</services>
+
