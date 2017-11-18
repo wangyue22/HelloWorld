@@ -24,7 +24,7 @@ public class FaceLiveControllerTest extends BaseUnitTest {
  
     @Test
     /**
-     * http://localhost:18080/edccommon/co/getfacelive
+     * http://localhost:18080/edccommon/co/facelive
      * @throws Exception
      */
     public void getFaceLiveTest() throws Exception{
@@ -32,12 +32,12 @@ public class FaceLiveControllerTest extends BaseUnitTest {
     	faceLiveInfo.setReqstSrcCode("371");
     	faceLiveInfo.setBizTypeCode("DEFAULT");
     	faceLiveInfo.setFaceLiveScore("98.075");
-    	faceLiveInfo.setPicRPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
-    	faceLiveInfo.setCrkey("BRIEZ");
+    	faceLiveInfo.setPicRPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
+    	faceLiveInfo.setCrkey("QXNLD");
     	faceLiveInfo.setSwftno("1234567890");
         logger.info("入参："+JsonUtil.convertObject2Json(faceLiveInfo));
         MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/co/getfacelive").accept("application/json")
+                MockMvcRequestBuilders.post("/co/facelive").accept("application/json")
                         .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(faceLiveInfo)))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
         logger.info("" + result.getResponse().getContentAsString());

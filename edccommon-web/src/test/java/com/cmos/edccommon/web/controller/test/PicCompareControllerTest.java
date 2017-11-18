@@ -25,7 +25,7 @@ public class PicCompareControllerTest extends BaseUnitTest {
 
     @Test
     /**
-     * http://localhost:18080/co/picdoublecompare
+     * http://localhost:18080/edccommon/co/picdoublecompare
      * @throws Exception
      */
     public void picdoublecompareTest() throws Exception{
@@ -35,12 +35,12 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picDoubleCompareInfo.setBizTypeCode("DEFAULT");
     	picDoubleCompareInfo.setBothCompFlag("true");
     	picDoubleCompareInfo.setGztAvtrPath("certfile/41/10/81/411081199009115952.jpg");
-    	picDoubleCompareInfo.setPhotoPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
-    	picDoubleCompareInfo.setPicStoinPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
+    	picDoubleCompareInfo.setPhotoPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
+    	picDoubleCompareInfo.setPicStoinPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
     	picDoubleCompareInfo.setGztAvtrScore("0-50|80-100");
     	picDoubleCompareInfo.setPicStoinScore("0-50|80-100");
     	picDoubleCompareInfo.setPhotoType("r");
-    	picDoubleCompareInfo.setCrkey("BRIEZ");
+    	picDoubleCompareInfo.setCrkey("QXNLD");
         logger.info("入参："+JsonUtil.convertObject2Json(picDoubleCompareInfo));
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.post("/co/picdoublecompare").accept("application/json")
@@ -51,7 +51,7 @@ public class PicCompareControllerTest extends BaseUnitTest {
     
     @Test
     /**
-     * http://localhost:18080/co/piccompare
+     * http://localhost:18080/edccommon/co/picCompare
      * @throws Exception
      */
     public void picCompareTest() throws Exception{
@@ -61,15 +61,15 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picCompareInfo.setBizTypeCode("DEFAULT");
 
     	picCompareInfo.setPhotoType("r");
-    	picCompareInfo.setPhotoPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
-    	picCompareInfo.setPicTPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
+    	picCompareInfo.setPhotoPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
+    	picCompareInfo.setPicTPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
     	picCompareInfo.setPicTType("x");
-    	picCompareInfo.setCrkey("BRIEZ");
+    	picCompareInfo.setCrkey("QXNLD");
     	picCompareInfo.setConfidenceScore("0-50|80-100");
 
         logger.info("入参："+JsonUtil.convertObject2Json(picCompareInfo));
         MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/co/piccompare").accept("application/json")
+                MockMvcRequestBuilders.post("/co/picCompare").accept("application/json")
                         .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(picCompareInfo)))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 		logger.info("" + result.getResponse().getContentAsString());
@@ -77,7 +77,7 @@ public class PicCompareControllerTest extends BaseUnitTest {
     
     @Test
     /**
-     * http://localhost:18080/co/piccheck
+     * http://localhost:18080/edccommon/co/picCheck
      * @throws Exception
      */
     public void picCheckTest() throws Exception{
@@ -87,14 +87,14 @@ public class PicCompareControllerTest extends BaseUnitTest {
     	picCompareInfo.setBizTypeCode("DEFAULT");
 
     	picCompareInfo.setPhotoType("r");
-    	picCompareInfo.setPhotoPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
-    	picCompareInfo.setPicTPath("oNest/10085custPicCompare/371/20171106/10852017110603710004_R.jpg");
+    	picCompareInfo.setPhotoPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
+    	picCompareInfo.setPicTPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
     	picCompareInfo.setPicTType("x");
-    	picCompareInfo.setCrkey("BRIEZ");
+    	picCompareInfo.setCrkey("QXNLD");
 
         logger.info("入参："+JsonUtil.convertObject2Json(picCompareInfo));
         MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/co/piccheck").accept("application/json")
+                MockMvcRequestBuilders.post("/co/picCheck").accept("application/json")
                         .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(picCompareInfo)))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 		logger.info("" + result.getResponse().getContentAsString());
