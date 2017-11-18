@@ -650,7 +650,7 @@ public class PicCompareController {
 			reqInfoMap.put("IsCHeckHand", isHeadCheck);
 			
 			// 只有进行手持证件照判断是否含有证件照才传值
-			String perScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PER_SCORE);
+			String perScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_PER_SCORE);
 			if (StringUtil.isEmpty(perScore)) {
 				perScore = "0";
 			}
@@ -668,7 +668,7 @@ public class PicCompareController {
 		}
 
 		// 自拍照是否有人像判定分值
-		String portraitSorce = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PORTRAIT_SCORE);
+		String portraitSorce = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_PORTRAIT_SCORE);
 		if (StringUtil.isEmpty(portraitSorce)) {
 			portraitSorce = "0";
 		}
@@ -694,7 +694,7 @@ public class PicCompareController {
 //		String svUrl = env.getProperty("cfg.picCheck.url");	
 		String svUrl = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_URL);
 		log.info("*********************"+svUrl);
-		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH__PORTRAIT_SCORE);
+		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_PORTRAIT_SCORE);
 		if (StringUtil.isEmpty(timeOutConf)) {
 			timeOutConf = "20";
 		}

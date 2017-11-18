@@ -1,6 +1,5 @@
 package com.cmos.edccommon.web.fileupdown;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +11,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.cmos.common.exception.GeneralException;
-import com.cmos.common.remote.Response;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.beans.common.GetGztPhotoDTO;
 import com.cmos.edccommon.utils.Base64;
 import com.cmos.edccommon.utils.HttpMultiPartUtil;
 import com.cmos.edccommon.utils.StringUtil;
