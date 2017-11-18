@@ -11,6 +11,7 @@ public enum   ReturnInfoEnums {
     PROCESS_ERROR("9999","系统异常"),
     PROCESS_INPARAM_ERROR("2999","入参校验不通过"),
     
+    PICCOMPARE_GZT_DOWN_FAILED("2998","国政通图片下载异常，请重新下载国政通图片"), //国政通特殊返回码（*重要*）
 	PICCOMPARE_PICR_DOWN_FAILED("2999","人像照片下载异常"),
 	PICCOMPARE_PICR_DEC_FAILED("2999","人像照片解密异常"),
 	PICCOMPARE_PICT_DOWN_FAILED("2999","标准照片下载异常"),

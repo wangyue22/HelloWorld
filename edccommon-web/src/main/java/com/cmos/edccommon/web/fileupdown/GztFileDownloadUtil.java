@@ -22,7 +22,6 @@ import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.FileUpDownConstants;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
-import com.cmos.edccommon.web.remote.IRemoteGztFileSV;
 import com.cmos.onest.ONestUtil;
 
 /**
@@ -36,9 +35,6 @@ import com.cmos.onest.ONestUtil;
 public class GztFileDownloadUtil {
     @Autowired
     private Environment env;
-    
-    @Autowired
-    private IRemoteGztFileSV remoteSV;
 
     private static final Logger logger = LoggerFactory.getActionLog(GztFileDownloadUtil.class);
 
@@ -52,10 +48,10 @@ public class GztFileDownloadUtil {
      * @return
      * @throws GeneralException
      */
-    public String downloadGztPicBase64Str(String inPath, String provCode, String sourceCode, String sourceSys,
+    public String downloadGztPicBase64Str(String inPath, String sourceCode, String sourceSys,
         String swftNo) throws GeneralException {
         String base64Str = null;
-        byte[] bt = dowdloadGztPic(inPath, provCode, sourceCode, sourceSys, swftNo);
+        byte[] bt = dowdloadGztPic(inPath, sourceCode, sourceSys, swftNo);
         if (bt != null) {
             base64Str = Base64.encode(bt);
         }
@@ -73,7 +69,7 @@ public class GztFileDownloadUtil {
      * @throws GeneralException
      */
     @SuppressWarnings("rawtypes")
-    public byte[] dowdloadGztPic(String inPath, String provCode, String sourceCode, String sourceSys, String swftNo)
+    public byte[] dowdloadGztPic(String inPath, String sourceCode, String sourceSys, String swftNo)
         throws GeneralException {
         String path = inPath;
         if (StringUtil.isBlank(path)) {
@@ -104,20 +100,6 @@ public class GztFileDownloadUtil {
             }
         } catch (Exception e) {
             logger.error("*******downGztFileByRnfs error******");
-        }
-        
-        if (inputByte == null) {
-            GetGztPhotoDTO paramDto = new GetGztPhotoDTO();
-            paramDto.setGztUrl(path);
-            paramDto.setProvCode(provCode);
-            paramDto.setReqstSrcCode(sourceCode);
-            paramDto.setSourceSystem(sourceSys);
-            paramDto.setSwftno(swftNo);
-            Response response = remoteSV.getGztPhotoByPath(paramDto);
-            String gztBase64Str = (String) response.getResult().getBean().get("gztBase64Str");
-            if(StringUtil.isNotBlank(gztBase64Str)){
-                inputByte = Base64.decode(gztBase64Str);
-            }
         }
         return inputByte;
     }

@@ -51,7 +51,7 @@ public class RealityAccountController {
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
         log.info("RealityAccountController cacheKey= " + cacheKey);
      
-        if (bean != null) {
+        if (bean != null && !bean.isEmpty()) {
         	log.info("RealityAccountController bean = " + bean.toString());
             outParam.setBean(bean);
             outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());

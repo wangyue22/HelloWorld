@@ -61,7 +61,7 @@ public class KeyInfoController {
 		String cacheKey = KeyInfoConstants.CACHEKEY.CO_RSAKEY_PREFIX + reqstSrcCode + bizTypeCd;
 		
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
-		if (bean != null) {
+		if (bean != null && !bean.isEmpty()) {
 			outParam.setBean(bean);
 			outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
@@ -90,7 +90,7 @@ public class KeyInfoController {
         String cacheKey = KeyInfoConstants.CACHEKEY.CO_REALACC_PREFIX + reqstSrcCode + reqstSrcNm;
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
 
-        if (bean != null) {
+        if (bean != null && !bean.isEmpty()) {
             Map<String, String> result = new HashMap<String, String>();
             String desKey = bean.get("desKey");
             if (StringUtil.isNotEmpty(desKey)) {
