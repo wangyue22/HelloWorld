@@ -173,7 +173,7 @@ public class CacheFatctoryUtil {
                 }
             	Map dataMap = new HashMap();
                 dataMap.put(key, resultList);
-            	JVMCacheDataUtil.putMapCache(dataMap);
+            	JVMCacheDataUtil.putListCache(dataMap);
                 return resultList;
             default:
                 logger.error("传入key不符合规范");
