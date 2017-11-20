@@ -53,6 +53,21 @@
 	<build>
 		<finalName>${cmos.core-finalName}</finalName>
 		<plugins>
+			<!-- sonar单元测试jar包 -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<configuration>
+					<formats>
+						<format>xml</format>
+					</formats>
+					<instrumentation>
+						<excludes>
+						</excludes>
+					</instrumentation>
+					<check/>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

@@ -27,9 +27,11 @@ import com.cmos.edccommon.iservice.piccompare.IPicCompareSV;
 import com.cmos.edccommon.utils.Base64;
 import com.cmos.edccommon.utils.HttpUtil;
 import com.cmos.edccommon.utils.JsonUtil;
+import com.cmos.edccommon.utils.KafkaUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.CoConstants;
+import com.cmos.edccommon.utils.consts.KafkaConsts;
 import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
@@ -895,6 +897,8 @@ public class PicCompareController {
 			EdcCoOutDTO out) throws MsgException, JsonFormatException {
 		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
 		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
+		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
+		
 	}
 	
 	
