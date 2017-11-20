@@ -432,14 +432,14 @@ public class BusiFileUpDownUtil {
         } catch (Exception e) {
             throw new GeneralException("9999", e.getMessage() + " remotePathAndName=" + remotePathAndName, e);
         } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                    if (client != null) {
-                        client.completePendingCommand();
-                    }
-                }
-            } catch (Exception e2) {
+			try {
+				if (input != null) {
+					input.close();
+				}
+				if (client != null) {
+					client.completePendingCommand();
+				}
+			} catch (Exception e2) {
                 logger.error(e2.getMessage(), e2);
             }
             closeFtp(client);

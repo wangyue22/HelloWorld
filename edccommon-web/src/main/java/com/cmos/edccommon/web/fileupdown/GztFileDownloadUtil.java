@@ -96,7 +96,7 @@ public class GztFileDownloadUtil {
                 }
             }
         } catch (Exception e) {
-            logger.error("*******downGztFileByRnfs error******");
+			logger.error("*******downGztFileByRnfs error******", e);
         }
         return inputByte;
     }
