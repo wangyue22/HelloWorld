@@ -897,7 +897,7 @@ public class PicCompareController {
 			EdcCoOutDTO out) throws MsgException, JsonFormatException {
 		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
 		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
-		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
+//		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
 		
 	}
 	
