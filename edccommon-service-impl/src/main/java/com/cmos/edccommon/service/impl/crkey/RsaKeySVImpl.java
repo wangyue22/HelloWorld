@@ -19,11 +19,11 @@ import com.cmos.edccommon.iservice.crkey.IRsaKeySV;
  *
  */
 @Service(group = "edcco")
-public  class KeyInfoSVImpl implements  IRsaKeySV {
+public  class RsaKeySVImpl implements  IRsaKeySV {
     @Autowired
     private RsaKeyDAO keyDAO;
 
-    Logger logger = LoggerFactory.getActionLog(KeyInfoSVImpl.class);
+    Logger logger = LoggerFactory.getActionLog(RsaKeySVImpl.class);
 
     /**
      * 获取RSA秘钥

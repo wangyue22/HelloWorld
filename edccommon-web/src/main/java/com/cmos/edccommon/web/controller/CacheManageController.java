@@ -559,6 +559,7 @@ public class CacheManageController{
         try {
             BeanUtils.copyProperties(bean, inDto);
             bean.setModfTime(timestamp);
+            log.info("入参bean:" + bean.toJSONString());
             rsaKey.updateRsaKey(bean);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
