@@ -38,6 +38,7 @@ import com.cmos.edccommon.iservice.IServiceSwitchSV;
 import com.cmos.edccommon.iservice.crkey.IRsaKeySV;
 import com.cmos.edccommon.iservice.realityAccount.IRealityAccountSV;
 import com.cmos.edccommon.iservice.rnfsCfg.IRnfsCfgSV;
+import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.JVMCacheDataUtil;
 import com.cmos.edccommon.web.cache.RedisCacheDataUtil;
@@ -257,12 +258,12 @@ public class CacheManageController{
             bean.setCrtTime(timestamp);
             bean.setSwtchId(keyId);
             serviceSwitch.saveServiceSwitch(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("保存成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("保存失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -284,12 +285,12 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setModfTime(timestamp);
             serviceSwitch.updateServiceSwitch(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("修改成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("修改失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -311,16 +312,16 @@ public class CacheManageController{
             List<ServiceSwitchDO> list = serviceSwitch.getServiceSwitch(bean);
             if (!list.isEmpty()) {
                 dto.setBeans(list);
-                dto.setReturnCode("0000");
-                dto.setReturnMessage("查询成功");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             } else {
-                dto.setReturnCode("2999");
-                dto.setReturnMessage("查询失败");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("查询失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -341,16 +342,16 @@ public class CacheManageController{
             List<RnfsCfgDO> list = rnfsCfg.getRnfsCfg(bean);
             if (!list.isEmpty()) {
                 dto.setBeans(list);
-                dto.setReturnCode("0000");
-                dto.setReturnMessage("查询成功");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             } else {
-                dto.setReturnCode("2999");
-                dto.setReturnMessage("查询失败");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("查询失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -372,12 +373,12 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setModfTime(timestamp);
             rnfsCfg.updateRnfsCfg(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("修改成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("修改失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -409,12 +410,12 @@ public class CacheManageController{
             bean.setCrtTime(timestamp);
             bean.setConfigId(keyId);
             rnfsCfg.saveRnfsCfg(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("保存成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("保存失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -435,16 +436,16 @@ public class CacheManageController{
             List<RealityAccountDO> list = realityAccount.getRealityAccount(bean);
             if (!list.isEmpty()) {
                 dto.setBeans(list);
-                dto.setReturnCode("0000");
-                dto.setReturnMessage("查询成功");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             } else {
-                dto.setReturnCode("2999");
-                dto.setReturnMessage("查询失败");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("查询失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -466,13 +467,13 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setModifyTime(timestamp);
             realityAccount.updaterealityAccount(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("修改成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             log.info("出参dto:" + dto.toJSONString());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("修改失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -503,12 +504,12 @@ public class CacheManageController{
             bean.setCrtTime(timestamp);
             bean.setRealAcctId(keyId);
             realityAccount.saveRealityAccount(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("保存成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("保存失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -529,16 +530,16 @@ public class CacheManageController{
             List<RsaKeyDO> list = rsaKey.getRsaKey(bean);
             if (!list.isEmpty()) {
                 dto.setBeans(list);
-                dto.setReturnCode("0000");
-                dto.setReturnMessage("查询成功");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             } else {
-                dto.setReturnCode("2999");
-                dto.setReturnMessage("查询失败");
+                dto.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+                dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("查询失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -559,12 +560,12 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setModfTime(timestamp);
             rsaKey.updateRsaKey(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("修改成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("修改失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
@@ -595,12 +596,12 @@ public class CacheManageController{
             bean.setCrtTime(timestamp);
             bean.setCrkeyId(keyId);
             rsaKey.saveRsaKey(bean);
-            dto.setReturnCode("0000");
-            dto.setReturnMessage("保存成功");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
             log.error("error", e);
-            dto.setReturnCode("9999");
-            dto.setReturnMessage("保存失败");
+            dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
         return dto;
     }
