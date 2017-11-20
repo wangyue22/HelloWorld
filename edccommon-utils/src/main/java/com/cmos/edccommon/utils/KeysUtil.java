@@ -111,15 +111,15 @@ public class KeysUtil {
         }
         return sb.toString();
     }
-    
-    
-	public static void main(String[] args) {
-		StringBuffer str = new StringBuffer("wlf");
-		System.out.println(str); // 调用insert方法前结果：wlf
-		str.insert(0, "ang");
-		System.out.println(str); // 调用insert方法后结果：wanglf
-		System.out.println("---------------------------");
-		System.out.println(str); // wanglfhaha0
 
-	}
+
+    public static void main(String[] args) {
+        StringBuffer str = new StringBuffer("wlf");
+        System.out.println(str); // 调用insert方法前结果：wlf
+        str.insert(0, "ang");
+        System.out.println(str); // 调用insert方法后结果：wanglf
+        System.out.println("---------------------------");
+        System.out.println(str); // wanglfhaha0
+
+    }
 }
