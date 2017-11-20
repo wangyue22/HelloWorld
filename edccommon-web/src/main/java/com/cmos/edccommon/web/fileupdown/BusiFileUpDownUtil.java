@@ -50,7 +50,7 @@ public class BusiFileUpDownUtil {
 
     private Integer pos = 0;
 
-    
+
 
 
     // --------------------------------------------------业务图片上传下载start----------------------------------------------------------------------
@@ -83,8 +83,8 @@ public class BusiFileUpDownUtil {
             path.replaceAll("//", "/");
 
             try {
-                return uploadBusiByOnest(env.getProperty("onest.busifile.bucketname"), path,
-                    content.getBytes(FileUpDownConstants.FILE_CHAR_SET));
+                String buckName = env.getProperty("onest.busifile.bucketname" + "." + fileType);
+                return uploadBusiByOnest(buckName, path, content.getBytes(FileUpDownConstants.FILE_CHAR_SET), fileType);
             } catch (Exception e) {
                 logger.error("onest upload getBytes error:", e);
             }
@@ -126,7 +126,8 @@ public class BusiFileUpDownUtil {
             path.replaceAll("//", "/");
 
             try {
-                return uploadBusiByOnest(env.getProperty("onest.busifile.bucketname"), path, inputByte);
+                String buckName = env.getProperty("onest.busifile.bucketname" + "." + fileType);
+                return uploadBusiByOnest(buckName, path, inputByte, fileType);
             } catch (Exception e) {
                 logger.error("onest upload getBytes error:", e);
             }
@@ -150,8 +151,11 @@ public class BusiFileUpDownUtil {
 
         // 判断是否使用onest下载
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
-            byte[] file = downloadBusiByOnest(env.getProperty("onest.busifile.bucketname"),
-                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "/", "").trim());
+            // 图片路径形如：oNest_P/edcf/jmjAblity/371/20171101/3453452.jpg
+            String fileTypeStr = remotePathAndName.substring(0, remotePathAndName.indexOf("/"));
+            String fileType = fileTypeStr.split("_")[1];// P W V
+            byte[] file = downloadBusiByOnest(env.getProperty("onest.busifile.bucketname" + "." + fileType),
+                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "").trim());
             try {
                 return new String(file, FileUpDownConstants.FILE_CHAR_SET);
             } catch (Exception e) {
@@ -174,9 +178,12 @@ public class BusiFileUpDownUtil {
     public byte[] downloadBusiFileByte(String remotePathAndName) throws GeneralException {
         // 判断是否使用onest下载
         if (remotePathAndName.startsWith(FileUpDownConstants.ONEST_URL_PREFIX)) {
+            String fileTypeStr = remotePathAndName.substring(0, remotePathAndName.indexOf("/"));
+            String fileType = fileTypeStr.split("_")[1];
             try {
-                return downloadBusiByOnest(env.getProperty("onest.busifile.bucketname"),
-                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "/", "").trim());
+                return downloadBusiByOnest(env.getProperty("onest.busifile.bucketname" + "." + fileType),
+                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "")
+                        .trim());
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
             }
@@ -364,13 +371,13 @@ public class BusiFileUpDownUtil {
 
     }
 
-    private String uploadBusiByOnest(String bucketName, String path, byte[] inputByte) {
+    private String uploadBusiByOnest(String bucketName, String path, byte[] inputByte, String fileType) {
         String uploadUrl;
         InputStream in = null;
         try {
             in = new ByteArrayInputStream(inputByte);
             ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
-            uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "/" + path;
+            uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/" + path;
             return uploadUrl;
         } catch (Exception e) {
             logger.error("ONEST上传异常 onest error:", e);
@@ -742,7 +749,7 @@ public class BusiFileUpDownUtil {
         }
         return null;
     }
-    
+
     /**
      * 将输入流转换为byte数组
      * @param result
