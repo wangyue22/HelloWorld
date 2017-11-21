@@ -257,6 +257,7 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
             bean.setSwtchId(keyId);
+            bean.setValidFlag("1");
             serviceSwitch.saveServiceSwitch(bean);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
@@ -409,6 +410,7 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
             bean.setConfigId(keyId);
+            bean.setValidFlag("1");
             rnfsCfg.saveRnfsCfg(bean);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
@@ -503,6 +505,7 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
             bean.setRealAcctId(keyId);
+            bean.setValidFlag("1");
             realityAccount.saveRealityAccount(bean);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
@@ -596,6 +599,7 @@ public class CacheManageController{
             BeanUtils.copyProperties(bean, inDto);
             bean.setCrtTime(timestamp);
             bean.setCrkeyId(keyId);
+            bean.setValidFlag("1");
             rsaKey.saveRsaKey(bean);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
