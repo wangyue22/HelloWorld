@@ -22,11 +22,12 @@ public class FaceLiveControllerTest extends BaseUnitTest {
 
     Logger logger = LoggerFactory.getActionLog(FaceLiveControllerTest.class);
  
-    @Test
+    
     /**
      * http://localhost:18080/edccommon/co/facelive
      * @throws Exception
      */
+    @Test
     public void getFaceLiveTest() throws Exception{
     	FaceLiveInDTO faceLiveInfo = new FaceLiveInDTO();
     	faceLiveInfo.setReqstSrcCode("371");

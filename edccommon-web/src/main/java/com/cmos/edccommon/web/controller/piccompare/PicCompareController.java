@@ -67,7 +67,17 @@ public class PicCompareController {
 	private BasicUtil basicUtil;
 	
 	private static Logger log=LoggerFactory.getActionLog(PicCompareController.class);
-
+	/**字符编码*/
+	private static final String CHARSET_NAME = "ISO8859-1";
+	/**缓存配置的开关为true*/
+	private static final String SWITCH_IS_TRUE = "true";
+	/**文件上传下载来源系统*/
+	private static final String SOURCE_SYS_EDCCO = "EDCCOMMON";
+	/**人像比对结果为是同一人*/
+	private static final String VERIFY_STATE_SUCCESS = "0";
+	/**人像比对结果为不是同一人*/
+	private static final String VERIFY_STATE_FAILE = "1";
+	
 	/**
 	 * 人像比对判定接口（三张图片）
 	 * 如果国政通获取图片为空,nfc芯片图片不为空 则 优先比对nfc芯片图片 没有二次比对,如果国政通图片不为空 先比对国政通, 国政通比对失败或者比对不一致时,使用nfc芯片图片进行比对
@@ -100,7 +110,7 @@ public class PicCompareController {
 			boolean needCheckTPic;// 需要进行芯片头像比对
 			boolean checkGZTPicResult;// 国政通对比结果
 			boolean needBothComp = false;// 为true时，需要两次比对均成功才算比对成功，为false时，任一比对成功则成功
-			if (StringUtil.isNotEmpty(bothCompFlag) && "true".equalsIgnoreCase(bothCompFlag)) {
+			if (StringUtil.isNotEmpty(bothCompFlag) && SWITCH_IS_TRUE.equalsIgnoreCase(bothCompFlag)) {
 				needBothComp = true;
 			}
 			Map<String, String> rtnMap = new HashMap<String, String>();
@@ -119,7 +129,7 @@ public class PicCompareController {
 				MsDesPlus Ms = new MsDesPlus(crkey);
 				String picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串
 				if (StringUtil.isNotEmpty(picRDecStr)) {
-					picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+					picRBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
 				}
 			} catch (Exception e1) {
 				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getCode());
@@ -129,7 +139,7 @@ public class PicCompareController {
 			}
 
 			// 2.1 获取国政通头像
-			String picTGStr = downloadGZTPic(picTGPath, reqstSrcCode, "EDCCOMMON", swftno);
+			String picTGStr = downloadGZTPic(picTGPath, reqstSrcCode, SOURCE_SYS_EDCCO, swftno);
 			picGZTBase64Str = picTGStr;
 			if (StringUtil.isEmpty(picGZTBase64Str)) {
 				log.info("国政通图片获取失败");
@@ -147,7 +157,7 @@ public class PicCompareController {
 							Map.class);
 					Map<String, String> compareMap = getCompareResult(logMap, picGztAvtrScore);
 					String verifyState = compareMap.get("verifyState");
-					if ("0".equals(verifyState)) {
+					if (VERIFY_STATE_SUCCESS.equals(verifyState)) {
 						out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 						checkGZTPicResult = true;
@@ -202,7 +212,7 @@ public class PicCompareController {
 					MsDesPlus Ms = new MsDesPlus(crkey);
 					String picStoinDecStr = Ms.decrypt(picTStr);// 解密后的图片字符串
 					if (StringUtil.isNotEmpty(picStoinDecStr)) {
-						picStoinBase64Str = Base64.encode(picStoinDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+						picStoinBase64Str = Base64.encode(picStoinDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
 					}
 				} catch (Exception e1) {
 					picStoinBase64Str = null;
@@ -210,7 +220,7 @@ public class PicCompareController {
 
 				}
 				if (StringUtil.isEmpty(picStoinBase64Str)) {
-					rtnMap.put("verifyState", "1");// 是否是同一人 0是 1否
+					rtnMap.put("verifyState", VERIFY_STATE_FAILE);// 是否是同一人 0是 1否
 					rtnMap.put("gztAvtrResultType", "-1");
 					rtnMap.put("gztAvtrScore", "0");
 					out.setBean(rtnMap);
@@ -226,7 +236,7 @@ public class PicCompareController {
 							Map.class);
 					Map<String, String> compareMap = getCompareResult(logMap, picPicStoinScore);
 					String verifyState = compareMap.get("verifyState");
-					if ("0".equals(verifyState)) {
+					if (VERIFY_STATE_SUCCESS.equals(verifyState)) {
 						out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 					} else {
@@ -298,7 +308,7 @@ public class PicCompareController {
 				MsDesPlus Ms = new MsDesPlus(crkey);
 				String picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串
 				if (StringUtil.isNotEmpty(picRDecStr)) {// 图片本身已将转为Base64
-					picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+					picRBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
 				}
 				// picRBase64Str = picRDecStr;
 			} catch (Exception e1) {
@@ -312,7 +322,7 @@ public class PicCompareController {
 			try {
 				String picRDecStr;
 				if (CoConstants.PIC_TYPE.PIC_GZT.equalsIgnoreCase(picTType)) {
-					picTStr = downloadGZTPic(picTPath, reqstSrcCode, "EDCCOMMON", swftno);
+					picTStr = downloadGZTPic(picTPath, reqstSrcCode, SOURCE_SYS_EDCCO, swftno);
 					if (StringUtil.isEmpty(picTStr)) {
 						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getMessage());
@@ -332,7 +342,7 @@ public class PicCompareController {
 					picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串 NFC 芯片头像需要解密
 					// base64转码
 					if (StringUtil.isNotEmpty(picRDecStr)) {
-						picTBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+						picTBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
 					}
 				}
 
@@ -409,7 +419,7 @@ public class PicCompareController {
 				String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
 				if(StringUtil.isNotEmpty(picRDecStr)){
 					log.info("解密后的人像图片字符串"+picRDecStr.length());
-					picRBase64Str = Base64.encode(picRDecStr.getBytes("ISO8859-1"));//解密后的Base64字符串
+					picRBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));//解密后的Base64字符串
 					log.info("解密后的人像图片Base64字符串"+picRBase64Str.length());
 				}
 			} catch (Exception e1) {
@@ -423,7 +433,7 @@ public class PicCompareController {
 
 			try {
 				if (CoConstants.PIC_TYPE.PIC_GZT.equalsIgnoreCase(picTType)) {
-					picTStr = downloadGZTPic(picTPath, reqstSrcCode, "EDCCOMMON", swftno);
+					picTStr = downloadGZTPic(picTPath, reqstSrcCode, SOURCE_SYS_EDCCO, swftno);
 					if (StringUtil.isEmpty(picTStr)) {
 						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getMessage());
@@ -445,7 +455,7 @@ public class PicCompareController {
 					//base64转码
 					if (StringUtil.isNotEmpty(picTDecStr)) {
 						log.info("解密后的标准图片字符串" + picTDecStr.length());
-						picTBase64Str = Base64.encode(picTDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+						picTBase64Str = Base64.encode(picTDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
 						log.info("解密后的标准图片Base64字符串" + picTBase64Str.length());
 					}
 				}
@@ -465,7 +475,7 @@ public class PicCompareController {
 				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 				if (compareMap != null) {
 					String verifyState = compareMap.get("verifyState");
-					if (StringUtil.isNotEmpty(verifyState) && "0".equals(verifyState)) {					
+					if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {					
 						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 					}else{
 						out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
@@ -746,7 +756,7 @@ public class PicCompareController {
 				if (StringUtil.isBlank(rangeStr)) {
 					rangeStr = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
 				}
-				verifyState = checkInRange(rangeStr, score, "0", "1");// 是否是同一人// 0是 1否
+				verifyState = checkInRange(rangeStr, score, VERIFY_STATE_SUCCESS, VERIFY_STATE_FAILE);// 是否是同一人// 0是 1否
 				returnMap.put("similarityScore", score);
 				returnMap.put("verifyState", verifyState);
 				returnMap.put("portrtOther3Score",portrtOther3Score);
