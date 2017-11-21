@@ -99,7 +99,7 @@ public class FaceLiveController {
 		out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());//默认调用不成功		
 		Map<String, String> returnMap = new HashMap<String, String>();
 		
-		String picRStr = null;
+		String picRStr;
 		String picRStrBase64 = null;
 		String resultNum = null;
 		String idntifResult;//识别结果

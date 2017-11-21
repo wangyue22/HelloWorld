@@ -898,8 +898,8 @@ public class PicCompareController {
 		try {
 			String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
 			log.info("##########msg=" + Msg);
-			MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 			KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
+			MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 		} catch (Exception e) {
 			log.error("发送日志异常", e);
 		}
