@@ -55,6 +55,11 @@
 			<artifactId>cmos-sequence</artifactId>
 			<version> 1.0.2-SNAPSHOT</version>
 		</dependency>
+		<!-- 单元测试jar包 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-test</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${cmos.control-finalName}</finalName>

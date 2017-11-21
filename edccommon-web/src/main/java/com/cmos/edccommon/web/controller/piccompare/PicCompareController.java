@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.core.env.Environment;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.common.bean.JsonFormatException;
@@ -39,7 +39,6 @@ import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.edccommon.web.fileupdown.GztFileDownloadUtil;
-import com.cmos.msg.exception.MsgException;
 import com.cmos.producer.client.MsgProducerClient;
 
 /**
@@ -49,8 +48,8 @@ import com.cmos.producer.client.MsgProducerClient;
 @RestController
 @RequestMapping(value = "/co")
 public class PicCompareController {
-//	@Autowired
-//    private Environment env;
+	@Autowired
+    private Environment env;
 	
 	@Reference(group = "edcco")
 	private IPicCompareSV msgPicComSV;
@@ -692,9 +691,12 @@ public class PicCompareController {
 		
 		reqJsonMap.put("reqInfo", reqInfoMap);
 		String reqJson = JsonUtil.convertObject2Json(reqJsonMap);	
-		//环境变量配置是否调用人像比对 地址
-//		String svUrl = env.getProperty("cfg.picCheck.url");	
+			
 		String svUrl = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_URL);
+		if (StringUtil.isBlank(svUrl)) {
+			// 环境变量配置调用人像比对 地址
+			svUrl = env.getProperty("piccheck.url");
+		}
 		log.info("*********************"+svUrl);
 		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_PORTRAIT_SCORE);
 		if (StringUtil.isEmpty(timeOutConf)) {
@@ -890,15 +892,17 @@ public class PicCompareController {
 
 	/**
 	 * 发送消息队列
-	 * @throws MsgException
-	 * @throws JsonFormatException 
 	 */
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String, Object> compareResult,
-			EdcCoOutDTO out) throws MsgException, JsonFormatException {
-		String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
-		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
-//		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
-		
+			EdcCoOutDTO out) {
+		try {
+			String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
+			log.info("##########msg=" + Msg);
+			MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
+			KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
+		} catch (Exception e) {
+			log.error("发送日志异常", e);
+		}
 	}
 	
 	

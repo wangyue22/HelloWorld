@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +51,9 @@ public class FaceLiveController {
 	
 	@Autowired
 	private BasicUtil basicUtil;
+	
+	@Autowired
+	private Environment env;
 	
 	private Logger log = LoggerFactory.getActionLog(FaceLiveController.class);
 
@@ -108,6 +112,10 @@ public class FaceLiveController {
 		
 		// 活体检测服务器地址
 		String sendUrl = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_URL);
+		if(StringUtil.isBlank(sendUrl)){
+			//环境变量配置活体检测服务器地址
+			sendUrl = env.getProperty("facelive.url");	
+		}
 		Map<String, String> paraMap = new HashMap<String, String>();
 
 		// 1 获取人像照片
