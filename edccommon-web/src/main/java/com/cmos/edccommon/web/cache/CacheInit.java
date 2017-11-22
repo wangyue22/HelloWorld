@@ -76,7 +76,7 @@ public class CacheInit implements ICacheInit,CommandLineRunner{
     @Override
     public Map<String, String> getJvmStringCacheDate() {
         Map all = new HashMap();
-        all.put("cacheTypeCd","");
+        all.put("cacheTypeCd","1");
         Map<String, String> StringData = new HashMap<String, String>();
 
         //获取t_op_service_switch表的初始化数据
