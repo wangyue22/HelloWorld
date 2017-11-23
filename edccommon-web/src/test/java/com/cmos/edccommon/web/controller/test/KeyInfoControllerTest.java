@@ -23,7 +23,7 @@ public class KeyInfoControllerTest extends BaseUnitTest {
 
     
     /**
-     * http://localhost:18080/edccommon/co/getDesKey
+     * http://localhost:18080/edccommon/getDesKey
      * @throws Exception
      */
     @Test
@@ -34,16 +34,29 @@ public class KeyInfoControllerTest extends BaseUnitTest {
         logger.info("入参："+JsonUtil.convertObject2Json(keyInfoDTO));
         MvcResult result = mockMvc.perform(
             MockMvcRequestBuilders.post("/getDesKey").accept("application/json")
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(JsonUtil.convertObject2Json(keyInfoDTO))
-                /* content("371")*/)
+            .contentType(MediaType.APPLICATION_JSON_VALUE).param("reqstSrcCode", "371"))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 		logger.info("" + result.getResponse().getContentAsString());
     }
 
+    /**
+     * http://localhost:18080/edccommon/getSpecialDesKey
+     * @throws Exception
+     */
+    @Test
+	public void getSpecialDesKeyTest() throws Exception {
+		MvcResult result = mockMvc
+				.perform(MockMvcRequestBuilders.post("/getSpecialDesKey").accept("application/json")
+						.contentType(MediaType.APPLICATION_JSON_VALUE).param("reqstSrcCode", "371"))
+				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+		logger.info("" + result.getResponse().getContentAsString());
+	}
+
+
 
     @Test
     /**
-     * http://localhost:18080/edccommon/co/getRsaKey
+     * http://localhost:18080/edccommon/getRsaKey
      * @throws Exception
      */
     public void getRsaKeyTest() throws Exception{

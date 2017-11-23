@@ -91,6 +91,8 @@ public class PicCompareController {
 		EdcCoOutDTO out = new EdcCoOutDTO();
 		try {
 			log.info("****************************" + inParam);
+			String appSysID = inParam.getAppSysID();// 来源系统
+			String appUserID = inParam.getAppUserID();//来源用户
 			String swftno = inParam.getSwftno();// 流水号
 			String reqstSrcCode = inParam.getReqstSrcCode();// 请求源
 			String bizTypeCode = inParam.getBizTypeCode();// 业务类型
@@ -177,7 +179,7 @@ public class PicCompareController {
 						logMap.put("picTPath", picTPath);
 						logMap.put("picRType", picRType);
 						logMap.put("picTType", CoConstants.PIC_TYPE.PIC_GZT);
-						sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
+						sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
 					} catch (Exception e) {
 						log.error("MQ保存信息出错", e);
 					}
@@ -255,7 +257,7 @@ public class PicCompareController {
 						logMap.put("picTPath", picTPath);
 						logMap.put("picRType", picRType);
 						logMap.put("picTPath", CoConstants.PIC_TYPE.PIC_STOIN);
-						sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
+						sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
 					} catch (Exception e) {
 						log.error("MQ保存消费信息出错", e);
 					}
@@ -281,6 +283,8 @@ public class PicCompareController {
 		EdcCoOutDTO out = new EdcCoOutDTO();
 		try {
 			log.info("****************************" + inParam);
+			String appSysID = inParam.getAppSysID();// 来源系统
+			String appUserID = inParam.getAppUserID();//来源用户
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();			
 			String bizTypeCode = inParam.getBizTypeCode();
@@ -368,7 +372,7 @@ public class PicCompareController {
 				logMap.put("picTPath", picTPath);
 				logMap.put("picRType", picRType);
 				logMap.put("picTType", picTType);
-				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
 			} catch (Exception e) {
 				log.error("MQ保存消费信息出错", e);
 			}
@@ -391,6 +395,8 @@ public class PicCompareController {
 		EdcCoOutDTO out = new EdcCoOutDTO();
 		try {
 			log.info("****************************" + inParam);
+			String appSysID = inParam.getAppSysID();// 来源系统
+			String appUserID = inParam.getAppUserID();//来源用户
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();
 			String bizTypeCode = inParam.getBizTypeCode();
@@ -489,7 +495,7 @@ public class PicCompareController {
 					logMap.put("picTPath", picTPath);
 					logMap.put("picRType", picRType);
 					logMap.put("picTType", picTType);
-					sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
+					sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
 				} catch (Exception e) {
 					log.error("MQ保存消费信息出错", e );
 				}
@@ -515,6 +521,8 @@ public class PicCompareController {
 		EdcCoOutDTO out = new EdcCoOutDTO();
 		try {
 			log.info("****************************" + inParam);
+			String appSysID = inParam.getAppSysID();// 来源系统
+			String appUserID = inParam.getAppUserID();//来源用户
 			String swftno = inParam.getSwftno();
 			String reqstSrcCode = inParam.getReqstSrcCode();
 			String bizTypeCode = inParam.getBizTypeCode();
@@ -557,7 +565,7 @@ public class PicCompareController {
 					// 发送消息队列的内容
 					logMap.put("picRType", picRType);
 					logMap.put("picTType", picTType);
-					sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap, out);
+					sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
 				} catch (Exception e) {
 					log.error("MQ保存消费信息出错", e);
 				}
@@ -829,14 +837,22 @@ public class PicCompareController {
 	 * @throws JsonFormatException 
 	 */
 	@SuppressWarnings("unchecked")
-	private String saveCompareInfo(String requestSource, String busiType, String transactionId, Map<String,Object> compareResult, EdcCoOutDTO out) throws JsonFormatException{
+	private String saveCompareInfo(String appSysID, String appUserID, String requestSource, String busiType,
+			String transactionId, Map<String, Object> compareResult, EdcCoOutDTO out) throws JsonFormatException{
 
 		CoPicCompareInfoDO infoBean = new CoPicCompareInfoDO();
 		infoBean.setCrtTime(new Timestamp(new Date().getTime()));
 		infoBean.setReqstSrcCode(requestSource);
 		infoBean.setBizTypeCode(busiType);
 		infoBean.setSwftno(transactionId);
-		
+		if (StringUtil.isBlank(appSysID)) {
+			appSysID = "UNDEFINED";
+		}
+		if (StringUtil.isBlank(appUserID)) {
+			appUserID = "UNDEFINED";
+		}
+		infoBean.setCrtUserId(appUserID);
+		infoBean.setCrtAppSysId(appSysID);
 		//生成分表字段
 		Date nowTime = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");
@@ -903,10 +919,10 @@ public class PicCompareController {
 	/**
 	 * 发送消息队列
 	 */
-	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String, Object> compareResult,
-			EdcCoOutDTO out) {
+	private void sendMQ(String appSysID, String appUserID, String requestSource, String busiType, String transactionId,
+			Map<String, Object> compareResult, EdcCoOutDTO out) {
 		try {
-			String Msg = saveCompareInfo(requestSource, busiType, transactionId, compareResult, out);
+			String Msg = saveCompareInfo(appSysID, appUserID, requestSource, busiType, transactionId, compareResult, out);
 			log.info("##########msg=" + Msg);
 			KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
 			MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);

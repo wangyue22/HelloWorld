@@ -13,6 +13,17 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 	private static final long serialVersionUID = -6516310978206066441L;
 	
 	/**
+	 * 定义各个业务系统id
+     * 用于存储表中crtSysId,mdfSysId
+	 */
+	private String appSysID;
+	
+    /**
+     * 定义各个业务系统程序用户id
+     * 用于存储表中crtUserId,mdfUserId
+     */
+	private String appUserID;
+	/**
 	 * 请求源
 	 */
 	private String reqstSrcCode;
@@ -130,6 +141,18 @@ public class PicCompareInDTO extends GenericBean implements UserResult {
 
 	public void setCrkey(String crkey) {
 		this.crkey = crkey;
+	}
+	public String getAppSysID() {
+		return appSysID;
+	}
+	public void setAppSysID(String appSysID) {
+		this.appSysID = appSysID;
+	}
+	public String getAppUserID() {
+		return appUserID;
+	}
+	public void setAppUserID(String appUserID) {
+		this.appUserID = appUserID;
 	}
 
 }

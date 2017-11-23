@@ -109,7 +109,8 @@ public class FaceLiveController {
 		String swftno = inParam.getSwftno();
 		String bizTypeCode = inParam.getBizTypeCode();
 		String faceliveScore = inParam.getFaceLiveScore();
-		
+		String appSysID = inParam.getAppSysID();// 来源系统
+		String appUserID = inParam.getAppUserID();//来源用户
 		// 活体检测服务器地址
 		String sendUrl = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_URL);
 		if(StringUtil.isBlank(sendUrl)){
@@ -140,7 +141,7 @@ public class FaceLiveController {
 			logMap .put("rspCode", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getCode());
 			logMap.put("rspInfoCntt", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
 			try {
-				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap);
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);
 			} catch (Exception e) {
 				log.error("人像比对服务下载人像图片异常", e);
 			}
@@ -206,7 +207,7 @@ public class FaceLiveController {
 				logMap.put("rspInfoCntt", ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 				logMap.put("faceliveScore", faceliveScore);
 				logMap.putAll(returnMap);
-				sendMQ(reqstSrcCode, bizTypeCode, swftno, logMap);
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);
 			} catch (Exception e) {
 				log.error("静默活体发送消息队列异常", e);
 			}
@@ -219,8 +220,9 @@ public class FaceLiveController {
 	 * @throws MsgException
 	 * @throws JsonFormatException 
 	 */
-	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String,String> logMap) throws MsgException, JsonFormatException{
-		String Msg = saveFaceLiveInfo(requestSource, busiType, transactionId, logMap);
+	private void sendMQ(String appSysID, String appUserID, String requestSource, String busiType, String transactionId,
+			Map<String, String> logMap) throws MsgException, JsonFormatException{
+		String Msg = saveFaceLiveInfo(appSysID, appUserID, requestSource, busiType, transactionId, logMap);
 		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_FACE_LIVE_INFO);
 //		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.FACE_LIVE, Msg);
 	}
@@ -228,9 +230,18 @@ public class FaceLiveController {
 	/**
 	 * 将保存信息转化为消息
 	 */
-	private String saveFaceLiveInfo(String requestSource, String busiType, String transactionId, Map<String,String> logMap) throws JsonFormatException {
+	private String saveFaceLiveInfo(String appSysID, String appUserID, String requestSource, String busiType,
+			String transactionId, Map<String, String> logMap) throws JsonFormatException {
 
 		CoFaceLiveInfoDO infoBean = new CoFaceLiveInfoDO();
+		if (StringUtil.isBlank(appSysID)) {
+			appSysID = "UNDEFINED";
+		}
+		if (StringUtil.isBlank(appUserID)) {
+			appUserID = "UNDEFINED";
+		}
+		infoBean.setCrtUserId(appUserID);
+		infoBean.setCrtAppSysId(appSysID);
 		String uniqueSequence = null;
 		try {
 			uniqueSequence = basicUtil.getSequence(CoConstants.DB_NAME.FACE_LIVE);
