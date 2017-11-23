@@ -846,7 +846,7 @@ public class PicCompareController {
 		//生成主键
 		String uniqueSequence = null;
 		try {
-			uniqueSequence = basicUtil.getSequence(CoConstants.DB_NAME.PIC_COMPARE + dateFormat);
+			uniqueSequence = basicUtil.getSequence(CoConstants.DB_NAME.PIC_COMPARE);
 		} catch (Exception e) {
 			log.error("生成主键异常", e);
 		}

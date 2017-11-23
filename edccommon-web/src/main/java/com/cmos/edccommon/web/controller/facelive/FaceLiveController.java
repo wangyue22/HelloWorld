@@ -10,17 +10,17 @@ import com.cmos.edccommon.beans.facelive.FaceLiveInDTO;
 import com.cmos.edccommon.utils.Base64;
 import com.cmos.edccommon.utils.HttpUtil;
 import com.cmos.edccommon.utils.JsonUtil;
+import com.cmos.edccommon.utils.KafkaUtil;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.CacheConsts;
-import com.cmos.edccommon.utils.consts.MqConstants;
+import com.cmos.edccommon.utils.consts.CoConstants;
+import com.cmos.edccommon.utils.consts.KafkaConsts;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
-import com.cmos.producer.client.MsgProducerClient;
-
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -221,7 +221,8 @@ public class FaceLiveController {
 	 */
 	private void sendMQ(String requestSource, String busiType, String transactionId, Map<String,String> logMap) throws MsgException, JsonFormatException{
 		String Msg = saveFaceLiveInfo(requestSource, busiType, transactionId, logMap);
-		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.FACE_LIVE, Msg);
+		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_FACE_LIVE_INFO);
+//		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.FACE_LIVE, Msg);
 	}
 	
 	/**
@@ -232,7 +233,7 @@ public class FaceLiveController {
 		CoFaceLiveInfoDO infoBean = new CoFaceLiveInfoDO();
 		String uniqueSequence = null;
 		try {
-			uniqueSequence = basicUtil.getSequence(MqConstants.MQ_TOPIC.FACE_LIVE);
+			uniqueSequence = basicUtil.getSequence(CoConstants.DB_NAME.FACE_LIVE);
 		} catch (Exception e) {
 			log.error("静默活体生成主键异常", e);
 		}

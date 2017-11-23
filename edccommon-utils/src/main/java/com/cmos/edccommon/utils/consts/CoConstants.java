@@ -43,9 +43,9 @@ public final class CoConstants {
 	 */
 	public interface DB_NAME {
 		/** 人像比对 */
-		String PIC_COMPARE = "T_CO_PIC_COMPARE_INFO_";
+		String PIC_COMPARE = "T_CO_PIC_COMPARE_INFO";
 		/** 静默活体 */
-		String FACE_LIVE = "T_CO_FACE_LIVE_INFO_";
+		String FACE_LIVE = "T_CO_FACE_LIVE_INFO";
 	}
 
 }
