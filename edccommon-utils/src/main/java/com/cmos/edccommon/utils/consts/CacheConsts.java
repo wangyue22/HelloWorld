@@ -6,16 +6,18 @@ package com.cmos.edccommon.utils.consts;
  *
  */
 public class CacheConsts {
+    
+    public static final String FLOW_CONTROLLER_PARAM_KEY="sourceSystem";
 
     /**
      * 各系统公用工具类中的开关key前缀
      */
-    private static final String CACHE_SWITCH_PREFIX = "CO_SWITCH:";
+    public static final String CACHE_SWITCH_PREFIX = "CO_SWITCH:";
 
     /**
      * 各系统公用工具类中的rnfs配置信息key前缀
      */
-    private static final String CACHE_RNFSCFG_PREFIX = "CO_RNFS:";
+    public static final String CACHE_RNFSCFG_PREFIX = "CO_RNFS:";
 
     /**接入运营管理中心管理的JVM缓存Key值管理
      * 键值命名规则：系统名_业务名:自定义key
