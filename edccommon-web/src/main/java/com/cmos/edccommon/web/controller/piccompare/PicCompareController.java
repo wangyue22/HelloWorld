@@ -29,6 +29,7 @@ import com.cmos.edccommon.utils.HttpUtil;
 import com.cmos.edccommon.utils.JsonUtil;
 import com.cmos.edccommon.utils.KafkaUtil;
 import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.AppCodeConsts;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.CoConstants;
 import com.cmos.edccommon.utils.consts.KafkaConsts;
@@ -846,10 +847,10 @@ public class PicCompareController {
 		infoBean.setBizTypeCode(busiType);
 		infoBean.setSwftno(transactionId);
 		if (StringUtil.isBlank(appSysID)) {
-			appSysID = "UNDEFINED";
+			appSysID = AppCodeConsts.APP_SYS_ID.UNDEFINED;
 		}
 		if (StringUtil.isBlank(appUserID)) {
-			appUserID = "UNDEFINED";
+			appUserID = AppCodeConsts.APP_USER_ID.UNDEFINED;
 		}
 		infoBean.setCrtUserId(appUserID);
 		infoBean.setCrtAppSysId(appSysID);

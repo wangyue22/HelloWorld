@@ -29,6 +29,9 @@ public class AppCodeConsts {
 
         //运营中心
         String EDC_OPMS = "0008";
+        
+        //未定义
+        String UNDEFINED = "UNDEFINED";
     }
 
     /**
@@ -38,5 +41,7 @@ public class AppCodeConsts {
     public interface APP_USER_ID{
         String BUSI_TASK_USER = "T001";
         String BUSI_MQ_USER = "MQ001";
+        //未定义
+        String UNDEFINED = "UNDEFINED";
     }
 }
