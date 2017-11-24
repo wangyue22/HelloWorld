@@ -31,7 +31,7 @@ public class KafkaUtil {
             Map<String, Object> logMap = JSON.parseObject(logJson, Map.class);
             logger.commonLog(topic, logMap);
         } catch (Exception e) {
-            logger.error("========发送日志信息发生异常========", e);
+            logger.error("Send message to vertica TOPIC error", e);
         }
     }
 }
