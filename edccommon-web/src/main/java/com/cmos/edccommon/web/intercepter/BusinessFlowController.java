@@ -13,6 +13,8 @@ import com.cmos.cache.service.ICacheService;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
+import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.AppCodeConsts;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 
 /**
@@ -26,7 +28,7 @@ public class BusinessFlowController {
     /**
      * 定义切面范围
      */
-    @Pointcut("@annotation(com.cmos.edcacms.web.aop.AopChecker)")
+    @Pointcut("@annotation(com.cmos.edccommon.web.aop.AopChecker)")
     public void pointcut() {
     }
     @Autowired
@@ -44,6 +46,10 @@ public class BusinessFlowController {
             String json = JSON.toJSONString(argarg);
             JSONObject jsonOb = JSON.parseObject(json);
             sourceSystem = jsonOb.getString(CacheConsts.FLOW_CONTROLLER_PARAM_KEY);
+			if (StringUtil.isBlank(sourceSystem)) {
+				logger.error("AopChecker 入参 sourceSystem 为空：" + sourceSystem);
+				sourceSystem = AppCodeConsts.APP_SYS_ID.UNDEFINED;
+			}
         } catch (Exception e) {
             logger.error("获取参数异常异常", e);
             throw new GeneralException("FLOW605");
