@@ -74,10 +74,12 @@ public class BusinessFlowController {
 
         try {
             try {
-                serviceTotalCount = Long.parseLong(cacheService.getObject(serviceTotalKey).toString());
-                logger.error("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
-                serviceSystemTotalCount = Long.parseLong(cacheService.getObject(serviceSystemTotalKey).toString());
-                logger.error("当前接口" + serviceSystemTotalKey + "分来源系统阀值为：" + serviceSystemTotalCount);
+                logger.info("当前缓存key值为:"+serviceTotalKey);
+                serviceTotalCount = Long.parseLong(cacheService.getString(serviceTotalKey));
+                logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
+                logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
+                serviceSystemTotalCount = Long.parseLong(cacheService.getString(serviceSystemTotalKey));
+                logger.info("当前接口" + serviceSystemTotalKey + "分来源系统阀值为：" + serviceSystemTotalCount);
             } catch (Exception e) {
                 logger.error("redis异常", e);
                 r = joinPoint.proceed();
@@ -85,14 +87,18 @@ public class BusinessFlowController {
             }
             //当前分接口分来源系统总量
             long currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
+            logger.info("当前分接口分来源系统总量为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
             if (currServiceSystemTotalCount > serviceSystemTotalCount) {
+                logger.error("aopOverLimitInterface_params");
                 throw new GeneralException("FLOW705");
             }
             //当前分接口总量
             long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
+            logger.info("当前分接口总量为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
             if (currServiceTotalCount > serviceTotalCount) {
+                logger.error("aopOverLimitInterface");
                 throw new GeneralException("FLOW505");
             }
             r = joinPoint.proceed();
