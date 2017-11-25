@@ -36,6 +36,7 @@ import com.cmos.edccommon.utils.consts.KafkaConsts;
 import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
+import com.cmos.edccommon.web.aop.AopChecker;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
@@ -46,6 +47,7 @@ import com.cmos.producer.client.MsgProducerClient;
  * @author Administrator
  *
  */
+
 @RestController
 @RequestMapping(value = "/co")
 public class PicCompareController {
@@ -86,6 +88,7 @@ public class PicCompareController {
 	 * @return
 	 * @date 2017-10-14 11:00:00
 	 */
+	@AopChecker
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/picdoublecompare", method = RequestMethod.POST)
 	public EdcCoOutDTO picdoublecompare(@RequestBody PicDoubleCompareInDTO inParam) {
@@ -278,6 +281,7 @@ public class PicCompareController {
 	 * @return
 	 * @date 2017-10-11 13:00:00
 	 */
+	@AopChecker
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/picCheck", method = RequestMethod.POST)
 	public EdcCoOutDTO picCheck(@RequestBody PicCompareInDTO inParam) {
@@ -390,6 +394,7 @@ public class PicCompareController {
 	 * @return
 	 * @date 2017-10-11 13:00:00
 	 */
+	@AopChecker
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/picCompare", method = RequestMethod.POST)
 	public EdcCoOutDTO picCompare(@RequestBody PicCompareInDTO inParam) {
@@ -516,6 +521,7 @@ public class PicCompareController {
 	 * @return
 	 * @date 2017-10-11 13:00:00
 	 */
+	@AopChecker
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/picCompareBase64", method = RequestMethod.POST)
 	public EdcCoOutDTO picCompareBase64(@RequestBody PicCompareBase64InDTO inParam) {
@@ -762,8 +768,10 @@ public class PicCompareController {
 			if ("0".equals(resultType)) {
 				// 显示对比分数
 				String score = returnInfo.get("similarity");
+				log.info("#############" + rangeStr);
 				if (StringUtil.isBlank(rangeStr)) {
 					rangeStr = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
+					log.info("#############使用默认############" + rangeStr);
 				}
 				verifyState = checkInRange(rangeStr, score, VERIFY_STATE_SUCCESS, VERIFY_STATE_FAILE);// 是否是同一人// 0是 1否
 				returnMap.put("similarityScore", score);
@@ -840,20 +848,21 @@ public class PicCompareController {
 	@SuppressWarnings("unchecked")
 	private String saveCompareInfo(String appSysID, String appUserID, String requestSource, String busiType,
 			String transactionId, Map<String, Object> compareResult, EdcCoOutDTO out) throws JsonFormatException{
-
+		String crtSysID = appSysID;
+		String crtUserID = appUserID;
 		CoPicCompareInfoDO infoBean = new CoPicCompareInfoDO();
 		infoBean.setCrtTime(new Timestamp(new Date().getTime()));
 		infoBean.setReqstSrcCode(requestSource);
 		infoBean.setBizTypeCode(busiType);
 		infoBean.setSwftno(transactionId);
-		if (StringUtil.isBlank(appSysID)) {
-			appSysID = AppCodeConsts.APP_SYS_ID.UNDEFINED;
+		if (StringUtil.isBlank(crtSysID)) {
+			crtSysID = AppCodeConsts.APP_SYS_ID.UNDEFINED;
 		}
-		if (StringUtil.isBlank(appUserID)) {
-			appUserID = AppCodeConsts.APP_USER_ID.UNDEFINED;
+		if (StringUtil.isBlank(crtUserID)) {
+			crtUserID = AppCodeConsts.APP_USER_ID.UNDEFINED;
 		}
-		infoBean.setCrtUserId(appUserID);
-		infoBean.setCrtAppSysId(appSysID);
+		infoBean.setCrtUserId(crtUserID);
+		infoBean.setCrtAppSysId(crtSysID);
 		//生成分表字段
 		Date nowTime = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMM");

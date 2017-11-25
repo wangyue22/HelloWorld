@@ -7,7 +7,7 @@ package com.cmos.edccommon.utils.consts;
  */
 public class CacheConsts {
     
-    public static final String FLOW_CONTROLLER_PARAM_KEY="sourceSystem";
+    public static final String FLOW_CONTROLLER_PARAM_KEY="appSysID";
 
     /**
      * 各系统公用工具类中的开关key前缀
