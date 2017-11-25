@@ -87,7 +87,7 @@ public class BusinessFlowController {
             }
             //当前分接口分来源系统总量
             long currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
-            logger.info("当前分接口分来源系统总量为:"+currServiceSystemTotalCount);
+            logger.info("当前分接口分来源系统"+currServiceSystemTotalKey+"总量为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
             if (currServiceSystemTotalCount > serviceSystemTotalCount) {
                 logger.error("aopOverLimitInterface_params");
@@ -95,7 +95,7 @@ public class BusinessFlowController {
             }
             //当前分接口总量
             long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
-            logger.info("当前分接口总量为:"+currServiceTotalCount);
+            logger.info("当前分接口"+currServiceTotalKey+"总量为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
             if (currServiceTotalCount > serviceTotalCount) {
                 logger.error("aopOverLimitInterface");
