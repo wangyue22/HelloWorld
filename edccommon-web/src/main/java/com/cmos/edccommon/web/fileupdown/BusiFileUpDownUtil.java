@@ -155,7 +155,8 @@ public class BusiFileUpDownUtil {
             String fileTypeStr = remotePathAndName.substring(0, remotePathAndName.indexOf("/"));
             String fileType = fileTypeStr.split("_")[1];// P W V
             byte[] file = downloadBusiByOnest(env.getProperty("onest.busifile.bucketname" + "." + fileType),
-                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "").trim());
+                remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "").trim(),
+                fileType);
             try {
                 return new String(file, FileUpDownConstants.FILE_CHAR_SET);
             } catch (Exception e) {
@@ -183,7 +184,8 @@ public class BusiFileUpDownUtil {
             try {
                 return downloadBusiByOnest(env.getProperty("onest.busifile.bucketname" + "." + fileType),
                     remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "")
-                        .trim());
+                        .trim(),
+                    fileType);
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
             }
@@ -380,7 +382,7 @@ public class BusiFileUpDownUtil {
             uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/" + path;
             return uploadUrl;
         } catch (Exception e) {
-            logger.error("ONEST上传异常 onest error:", e);
+            logger.error("OnestBusiFileUploadFailed:fileType=" + fileType, e);
         } finally {
             try {
                 if (in != null) {
@@ -393,7 +395,7 @@ public class BusiFileUpDownUtil {
         return null;
     }
 
-    private byte[] downloadBusiByOnest(String bucketName, String path) {
+    private byte[] downloadBusiByOnest(String bucketName, String path, String fileType) {
         InputStream result;
         byte[] resultByte = null;
         try {
@@ -402,7 +404,7 @@ public class BusiFileUpDownUtil {
                 resultByte = toByteArray(result);
             }
         } catch (Exception e) {
-            logger.error("downloadByOnest error:", e);
+            logger.error("OnestBusiFileDownloadFailed:fileType=" + fileType, e);
         }
         return resultByte;
     }
@@ -426,20 +428,24 @@ public class BusiFileUpDownUtil {
             if (input != null) {
                 return IOUtils.toByteArray(input);
             } else {
+                logger.error("RnfsBusiFileDownloadFailed");
+
                 logger.error("FTP file name=" + remotePathAndName + " is not exist");
                 return null;
             }
         } catch (Exception e) {
+            logger.error("RnfsBusiFileDownloadFailed", e);
+
             throw new GeneralException("9999", e.getMessage() + " remotePathAndName=" + remotePathAndName, e);
         } finally {
-			try {
-				if (input != null) {
-					input.close();
-				}
-				if (client != null) {
-					client.completePendingCommand();
-				}
-			} catch (Exception e2) {
+            try {
+                if (input != null) {
+                    input.close();
+                    if (client != null) {
+                        client.completePendingCommand();
+                    }
+                }
+            } catch (Exception e2) {
                 logger.error(e2.getMessage(), e2);
             }
             closeFtp(client);
@@ -484,9 +490,12 @@ public class BusiFileUpDownUtil {
             logger.info(String.format("下载url=%s,filePath=%s", urlStr, newFileFullPath));
             return HttpMultiPartUtil.upDownPost(urlStr, textMap, null);
         } catch (GeneralException e) {
+            logger.error("RnfsBusiFileDownloadFailed", e);
             throw new GeneralException("2999", e.getMessage() + "downByRnfs error，remotePathAndName=" + newFileFullPath,
                 e);
         } catch (Exception e) {
+            logger.error("RnfsBusiFileDownloadFailed", e);
+
             throw new GeneralException("9999", e.getMessage() + "downByRnfs error，remotePathAndName=" + newFileFullPath,
                 e);
         }
@@ -595,7 +604,7 @@ public class BusiFileUpDownUtil {
             logger.error("upload res:" + resStr);
             return resStr;
         } else {
-            logger.error("upload res:is null");
+            logger.error("RnfsBusiFileDownloadFailed");
         }
         return "";
     }
@@ -628,6 +637,7 @@ public class BusiFileUpDownUtil {
                 throw new GeneralException("2999", " 文件上传路径格式错误，ftpPathAndName=" + ftpPathAndName);
             }
         } catch (Exception e) {
+            logger.error("RnfsBusiFileDownloadFailed");
             throw new GeneralException("9999", e.getMessage(), e);
         } finally {
             try {
