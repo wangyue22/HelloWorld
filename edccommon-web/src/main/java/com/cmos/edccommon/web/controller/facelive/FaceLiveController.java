@@ -235,16 +235,17 @@ public class FaceLiveController {
 	 */
 	private String saveFaceLiveInfo(String appSysID, String appUserID, String requestSource, String busiType,
 			String transactionId, Map<String, String> logMap) throws JsonFormatException {
-
+		String crtSysID = appSysID;
+		String crtUserID = appUserID;
 		CoFaceLiveInfoDO infoBean = new CoFaceLiveInfoDO();
-		if (StringUtil.isBlank(appSysID)) {
-			appSysID = AppCodeConsts.APP_SYS_ID.UNDEFINED;
+		if (StringUtil.isBlank(crtSysID)) {
+			crtSysID = AppCodeConsts.APP_SYS_ID.UNDEFINED;
 		}
-		if (StringUtil.isBlank(appUserID)) {
-			appUserID =  AppCodeConsts.APP_USER_ID.UNDEFINED;
+		if (StringUtil.isBlank(crtUserID)) {
+			crtUserID =  AppCodeConsts.APP_USER_ID.UNDEFINED;
 		}
-		infoBean.setCrtUserId(appUserID);
-		infoBean.setCrtAppSysId(appSysID);
+		infoBean.setCrtUserId(crtUserID);
+		infoBean.setCrtAppSysId(crtSysID);
 		String uniqueSequence = null;
 		try {
 			uniqueSequence = basicUtil.getSequence(CoConstants.DB_NAME.FACE_LIVE);
