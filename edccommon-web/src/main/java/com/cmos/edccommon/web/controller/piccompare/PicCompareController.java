@@ -726,7 +726,7 @@ public class PicCompareController {
 			svUrl = env.getProperty("piccheck.url");
 		}
 		log.info("*********************"+svUrl);
-		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_PORTRAIT_SCORE);
+		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_TIMEOUT);
 		if (StringUtil.isEmpty(timeOutConf)) {
 			timeOutConf = "20";
 		}
