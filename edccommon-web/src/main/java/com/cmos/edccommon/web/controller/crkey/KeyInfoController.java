@@ -20,6 +20,8 @@ import com.cmos.edccommon.utils.consts.KeyInfoConstants;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 
+import io.swagger.annotations.Api;
+
 
 /**
  * 获取秘钥
@@ -27,6 +29,7 @@ import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
  * @author xdx
  *
  */
+@Api(description = "通用能力秘钥管理")
 @RestController
 @RequestMapping()
 public class KeyInfoController {

@@ -8,6 +8,8 @@ import com.cmos.edccommon.beans.hlrinfo.HlrInfoDTO;
 import com.cmos.edccommon.iservice.hlrinfo.IHlrInfoSV;
 import com.cmos.edccommon.utils.StringUtil;
 
+import io.swagger.annotations.Api;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @created: 2017年10月27日
  */
+@Api(description = "根据电话号码获取省编码以及根据电话号码得到所属运营商")
 @RestController
 public class HlrInfoController {
 	Logger log = LoggerFactory.getActionLog(HlrInfoController.class);

@@ -26,7 +26,7 @@ import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
  */
 @RestController
 @RequestMapping(value = "realityAccount")
-@Api(description = "通用功能获取密钥服务")
+@Api(description = "通用功能获取用户名，密码和密钥服务")
 public class RealityAccountController {
 	
 	private static Logger log=LoggerFactory.getActionLog(RealityAccountController.class);

@@ -23,6 +23,9 @@ import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.msg.exception.MsgException;
+
+import io.swagger.annotations.Api;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 静默活体服务
  * @author xdx
  */
+@Api(description = "通用能力静默活体")
 @RestController
 @RequestMapping(value = "/co")
 public class FaceLiveController {

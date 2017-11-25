@@ -43,11 +43,14 @@ import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.edccommon.web.fileupdown.GztFileDownloadUtil;
 import com.cmos.producer.client.MsgProducerClient;
 
+import io.swagger.annotations.Api;
+
 /**
- * @author Administrator
+ * 人像比对服务
+ * @author xdx
  *
  */
-
+@Api(description = "通用能力人像比对")
 @RestController
 @RequestMapping(value = "/co")
 public class PicCompareController {
