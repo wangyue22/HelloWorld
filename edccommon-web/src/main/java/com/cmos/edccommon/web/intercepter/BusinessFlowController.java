@@ -46,7 +46,14 @@ public class BusinessFlowController {
             sourceSystem = jsonOb.getString(CacheConsts.FLOW_CONTROLLER_PARAM_KEY);
         } catch (Exception e) {
             logger.error("获取参数异常异常", e);
-            throw new GeneralException("FLOW605");
+            try {
+                r = joinPoint.proceed();
+            } catch (Throwable e2) {
+                logger.error("BusinessFlowController error:",e2);
+                throw new GeneralException("FLOW805");
+            }
+
+            return r;
         }
 
         String serviceTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_ALL";// 阀值key
@@ -86,8 +93,9 @@ public class BusinessFlowController {
         } catch (GeneralException e) {
             logger.error("流控校验超过阀值",e);
             throw e;
-        }catch (Throwable e) {
-            logger.error("BusinessFlowController error:",e);
+        }catch (Throwable e1) {
+            logger.error("BusinessFlowController error:",e1);
+            throw new GeneralException("FLOW805");
         } finally {
             if (isServiceTotalDecr) {
                 cacheService.decr(currServiceTotalKey);
