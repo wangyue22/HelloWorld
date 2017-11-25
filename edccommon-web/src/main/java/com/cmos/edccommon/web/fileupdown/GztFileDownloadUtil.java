@@ -65,7 +65,6 @@ public class GztFileDownloadUtil {
      * @return
      * @throws GeneralException
      */
-    @SuppressWarnings("rawtypes")
     public byte[] dowdloadGztPic(String inPath, String sourceCode, String sourceSys, String swftNo)
         throws GeneralException {
         String path = inPath;
@@ -96,7 +95,7 @@ public class GztFileDownloadUtil {
                 }
             }
         } catch (Exception e) {
-			logger.error("*******downGztFileByRnfs error******", e);
+			logger.error("RnfsGztFileDownloadFailed:fileType=BusiFile", e);
         }
         return inputByte;
     }
@@ -151,7 +150,7 @@ public class GztFileDownloadUtil {
                 resultByte = toByteArray(result);
             }
         } catch (Exception e) {
-            logger.error("downloadByOnest error:",e);
+            logger.error("OnestGztFileDownloadFailed:fileType=GZT",e);
         }
         return resultByte;
     }
