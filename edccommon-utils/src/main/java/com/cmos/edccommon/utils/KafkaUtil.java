@@ -29,7 +29,7 @@ public class KafkaUtil {
         try {
             // 发送日志信息到vertica
             Map<String, Object> logMap = JSON.parseObject(logJson, Map.class);
-            logger.info("send message to vertica start, TOPIC IS :" + topic + "jsonStr IS :" + jsonString);
+            logger.info("send message to vertica start, TOPIC IS :" + topic + "jsonStr IS :" + logJson);
             logger.commonLog(topic, logMap);
             logger.info("send message to vertica end, TOPIC IS :" + topic);
         } catch (Exception e) {
