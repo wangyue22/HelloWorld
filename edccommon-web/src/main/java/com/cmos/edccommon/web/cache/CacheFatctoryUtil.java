@@ -51,7 +51,7 @@ public class CacheFatctoryUtil {
      * @return String 表名字
      */
     @SuppressWarnings("unchecked")
-	public String getStringFromDB (String key) {
+    public String getStringFromDB (String key) {
         if(StringUtils.isEmpty(key)){
             logger.error("传入key值不能为空");
             return "";
@@ -61,20 +61,20 @@ public class CacheFatctoryUtil {
         String table = key.substring(start,end);//取出表的名字
         try{
             switch(table){
-	            case "SWITCH" :
-	                ServiceSwitchDO swtichDo = serviceSwitchSV.getServiceSwitchByKey(key);
-	                if(null != swtichDo){
-	                	Map dataMap = new HashMap();
-	                	String value = swtichDo.getSwtchVal();
-	                	dataMap.put(key, value);
-	                	JVMCacheDataUtil.putStringCache(dataMap);//将从DB中查询出的值加载到缓存中
-	                    return swtichDo.getSwtchVal();
-	                }else{
-	                    return "";
-	                }
-	            default:
-	                logger.error("传入key不符合规范");
-	                return "";
+            case "SWITCH" :
+                ServiceSwitchDO swtichDo = serviceSwitchSV.getServiceSwitchByKey(key);
+                if(null != swtichDo){
+                    Map dataMap = new HashMap();
+                    String value = swtichDo.getSwtchVal();
+                    dataMap.put(key, value);
+                    JVMCacheDataUtil.putStringCache(dataMap);//将从DB中查询出的值加载到缓存中
+                    return swtichDo.getSwtchVal();
+                }else{
+                    return "";
+                }
+            default:
+                logger.error("传入key不符合规范");
+                return "";
             }
         }catch(Exception e){
             logger.error("从DB中取值异常",e);
@@ -88,7 +88,7 @@ public class CacheFatctoryUtil {
      * @return String 表名字
      */
     @SuppressWarnings("unchecked")
-	public Map getMapFromDB (String key){
+    public Map getMapFromDB (String key){
         Map<String, String> rnfsData = new HashMap<String, String>();
         if(StringUtils.isEmpty(key)){
             logger.error("传入key值不能为空");
@@ -99,46 +99,46 @@ public class CacheFatctoryUtil {
         String table = key.substring(start,end);//取出表的名字
 
         try{
-    		Map dataMap = new HashMap();
+            Map dataMap = new HashMap();
             switch(table){
-	            case "RNFS" :
-	                RnfsCfgDO opRnfsDo = opRnfsCfgSV.getRnfsGrpNmByAlsCacheKeyVal(key);
-	                if(null != opRnfsDo){
-	                    rnfsData.put("rnfsGrpNm", opRnfsDo.getRnfsGrpNm());
-	                    rnfsData.put("rootPath", opRnfsDo.getRootPath());
-	                    rnfsData.put("rnfsAddrPrtnum", opRnfsDo.getRnfsAddrPrtnum());
-	                    rnfsData.put("uploadDwnldModeCd", opRnfsDo.getUploadDwnldModeCd());
-	                    rnfsData.put("ftpPrtnum", opRnfsDo.getFtpPrtnum());
-	                    rnfsData.put("ftpUserNm", opRnfsDo.getFtpUserNm());
-	                    rnfsData.put("ftpUserPw", opRnfsDo.getFtpUserPw());
-	                    rnfsData.put("ftpAls", opRnfsDo.getFtpAls());
-	                	dataMap.put(key, rnfsData);
-	                	JVMCacheDataUtil.putMapCache(dataMap);
-	                }
-	                return rnfsData;
-	            case "REALACC" :
-	                RealityAccountDO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
-	                if(null != realityDto){
-	                    rnfsData.put("userNm", realityDto.getUserNm());
-	                    rnfsData.put("pw", realityDto.getPw());
-	                    rnfsData.put("aesKey", realityDto.getAesKey());
-	                    rnfsData.put("desKey", realityDto.getDesKey());
-	                    dataMap.put(key, rnfsData);
-	                	JVMCacheDataUtil.putMapCache(dataMap);
-	                }
-	                return rnfsData;
-	            case "RSAKEY" :
-	                RsaKeyDO rsaDto = keyInfoSV.getKeyByCacheKey(key);
-	                if(null != rsaDto){
-	                    rnfsData.put("pbkey", rsaDto.getPbkey());
-	                    rnfsData.put("prtkey", rsaDto.getPrtkey());
-	                    dataMap.put(key, rnfsData);
-	                	JVMCacheDataUtil.putMapCache(dataMap);
-	                }
-	                return rnfsData;
-	            default:
-	                logger.error("传入key不符合规范");
-	                return rnfsData;
+            case "RNFS" :
+                RnfsCfgDO opRnfsDo = opRnfsCfgSV.getRnfsGrpNmByAlsCacheKeyVal(key);
+                if(null != opRnfsDo){
+                    rnfsData.put("rnfsGrpNm", opRnfsDo.getRnfsGrpNm());
+                    rnfsData.put("rootPath", opRnfsDo.getRootPath());
+                    rnfsData.put("rnfsAddrPrtnum", opRnfsDo.getRnfsAddrPrtnum());
+                    rnfsData.put("uploadDwnldModeCd", opRnfsDo.getUploadDwnldModeCd());
+                    rnfsData.put("ftpPrtnum", opRnfsDo.getFtpPrtnum());
+                    rnfsData.put("ftpUserNm", opRnfsDo.getFtpUserNm());
+                    rnfsData.put("ftpUserPw", opRnfsDo.getFtpUserPw());
+                    rnfsData.put("ftpAls", opRnfsDo.getFtpAls());
+                    dataMap.put(key, rnfsData);
+                    JVMCacheDataUtil.putMapCache(dataMap);
+                }
+                return rnfsData;
+            case "REALACC" :
+                RealityAccountDO realityDto = opRealityAccountSV.getRealityAccountBycacheKey(key);
+                if(null != realityDto){
+                    rnfsData.put("userNm", realityDto.getUserNm());
+                    rnfsData.put("pw", realityDto.getPw());
+                    rnfsData.put("aesKey", realityDto.getAesKey());
+                    rnfsData.put("desKey", realityDto.getDesKey());
+                    dataMap.put(key, rnfsData);
+                    JVMCacheDataUtil.putMapCache(dataMap);
+                }
+                return rnfsData;
+            case "RSAKEY" :
+                RsaKeyDO rsaDto = keyInfoSV.getKeyByCacheKey(key);
+                if(null != rsaDto){
+                    rnfsData.put("pbkey", rsaDto.getPbkey());
+                    rnfsData.put("prtkey", rsaDto.getPrtkey());
+                    dataMap.put(key, rnfsData);
+                    JVMCacheDataUtil.putMapCache(dataMap);
+                }
+                return rnfsData;
+            default:
+                logger.error("传入key不符合规范");
+                return rnfsData;
             }
         }catch(Exception e){
             logger.error("从DB中取值异常",e);
@@ -171,9 +171,9 @@ public class CacheFatctoryUtil {
                     Map<String, String> map = BeanUtil.convertBean(opRnfsDoList.get(i));
                     resultList.add(map);
                 }
-            	Map dataMap = new HashMap();
+                Map dataMap = new HashMap();
                 dataMap.put(key, resultList);
-            	JVMCacheDataUtil.putListCache(dataMap);
+                JVMCacheDataUtil.putListCache(dataMap);
                 return resultList;
             default:
                 logger.error("传入key不符合规范");
@@ -302,7 +302,7 @@ public class CacheFatctoryUtil {
         try {
             return JVMCacheDataUtil.putStringCache(inMap);
         } catch (Exception e) {
-            logger.error("存入缓存异常",e);
+            logger.error("initJvmCacheDataFailed存入缓存异常", e);
             return false;
         }
     }
@@ -328,7 +328,7 @@ public class CacheFatctoryUtil {
         try {
             return JVMCacheDataUtil.putMapCache(inMap);
         } catch (Exception e) {
-            logger.error("存入缓存异常",e);
+            logger.error("initJvmCacheDataFailed存入缓存异常", e);
             return false;
         }
     }
@@ -354,7 +354,7 @@ public class CacheFatctoryUtil {
         try {
             return JVMCacheDataUtil.putListCache(inMap);
         } catch (Exception e) {
-            logger.error("存入缓存异常",e);
+            logger.error("initJvmCacheDataFailed存入缓存异常", e);
             return false;
         }
     }
