@@ -59,7 +59,9 @@ public class BusinessFlowController {
                 r = joinPoint.proceed();
             } catch (Throwable e2) {
                 logger.error("BusinessFlowController error:",e2);
-                throw new GeneralException("FLOW805");
+                edcCoOutDTO.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+                edcCoOutDTO.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
+                return edcCoOutDTO ;
             }
 
             return r;
@@ -112,7 +114,9 @@ public class BusinessFlowController {
             return edcCoOutDTO;
         }catch (Throwable e1) {
             logger.error("BusinessFlowController error:",e1);
-            throw new GeneralException("FLOW805");
+            edcCoOutDTO.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
+            edcCoOutDTO.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
+            return edcCoOutDTO ;
         } finally {
             if (isServiceTotalDecr) {
                 cacheService.decr(currServiceTotalKey);
