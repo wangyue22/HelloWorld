@@ -378,7 +378,7 @@ public class BusiFileUpDownUtil {
         InputStream in = null;
         try {
             in = new ByteArrayInputStream(inputByte);
-            ONestUtil.uploadAndGetPrivateUrl(bucketName, path, in);
+            ONestUtil.upload(bucketName, path, in);
             uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/" + path;
             return uploadUrl;
         } catch (Exception e) {
