@@ -16,6 +16,7 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.AppCodeConsts;
 import com.cmos.edccommon.utils.consts.CacheConsts;
+import com.cmos.edccommon.beans.common.EdcCoOutDTO;
 
 /**
  * Created by guozong on 2017/10/30.
@@ -36,6 +37,7 @@ public class BusinessFlowController {
 
     @Around("pointcut()")
     public Object process(ProceedingJoinPoint joinPoint) throws GeneralException {
+        EdcCoOutDTO edcCoOutDTO = new EdcCoOutDTO();
         boolean isServiceTotalDecr = false;
         boolean isServiceSystemTotalDecr = false;
         Object r = null;
@@ -91,7 +93,9 @@ public class BusinessFlowController {
             isServiceSystemTotalDecr = true;
             if (currServiceSystemTotalCount > serviceSystemTotalCount) {
                 logger.error("aopOverLimitInterface_params");
-                throw new GeneralException("FLOW705");
+                edcCoOutDTO.setReturnCode("2997");
+                edcCoOutDTO.setReturnMessage("系统繁忙，请稍后再试");
+                return edcCoOutDTO;
             }
             //当前分接口总量
             long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
@@ -99,7 +103,9 @@ public class BusinessFlowController {
             isServiceTotalDecr = true;
             if (currServiceTotalCount > serviceTotalCount) {
                 logger.error("aopOverLimitInterface");
-                throw new GeneralException("FLOW505");
+                edcCoOutDTO.setReturnCode("2997");
+                edcCoOutDTO.setReturnMessage("系统繁忙，请稍后再试");
+                return edcCoOutDTO;
             }
             r = joinPoint.proceed();
         } catch (GeneralException e) {
