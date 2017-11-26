@@ -1,5 +1,6 @@
 package com.cmos.edccommon.web.intercepter;
 
+import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -93,9 +94,7 @@ public class BusinessFlowController {
             isServiceSystemTotalDecr = true;
             if (currServiceSystemTotalCount > serviceSystemTotalCount) {
                 logger.error("aopOverLimitInterface_params");
-                edcCoOutDTO.setReturnCode("2997");
-                edcCoOutDTO.setReturnMessage("系统繁忙，请稍后再试");
-                return edcCoOutDTO;
+                throw new GeneralException("FLOW705");
             }
             //当前分接口总量
             long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
@@ -103,14 +102,14 @@ public class BusinessFlowController {
             isServiceTotalDecr = true;
             if (currServiceTotalCount > serviceTotalCount) {
                 logger.error("aopOverLimitInterface");
-                edcCoOutDTO.setReturnCode("2997");
-                edcCoOutDTO.setReturnMessage("系统繁忙，请稍后再试");
-                return edcCoOutDTO;
+                throw new GeneralException("FLOW505");
             }
             r = joinPoint.proceed();
         } catch (GeneralException e) {
             logger.error("流控校验超过阀值",e);
-            throw e;
+            edcCoOutDTO.setReturnCode(ReturnInfoEnums.FLOW_PROCESS_FAILED.getCode());
+            edcCoOutDTO.setReturnMessage(ReturnInfoEnums.FLOW_PROCESS_FAILED.getMessage());
+            return edcCoOutDTO;
         }catch (Throwable e1) {
             logger.error("BusinessFlowController error:",e1);
             throw new GeneralException("FLOW805");
