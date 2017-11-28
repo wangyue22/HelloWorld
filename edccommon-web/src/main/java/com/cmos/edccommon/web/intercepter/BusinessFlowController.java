@@ -85,7 +85,6 @@ public class BusinessFlowController {
                 logger.info("当前缓存key值为:"+serviceTotalKey);
                 serviceTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceTotalKey));
                 logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
-                logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
                 serviceSystemTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceSystemTotalKey));
                 logger.info("当前接口" + serviceSystemTotalKey + "分来源系统阀值为：" + serviceSystemTotalCount);
             } catch (Exception e) {
