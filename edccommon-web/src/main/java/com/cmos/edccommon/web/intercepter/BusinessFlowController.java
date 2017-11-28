@@ -1,6 +1,7 @@
 package com.cmos.edccommon.web.intercepter;
 
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
+import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,6 +36,8 @@ public class BusinessFlowController {
     }
     @Autowired
     private ICacheService cacheService;
+    @Autowired
+    CacheFatctoryUtil cacheFatctoryUtil;
 
     @Around("pointcut()")
     public Object process(ProceedingJoinPoint joinPoint) throws GeneralException {
@@ -80,10 +83,10 @@ public class BusinessFlowController {
         try {
             try {
                 logger.info("当前缓存key值为:"+serviceTotalKey);
-                serviceTotalCount = Long.parseLong(cacheService.getString(serviceTotalKey));
+                serviceTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceTotalKey));
                 logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
                 logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
-                serviceSystemTotalCount = Long.parseLong(cacheService.getString(serviceSystemTotalKey));
+                serviceSystemTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceSystemTotalKey));
                 logger.info("当前接口" + serviceSystemTotalKey + "分来源系统阀值为：" + serviceSystemTotalCount);
             } catch (Exception e) {
                 logger.error("redis异常", e);
