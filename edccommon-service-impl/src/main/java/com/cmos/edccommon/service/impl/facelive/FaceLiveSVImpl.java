@@ -44,12 +44,19 @@ public class FaceLiveSVImpl implements IFaceLiveSV {
 		if (StringUtil.isNotBlank(idntifScore) && idntifScore.length() > 10) {
 			resultBean.setIdntifScore(idntifScore.substring(0, 10));
 		}
-		resultBean.setCrtUserId(AppCodeConsts.APP_USER_ID.UNDEFINED);
+		
 		resultBean.setModfTime(nowTime);
 		if (resultBean.getCrtTime() == null) {
 			resultBean.setCrtTime(nowTime);
 		}
-		resultBean.setCrtAppSysId(AppCodeConsts.APP_SYS_ID.EDC_COMMON);
+		if (StringUtil.isBlank(resultBean.getCrtAppSysId())) {
+			resultBean.setCrtAppSysId(AppCodeConsts.APP_SYS_ID.EDC_COMMON);
+		}
+		if (StringUtil.isBlank(resultBean.getCrtUserId())) {
+			resultBean.setCrtUserId(AppCodeConsts.APP_USER_ID.UNDEFINED);
+		}
+		
+		
 		resultBean.setSplitName(dateString);
 
 		dao.insert(resultBean);

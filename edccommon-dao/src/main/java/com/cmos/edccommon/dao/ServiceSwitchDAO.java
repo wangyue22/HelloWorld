@@ -21,7 +21,8 @@ public interface ServiceSwitchDAO {
      * @param in
      * @return
      */
-    ServiceSwitchDO getServiceSwitchByKey(Map in);
+    @SuppressWarnings("rawtypes")
+	ServiceSwitchDO getServiceSwitchByKey(Map in);
 
     /**
      * 根据数据类型和缓存类型获取开关信息

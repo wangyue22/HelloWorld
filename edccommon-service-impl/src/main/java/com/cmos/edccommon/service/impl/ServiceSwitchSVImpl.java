@@ -24,7 +24,8 @@ public class ServiceSwitchSVImpl implements IServiceSwitchSV {
         List<ServiceSwitchDO> list = serviceSwitchDao.slectByType(input);
         return list;
     }
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
     public ServiceSwitchDO getServiceSwitchByKey(String swtchKey) {
         Map a= new HashMap();
         a.put("swtchKey",swtchKey);

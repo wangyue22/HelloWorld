@@ -1,7 +1,6 @@
 package com.cmos.edccommon.web.controller.hlrinfo;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.cmos.common.bean.JsonFormatException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.hlrinfo.HlrInfoDTO;

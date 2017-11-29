@@ -8,6 +8,7 @@ import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
 import com.cmos.edccommon.dao.piccompare.CoPicCompareInfoDAO;
 import com.cmos.edccommon.iservice.piccompare.IPicCompareSV;
+import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.AppCodeConsts;
 
 /**
@@ -33,9 +34,13 @@ public class PicCompareSVImpl implements IPicCompareSV {
 	public void savePicCompareLog(CoPicCompareInfoDO resultBean) {
 
 		Date nowTime = new Date();
-		resultBean.setCrtUserId(AppCodeConsts.APP_USER_ID.UNDEFINED);
-		resultBean.setCrtAppSysId(AppCodeConsts.APP_SYS_ID.EDC_COMMON);
-
+		if (StringUtil.isBlank(resultBean.getCrtAppSysId())) {
+			resultBean.setCrtAppSysId(AppCodeConsts.APP_SYS_ID.EDC_COMMON);
+		}
+		if (StringUtil.isBlank(resultBean.getCrtUserId())) {
+			resultBean.setCrtUserId(AppCodeConsts.APP_USER_ID.UNDEFINED);
+		}
+		
 		if (resultBean.getCrtTime() == null) {
 			log.error("创建时间为空，请及时查看");
 			resultBean.setCrtTime(nowTime);
