@@ -1,7 +1,5 @@
 package com.cmos.edccommon.web.intercepter;
 
-import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
-import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,10 +13,11 @@ import com.cmos.cache.service.ICacheService;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
-import com.cmos.edccommon.utils.StringUtil;
-import com.cmos.edccommon.utils.consts.AppCodeConsts;
-import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
+import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.CacheConsts;
+import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
+import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 
 /**
  * Created by guozong on 2017/10/30.
@@ -52,7 +51,7 @@ public class BusinessFlowController {
         //分接口分来源系统阀值
         long serviceSystemTotalCount=0;
 
-         //接口瞬时并发值
+        //接口瞬时并发值
         String currServiceTotalKey="";
         //接口+参数瞬时并发值
         String currServiceSystemTotalKey="";
@@ -67,13 +66,13 @@ public class BusinessFlowController {
             String json = JSON.toJSONString(argarg);
             JSONObject jsonOb = JSON.parseObject(json);
             sourceSystem = jsonOb.getString(CacheConsts.FLOW_CONTROLLER_PARAM_KEY);
-			if (StringUtil.isBlank(sourceSystem)) {
-				logger.error("AopChecker 入参 sourceSystem 为空：" + sourceSystem);
+            if (StringUtil.isBlank(sourceSystem)) {
+                logger.error("AopChecker 入参 sourceSystem 为空：" + sourceSystem);
                 edcCoOutDTO.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
                 edcCoOutDTO.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
                 return edcCoOutDTO ;
-			}
-			//封装阀值key
+            }
+            //封装阀值key
             String serviceTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_ALL";// 阀值key
             String serviceSystemTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_" + sourceSystem.toUpperCase();// 阀值key
 
@@ -93,21 +92,26 @@ public class BusinessFlowController {
             }
 
             //判断当前并发并发是否超过阀值
-             currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
+            currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
             long currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
             logger.info("当前接口分来源系统"+currServiceSystemTotalKey+"瞬时并发为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
-            if (isNeedParamCheck&&(currServiceSystemTotalCount > serviceSystemTotalCount)) {
-                logger.error("流控校验超过阀值aopOverLimitInterface_params"+" "+CacheConsts.STYSTEM_NAME +" "+ funtionName+" "+sourceSystem);
+            if (isNeedParamCheck&&currServiceSystemTotalCount > serviceSystemTotalCount) {
+                logger.error("aopOverLimitInterface_params" + " 当前系统:" + CacheConsts.STYSTEM_NAME + " 接口:"
+                        + funtionName + " 来源系统：" + sourceSystem + " 流控配置阀值:" + serviceSystemTotalCount + " 当前瞬时并发:"
+                        + currServiceSystemTotalCount);
+
                 throw new GeneralException("FLOW705");
             }
             //当前分接口总量
-             currServiceTotalKey = serviceTotalKey + "_REALTIME";
+            currServiceTotalKey = serviceTotalKey + "_REALTIME";
             long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
             logger.info("当前接口"+currServiceTotalKey+"瞬时并发为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
-            if (isNeedAllCheck&&(currServiceTotalCount > serviceTotalCount)) {
-                logger.error("流控校验超过阀值aopOverLimitInterface"+" "+CacheConsts.STYSTEM_NAME+" "+ funtionName);
+            if (isNeedAllCheck&&currServiceTotalCount > serviceTotalCount) {
+                logger.error("aopOverLimitInterface" + " 当前系统:" + CacheConsts.STYSTEM_NAME + " 接口:"
+                        + funtionName + " 流控配置阀值:" + serviceTotalCount + " 当前瞬时并发:" + currServiceTotalCount);
+
                 throw new GeneralException("FLOW505");
             }
             //流控通过，进行业务处理
