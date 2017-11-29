@@ -47,71 +47,72 @@ public class BusinessFlowController {
         Object r = null;
         String funtionName = joinPoint.getSignature().getName();
         String sourceSystem;
+        //接口阀值
+        long serviceTotalCount=0;
+        //分接口分来源系统阀值
+        long serviceSystemTotalCount=0;
+
+         //接口瞬时并发值
+        String currServiceTotalKey="";
+        //接口+参数瞬时并发值
+        String currServiceSystemTotalKey="";
+
+        //是否做接口总流控
+        boolean isNeedAllCheck = true;
+        //是否做接口+参数流控
+        boolean isNeedParamCheck = true;
         try {
+            //解析入参
             Object argarg = joinPoint.getArgs()[0];
             String json = JSON.toJSONString(argarg);
             JSONObject jsonOb = JSON.parseObject(json);
             sourceSystem = jsonOb.getString(CacheConsts.FLOW_CONTROLLER_PARAM_KEY);
 			if (StringUtil.isBlank(sourceSystem)) {
 				logger.error("AopChecker 入参 sourceSystem 为空：" + sourceSystem);
-				sourceSystem = AppCodeConsts.APP_SYS_ID.UNDEFINED;
-			}
-        } catch (Exception e) {
-            logger.error("获取参数异常异常", e);
-            try {
-                r = joinPoint.proceed();
-            } catch (Throwable e2) {
-                logger.error("BusinessFlowController error:",e2);
-                edcCoOutDTO.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
-                edcCoOutDTO.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
+                edcCoOutDTO.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+                edcCoOutDTO.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
                 return edcCoOutDTO ;
-            }
+			}
+			//封装阀值key
+            String serviceTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_ALL";// 阀值key
+            String serviceSystemTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_" + sourceSystem.toUpperCase();// 阀值key
 
-            return r;
-        }
-
-        String serviceTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_ALL";// 阀值key
-        String serviceSystemTotalKey = CacheConsts.CACHE_SWITCH_PREFIX + funtionName.toUpperCase() + "_" + sourceSystem.toUpperCase();// 阀值key
-        String currServiceTotalKey = serviceTotalKey + "_REALTIME";
-        String currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
-
-        //接口阀值
-        long serviceTotalCount;
-        //分接口分来源系统阀值
-        long serviceSystemTotalCount;
-
-        try {
-            try {
-                logger.info("当前缓存key值为:"+serviceTotalKey);
+            //获取接口总控阀值
+            if(StringUtil.isBlank(cacheFatctoryUtil.getJVMString(serviceTotalKey))){
+                isNeedAllCheck=false;
+            }else{
                 serviceTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceTotalKey));
-                logger.info("当前接口" + serviceTotalKey + "阀值为：" + serviceTotalCount);
-                logger.info("当前系统缓存key值为:"+serviceSystemTotalKey);
-                serviceSystemTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceSystemTotalKey));
-                logger.info("当前接口" + serviceSystemTotalKey + "分来源系统阀值为：" + serviceSystemTotalCount);
-            } catch (Exception e) {
-                logger.error("redis异常", e);
-                r = joinPoint.proceed();
-                return r;
+                logger.info("当前接口" + serviceTotalKey + "阀值配置为：" + serviceTotalCount);
             }
-            //当前分接口分来源系统总量
+            //获取接口来源系统阀值
+            if(StringUtil.isBlank(cacheFatctoryUtil.getJVMString(serviceSystemTotalKey))){
+                isNeedParamCheck=false;
+            }else{
+                serviceSystemTotalCount = Long.parseLong(cacheFatctoryUtil.getJVMString(serviceSystemTotalKey));
+                logger.info("当前接口" + serviceSystemTotalKey + "来源系统阀值配置为：" + serviceSystemTotalCount);
+            }
+
+            //判断当前并发并发是否超过阀值
+             currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
             long currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
-            logger.info("当前分接口分来源系统"+currServiceSystemTotalKey+"总量为:"+currServiceSystemTotalCount);
+            logger.info("当前接口分来源系统"+currServiceSystemTotalKey+"瞬时并发为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
-            if (currServiceSystemTotalCount > serviceSystemTotalCount) {
-                logger.error("aopOverLimitInterface_params");
+            if (isNeedParamCheck&&(currServiceSystemTotalCount > serviceSystemTotalCount)) {
+                logger.error("流控校验超过阀值aopOverLimitInterface_params"+" "+CacheConsts.STYSTEM_NAME +" "+ funtionName+" "+sourceSystem);
                 throw new GeneralException("FLOW705");
             }
             //当前分接口总量
+             currServiceTotalKey = serviceTotalKey + "_REALTIME";
             long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
-            logger.info("当前分接口"+currServiceTotalKey+"总量为:"+currServiceTotalCount);
+            logger.info("当前接口"+currServiceTotalKey+"瞬时并发为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
-            if (currServiceTotalCount > serviceTotalCount) {
-                logger.error("aopOverLimitInterface");
+            if (isNeedAllCheck&&(currServiceTotalCount > serviceTotalCount)) {
+                logger.error("流控校验超过阀值aopOverLimitInterface"+" "+CacheConsts.STYSTEM_NAME+" "+ funtionName);
                 throw new GeneralException("FLOW505");
             }
+            //流控通过，进行业务处理
             r = joinPoint.proceed();
         } catch (GeneralException e) {
-            logger.error("流控校验超过阀值",e);
             edcCoOutDTO.setReturnCode(ReturnInfoEnums.FLOW_PROCESS_FAILED.getCode());
             edcCoOutDTO.setReturnMessage(ReturnInfoEnums.FLOW_PROCESS_FAILED.getMessage());
             return edcCoOutDTO;
@@ -120,6 +121,7 @@ public class BusinessFlowController {
             edcCoOutDTO.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             edcCoOutDTO.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
             return edcCoOutDTO ;
+
         } finally {
             if (isServiceTotalDecr) {
                 cacheService.decr(currServiceTotalKey);

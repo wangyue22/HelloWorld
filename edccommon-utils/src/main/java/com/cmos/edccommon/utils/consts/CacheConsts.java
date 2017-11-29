@@ -13,7 +13,10 @@ public class CacheConsts {
      * 各系统公用工具类中的开关key前缀
      */
     public static final String CACHE_SWITCH_PREFIX = "CO_SWITCH:";
-
+    /**
+     * 当前系统名称
+     */
+    public static final String STYSTEM_NAME="COMMON";
     /**
      * 各系统公用工具类中的rnfs配置信息key前缀
      */
