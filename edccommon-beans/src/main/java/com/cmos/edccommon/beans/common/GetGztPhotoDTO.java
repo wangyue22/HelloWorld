@@ -1,7 +1,10 @@
 package com.cmos.edccommon.beans.common;
 
 import com.cmos.common.bean.GenericBean;
-
+/**
+ * 获取国政通图片dto
+ * @author: wanghaiyang
+ */
 public class GetGztPhotoDTO extends GenericBean {
 
     private static final long serialVersionUID = 1L;

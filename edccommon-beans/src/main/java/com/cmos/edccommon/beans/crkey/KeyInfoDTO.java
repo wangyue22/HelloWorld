@@ -5,8 +5,8 @@ import com.cmos.common.bean.GenericBean;
 import com.cmos.common.domain.UserResult;
 
 /**
- * 统一入参数据类型  
- * 
+ * Rsa秘钥统一入参数据类型  
+ * @author: xdx
  */
 public class KeyInfoDTO extends GenericBean implements UserResult {
 

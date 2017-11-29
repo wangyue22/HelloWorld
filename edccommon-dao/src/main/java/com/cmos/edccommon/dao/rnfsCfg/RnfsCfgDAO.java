@@ -7,7 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO;
 
 /**
- * Created by guozong on 2017/10/31.
+ * 运营管理 rnfs缓存配置推送
+ * Created by guozong.
  */
 public interface RnfsCfgDAO {
 

@@ -3,7 +3,7 @@ package com.cmos.edccommon.iservice.piccompare;
 import com.cmos.edccommon.beans.piccompare.CoPicCompareInfoDO;
 
 /**
- * 人像比对
+ * 人像比对（若使用vertica，该文件废弃）
  *
  * @author xdx
  * @since 1.0

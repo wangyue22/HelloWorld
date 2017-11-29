@@ -11,6 +11,7 @@ import com.cmos.edccommon.dao.rnfsCfg.RnfsCfgDAO;
 import com.cmos.edccommon.iservice.rnfsCfg.IRnfsCfgSV;
 
 /**
+ * 运营管理 rnfs缓存配置实现类
  * Created by guozong on 2017/10/31.
  */
 @Service(group = "edcco")
@@ -23,7 +24,8 @@ public class RnfsCfgSVImpl implements IRnfsCfgSV {
         return null;
     }
 
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     public List getRnfsGrpNmByrnfsGrpNm(String cacheTypeCd, String cacheDataTypeCd) {
         List returnList = new ArrayList();
         List<RnfsCfgDO> grpNm = rnfsCfgDAO.getRnfsGrpNm(cacheTypeCd, cacheDataTypeCd);

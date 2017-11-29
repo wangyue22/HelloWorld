@@ -4,7 +4,7 @@ import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
 
 
 /**
- * 人像比对
+ * 保存静默活体调用日志（若使用vertica，该文件废弃）
  *
  * @author xdx
  * @since 1.0

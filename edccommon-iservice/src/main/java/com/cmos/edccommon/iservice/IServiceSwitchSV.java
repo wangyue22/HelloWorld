@@ -6,6 +6,7 @@ import java.util.Map;
 import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
 
 /**
+ * 运营管理 缓存开关
  * Created by guozong on 2017/10/17.
  */
 public interface IServiceSwitchSV {

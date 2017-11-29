@@ -23,7 +23,8 @@ public class SwaggerConfig {
                 .build();
     }
 
-    private ApiInfo apiInfo() {
+    @SuppressWarnings("deprecation")
+	private ApiInfo apiInfo() {
 
         ApiInfo apiInfo = new ApiInfo(
                 "SpringMVC REST API文档:http://localhost:18080/swagger-ui.html",

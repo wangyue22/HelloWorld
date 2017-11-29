@@ -90,10 +90,12 @@ public class CacheInDTO  extends GenericBean{
 		this.mapValue = mapValue;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public List getListValue() {
 		return listValue;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setListValue(List listValue) {
 		this.listValue = listValue;
 	}

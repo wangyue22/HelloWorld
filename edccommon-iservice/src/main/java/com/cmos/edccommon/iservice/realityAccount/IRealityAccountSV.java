@@ -5,6 +5,7 @@ import java.util.List;
 import com.cmos.edccommon.beans.realityAccount.RealityAccountDO;
 
 /**
+ * 运营管理 缓存实名账户信息
  * Created by guozong on 2017/10/31.
  */
 public interface IRealityAccountSV {

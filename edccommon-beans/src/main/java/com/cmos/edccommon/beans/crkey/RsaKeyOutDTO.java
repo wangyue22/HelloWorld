@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.cmos.common.bean.GenericBean;
 
+/**
+ * 运营管理，缓存管理 RSA秘钥数据表dto
+ * @author 王飞
+ *
+ */
 public class RsaKeyOutDTO extends GenericBean {
     private static final long serialVersionUID = 1L;
 

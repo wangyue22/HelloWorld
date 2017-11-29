@@ -4,7 +4,8 @@ import java.util.Date;
 
 import com.cmos.common.bean.GenericBean;
 
-/**RSA秘钥
+/**
+ * 运营管理RSA秘钥dto
  * @author 王飞
  *
  */

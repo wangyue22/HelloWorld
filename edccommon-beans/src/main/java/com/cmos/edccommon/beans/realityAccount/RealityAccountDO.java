@@ -6,7 +6,7 @@ import com.cmos.common.bean.GenericBean;
 
 /**
  * 人像比对实名账户
- *
+ * @author: xdx
  */
 public class RealityAccountDO extends GenericBean {
 

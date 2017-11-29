@@ -5,7 +5,7 @@ import com.cmos.common.domain.UserResult;
 
 /**
  * 人像双照比对入参数据类型
- * 
+ * @author: xdx
  */
 public class FaceLiveInDTO extends GenericBean implements UserResult {
 
