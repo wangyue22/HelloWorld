@@ -12,7 +12,8 @@ public interface IRnfsCfgSV {
      * 缓存list数据获取
      * @return
      */
-    List getRnfsGrpNmByrnfsGrpNm(String cacheTypeCd, String cacheDataTypeCd);
+    @SuppressWarnings("rawtypes")
+	List getRnfsGrpNmByrnfsGrpNm(String cacheTypeCd, String cacheDataTypeCd);
 
     /**
      * 缓存map 数据获取

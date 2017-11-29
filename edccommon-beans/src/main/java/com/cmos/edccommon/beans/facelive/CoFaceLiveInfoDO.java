@@ -3,7 +3,7 @@ package com.cmos.edccommon.beans.facelive;
 import com.cmos.common.bean.GenericBean;
 import java.util.Date;
 /**
- * 静默活体
+ * 静默活体（若使用vertica，该表废弃）
  * @author xdx
  *
  */

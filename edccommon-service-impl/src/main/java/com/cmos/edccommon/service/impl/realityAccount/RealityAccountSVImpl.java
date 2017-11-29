@@ -10,6 +10,7 @@ import com.cmos.edccommon.dao.realityAccount.RealityAccountDAO;
 import com.cmos.edccommon.iservice.realityAccount.IRealityAccountSV;
 
 /**
+ * 运营管理实名账户信息实现类
  * Created by guozong on 2017/10/31.
  */
 @Service(group = "edcco")
@@ -24,6 +25,7 @@ public class RealityAccountSVImpl implements IRealityAccountSV {
 
     /**
      * 根据缓存key获取实名账户信息
+     * 
      */
     @Override
     public RealityAccountDO getRealityAccountBycacheKey(String cacheKeyVal) {

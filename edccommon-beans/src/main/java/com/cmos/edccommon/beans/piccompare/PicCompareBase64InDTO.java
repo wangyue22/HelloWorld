@@ -6,7 +6,7 @@ import com.cmos.common.domain.UserResult;
 
 /**
  * 人像比对判定入参数据类型
- * 
+ * @author: xdx
  */
 public class PicCompareBase64InDTO extends GenericBean implements UserResult {
 

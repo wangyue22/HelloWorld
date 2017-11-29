@@ -36,6 +36,7 @@ public class FaceLiveControllerTest extends BaseUnitTest {
     	faceLiveInfo.setPicRPath("bFTP/10085custPicCompare/371/20171115/10852017111503710201_R.jpg");
     	faceLiveInfo.setCrkey("QXNLD");
     	faceLiveInfo.setSwftno("1234567890");
+    	faceLiveInfo.setAppSysID("CT");//模拟接口统一认证平台
         logger.info("入参："+JsonUtil.convertObject2Json(faceLiveInfo));
         MvcResult result = mockMvc.perform(
                 MockMvcRequestBuilders.post("/co/facelive").accept("application/json")

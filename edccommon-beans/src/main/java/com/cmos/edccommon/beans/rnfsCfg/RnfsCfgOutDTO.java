@@ -3,7 +3,10 @@ package com.cmos.edccommon.beans.rnfsCfg;
 import java.util.List;
 
 import com.cmos.common.bean.GenericBean;
-
+/**
+ * 运营管理 rnfs
+ * @author: 王飞
+ */
 public class RnfsCfgOutDTO extends GenericBean {
     private static final long serialVersionUID = 1L;
 

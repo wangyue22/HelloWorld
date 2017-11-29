@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.cmos.common.bean.GenericBean;
 
+/**
+ * 实名账户DTO
+ * @author: 王飞
+ */
 public class RealityAccountOutDTO extends GenericBean {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private List<RealityAccountDO> beans;

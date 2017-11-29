@@ -10,7 +10,7 @@ import com.cmos.common.domain.UserResult;
 
 /**
  * 统一出参数据类型  
- * 
+ * @author: xdx
  */
 public class EdcCoOutDTO extends GenericBean implements UserResult {
 	private static final long serialVersionUID = -5298399887946833718L;

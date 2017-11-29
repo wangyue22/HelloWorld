@@ -12,6 +12,7 @@ import com.cmos.edccommon.dao.ServiceSwitchDAO;
 import com.cmos.edccommon.iservice.IServiceSwitchSV;
 
 /**
+ * 运营管理缓存开关实现类
  * Created by guozong on 2017/10/17.
  */
 @Service(group = "edcco")
@@ -23,7 +24,8 @@ public class ServiceSwitchSVImpl implements IServiceSwitchSV {
         List<ServiceSwitchDO> list = serviceSwitchDao.slectByType(input);
         return list;
     }
-    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
     public ServiceSwitchDO getServiceSwitchByKey(String swtchKey) {
         Map a= new HashMap();
         a.put("swtchKey",swtchKey);
