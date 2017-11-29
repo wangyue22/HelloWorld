@@ -5,7 +5,10 @@ import java.util.Map;
 
 import com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO;
 
-
+/**
+ * 运营管理  缓存开关配置推送
+ * Created by guozong on 2017/10/31.
+ */
 public interface ServiceSwitchDAO {
     /**
      * 获取所有存入缓存的开关

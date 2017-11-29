@@ -5,8 +5,8 @@ import java.util.Date;
 import com.cmos.common.bean.GenericBean;
 
 /**
- * 人像比对实名账户DTO
- *
+ * 实名账户DTO
+ * @author: 王飞
  */
 public class RealityAccountInDTO extends GenericBean {
 

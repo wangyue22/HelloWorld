@@ -41,7 +41,6 @@ import com.cmos.edccommon.iservice.rnfsCfg.IRnfsCfgSV;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.JVMCacheDataUtil;
-import com.cmos.edccommon.web.cache.RedisCacheDataUtil;
 
 /**
  * @author 任林达
@@ -55,11 +54,11 @@ public class CacheManageController{
      * 1、实现缓存的增删改查方法
      * 2、实现所有模块db的增删改查方法，如果本业务系统没有对应的模块请返回默认错误
      */
-    @Autowired
-    private RedisCacheDataUtil redisCacheDataUtil;
-
-    @Autowired
-    private JVMCacheDataUtil jvmCacheDataUtil;
+//    @Autowired
+//    private RedisCacheDataUtil redisCacheDataUtil;
+//
+//    @Autowired
+//    private JVMCacheDataUtil jvmCacheDataUtil;
 
     @Autowired
     private BasicUtil basicUtil;

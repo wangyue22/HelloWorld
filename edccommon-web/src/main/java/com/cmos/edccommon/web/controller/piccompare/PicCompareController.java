@@ -46,7 +46,7 @@ import com.cmos.producer.client.MsgProducerClient;
 import io.swagger.annotations.Api;
 
 /**
- * 人像比对服务
+ * 人像比对
  * @author xdx
  *
  */
@@ -86,7 +86,9 @@ public class PicCompareController {
 	
 	/**
 	 * 人像比对判定接口（三张图片）
-	 * 如果国政通获取图片为空,nfc芯片图片不为空 则 优先比对nfc芯片图片 没有二次比对,如果国政通图片不为空 先比对国政通, 国政通比对失败或者比对不一致时,使用nfc芯片图片进行比对
+	 * 如果国政通获取图片为空（2017年11月更新逻辑，若国政通图片为空，需返回特殊返回码2998）
+	 * ,nfc芯片图片不为空 则 优先比对nfc芯片图片 没有二次比对,
+	 * 如果国政通图片不为空 先比对国政通, 国政通比对失败或者比对不一致时,使用nfc芯片图片进行比对
 	 * @param inParam
 	 * @return
 	 * @date 2017-10-14 11:00:00
@@ -590,7 +592,7 @@ public class PicCompareController {
 	}
 
 	/**
-	 * 下载业务图片
+	 * 下载业务图片或芯片图片
 	 * @param picPath
 	 * @return
 	 */
@@ -647,6 +649,9 @@ public class PicCompareController {
 	
 	/**
 	 * 调用人像照片质检接口
+	 * （特别注意，2017年11月，经实测，人像质检的证件分数阈值，人像分数阈值，linkface不使用，
+	 * 即 linkface采用默认分值做证件判断，返回5非手持证件照）
+	 * 
 	 * @param base64StrR 自拍照 头像照片or手持人像 
 	 * @param base64StrT 标准照片 国政通or芯片
 	 * @param returnPicRFlag 是否回传头像剪裁图片  true是false否
@@ -654,7 +659,6 @@ public class PicCompareController {
 	 * @param picTType  第二个参数是国政通照片还是芯片照片   g:国政通 x:芯片
 	 * @return
 	 * @throws GeneralException 
-	 * @throws BusiException
 	 */
 	private String sendPicCheck(String base64StrR, String base64StrT, String returnPicRFlag, String picRType, String picTType) throws GeneralException {
 		String rt;
@@ -747,17 +751,16 @@ public class PicCompareController {
 
 
 	/**
-	 * @param rtMap 人像对比服务 返回的map
-	 * @param busiType  业务类型   provcode $ 11
-	 * @param custCertNo
+	 * 人像对比服务 返回的map
+	 * @param rtMap 
+	 * @param rangeInStr
 	 * @return
-	 * @throws BusiException
 	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, String> getCompareResult(Map<String, Object> rtMap, String rangeInStr) {
 		String rangeStr = rangeInStr;
 		Map<String, String> returnMap = new HashMap<String, String>();
-		// 0成功1自拍照无人像 2 自拍照人像模糊 3标准照片无人像 4标准照片人像模糊 5 违规处理自拍照 6非手持证件照 -1其他情况
+		//5 为非手持证件照  -1其他情况（一般是图片异常，如非base64等）  1自拍照无人像 0成功
 		String resultType = (String) rtMap.get("resultType");
 		Map<String, String> returnInfo = ((Map<String, String>) rtMap.get("returnInfo"));
 		String verifyState; // 是否是同一人 0是 1否
@@ -787,7 +790,7 @@ public class PicCompareController {
 
 	/**
 	 * 检查是否在分数段内 
-	 * @param rangeStr 配置的分数区间  0-50|80-100
+	 * @param rangeStr 配置的分数区间  例如0-50|80-100
 	 * @param similarity  分数
 	 * @param matchValue  符合条件时的返回值
 	 * @param notMathchDefaultVal 不符合条件时的返回值
@@ -842,11 +845,17 @@ public class PicCompareController {
 	}
 	
 	/**
-	 * requestSource 比对请求源 例如：371
-	 * busiType 比对业务类型 例如：22、11
-	 * transactionId 业务流水号
-	 * compareResult 人像比对结果
-	 * @throws JsonFormatException 
+	 * 生成人像比对的保存日志记录
+	 * 
+	 * @param appSysID 创建系统ID
+	 * @param appUserID 创建用户ID
+	 * @param requestSource
+	 * @param busiType
+	 * @param transactionId
+	 * @param compareResult 
+	 * @param out 
+	 * @return
+	 * @throws JsonFormatException
 	 */
 	@SuppressWarnings("unchecked")
 	private String saveCompareInfo(String appSysID, String appUserID, String requestSource, String busiType,
@@ -930,7 +939,14 @@ public class PicCompareController {
 	}
 
 	/**
-	 * 发送消息队列
+	 * 发送消息队列，或发送vertica
+	 * @param appSysID 创建系统ID
+	 * @param appUserID 创建用户ID
+	 * @param requestSource
+	 * @param busiType
+	 * @param transactionId
+	 * @param compareResult
+	 * @param out
 	 */
 	private void sendMQ(String appSysID, String appUserID, String requestSource, String busiType, String transactionId,
 			Map<String, Object> compareResult, EdcCoOutDTO out) {

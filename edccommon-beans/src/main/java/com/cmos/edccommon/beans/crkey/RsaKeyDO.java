@@ -5,10 +5,6 @@ import java.sql.Timestamp;
 import com.cmos.common.bean.GenericBean;
 /**
  * RSA秘钥数据表
- * @author xdx
- *
- */
-/**
  * @author 王飞
  *
  */

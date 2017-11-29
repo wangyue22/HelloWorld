@@ -5,8 +5,8 @@ import java.util.Date;
 import com.cmos.common.bean.GenericBean;
 
 /**
- * 人像比对，人像双照比对存表
- *
+ * 人像比对，人像双照比对存表（若使用vertica，该表废弃）
+ * @author: xdx
  */
 public class CoPicCompareInfoDO extends GenericBean {
 	

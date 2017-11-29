@@ -14,8 +14,8 @@ import com.cmos.edccommon.dao.crkey.RsaKeyDAO;
 import com.cmos.edccommon.iservice.crkey.IRsaKeySV;
 
 /**
- * 根据请求源编码，秘钥类型，和省编码获取秘钥
- * @author xdx
+ * 运营管理中心 管理rsa秘钥实现类
+ * @author xdx 王飞  guozong
  *
  */
 @Service(group = "edcco")

@@ -9,7 +9,11 @@ import com.cmos.common.spring.AppContext;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.utils.KeysUtil;
-
+/**
+ * mysql生成唯一主键的工具类 
+ * @author sangkun
+ *
+ */
 @Configuration
 public class BasicUtil {
     private static final Logger logger = LoggerFactory.getLogger(BasicUtil.class);

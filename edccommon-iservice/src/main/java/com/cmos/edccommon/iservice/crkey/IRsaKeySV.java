@@ -5,9 +5,9 @@ import java.util.List;
 import com.cmos.edccommon.beans.crkey.RsaKeyDO;
 
 /**
- * 根据手机号得到对应的省端编码
+ * 运营管理 rsa秘钥管理
  *
- * @author xdx
+ * @author 王飞
  *
  */
 public interface IRsaKeySV {

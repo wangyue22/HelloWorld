@@ -16,6 +16,7 @@ import com.cmos.edccommon.web.intercepter.PrivateParamInterceptor;
  * Created by zhuzh on 2016/11/18.
  */
 
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebMvc
 @EnableFileUpload

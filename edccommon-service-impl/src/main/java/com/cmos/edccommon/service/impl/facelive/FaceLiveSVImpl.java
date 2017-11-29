@@ -12,10 +12,11 @@ import com.cmos.edccommon.beans.facelive.CoFaceLiveInfoDO;
 import com.cmos.edccommon.dao.facelive.CoFaceLiveInfoDAO;
 import com.cmos.edccommon.iservice.facelive.IFaceLiveSV;
 import com.cmos.edccommon.utils.StringUtil;
+import com.cmos.edccommon.utils.consts.AppCodeConsts;
 
 
 /**
- * 静默活体服务
+ * MQ保存静默活体服务日志(若使用vertica，可废弃)
  *
  * @author xdx
  * 
@@ -43,12 +44,12 @@ public class FaceLiveSVImpl implements IFaceLiveSV {
 		if (StringUtil.isNotBlank(idntifScore) && idntifScore.length() > 10) {
 			resultBean.setIdntifScore(idntifScore.substring(0, 10));
 		}
-		resultBean.setCrtUserId("EDCCOMMON");
+		resultBean.setCrtUserId(AppCodeConsts.APP_USER_ID.UNDEFINED);
 		resultBean.setModfTime(nowTime);
 		if (resultBean.getCrtTime() == null) {
 			resultBean.setCrtTime(nowTime);
 		}
-		resultBean.setCrtAppSysId("EDCCOMMON");
+		resultBean.setCrtAppSysId(AppCodeConsts.APP_SYS_ID.EDC_COMMON);
 		resultBean.setSplitName(dateString);
 
 		dao.insert(resultBean);

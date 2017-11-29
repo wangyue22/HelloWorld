@@ -4,7 +4,7 @@ import com.cmos.common.bean.GenericBean;
 import java.util.Date;
 /**
  * 根据手机号获取省份
- *
+ * @author: zhaohu
  */
 public class HlrInfoDO extends GenericBean {
 	

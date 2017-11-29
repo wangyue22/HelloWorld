@@ -12,6 +12,7 @@ import com.cmos.edccommon.dao.ServiceSwitchDAO;
 import com.cmos.edccommon.iservice.IServiceSwitchSV;
 
 /**
+ * 运营管理缓存开关实现类
  * Created by guozong on 2017/10/17.
  */
 @Service(group = "edcco")
