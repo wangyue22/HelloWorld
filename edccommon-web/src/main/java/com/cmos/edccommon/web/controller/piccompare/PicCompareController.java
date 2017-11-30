@@ -33,7 +33,6 @@ import com.cmos.edccommon.utils.consts.AppCodeConsts;
 import com.cmos.edccommon.utils.consts.CacheConsts;
 import com.cmos.edccommon.utils.consts.CoConstants;
 import com.cmos.edccommon.utils.consts.KafkaConsts;
-import com.cmos.edccommon.utils.consts.MqConstants;
 import com.cmos.edccommon.utils.des.MsDesPlus;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
 import com.cmos.edccommon.web.aop.AopChecker;
@@ -41,7 +40,6 @@ import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
 import com.cmos.edccommon.web.fileupdown.GztFileDownloadUtil;
-import com.cmos.producer.client.MsgProducerClient;
 
 import io.swagger.annotations.Api;
 
@@ -428,7 +426,7 @@ public class PicCompareController {
 			if (StringUtil.isEmpty(picRStr)) {
 				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getCode());
 				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getMessage());
-				log.error("人像照片下载异常");
+				log.error("人像照片下载异常，流水号：" + swftno);
 				return out;
 			}		
 			try {
@@ -442,7 +440,7 @@ public class PicCompareController {
 			} catch (Exception e1) {
 				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getCode());
 				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getMessage());
-				log.error("人像照片解密异常", e1);
+				log.error("人像照片解密异常，流水号：" + swftno, e1);
 				return out;
 			}
 
@@ -454,7 +452,7 @@ public class PicCompareController {
 					if (StringUtil.isEmpty(picTStr)) {
 						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getMessage());
-						log.error("国政通照片下载异常");
+						log.error("国政通照片下载异常，流水号：" + swftno);
 						return out;
 					}
 					picTBase64Str = picTStr;// 国政通图片字符串不用解密
@@ -465,7 +463,7 @@ public class PicCompareController {
 					if (StringUtil.isEmpty(picTStr)) {
 						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
-						log.error("标准照片下载异常");
+						log.error("标准照片下载异常，流水号：" + swftno);
 						return out;
 					}
 					String picTDecStr = Ms.decrypt(picTStr);// 解密后的图片字符串   NFC 芯片头像需要解密
@@ -480,7 +478,7 @@ public class PicCompareController {
 			} catch (Exception e1) {
 				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
 				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
-				log.error("标准照片下载异常", e1);
+				log.error("标准照片下载异常，流水号：" + swftno, e1);
 				return out;
 			}
 			// 3 调用人像比对服务
@@ -508,7 +506,7 @@ public class PicCompareController {
 					logMap.put("picTType", picTType);
 					sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
 				} catch (Exception e) {
-					log.error("MQ保存消费信息出错", e );
+					log.error("保存业务日志信息出错，流水号：" + swftno, e );
 				}
 			}
 		} catch (Exception e) {
@@ -629,12 +627,11 @@ public class PicCompareController {
 	
 	/**
 	 * 调用人像照片质检接口 （不进行图片回传）
-	 * @param picR 自拍照 头像照片or手持人像 
-	 * @param picT 标准照片 国政通or芯片
+	 * @param base64StrR 自拍照 头像照片or手持人像 
+	 * @param base64StrT 标准照片 国政通or芯片
 	 * @param picRType 第一个参数是头像照片还是手持人像照片  t:头像 r:手持人像 
 	 * @param picTType  第二个参数是国政通照片还是芯片照片   g:国政通 x:芯片
 	 * @return
-	 * @throws BusiException
 	 */
 	private String sendPicCheck(String base64StrR, String base64StrT, String picRType, String picTType) {
 		String result = null;
@@ -727,6 +724,7 @@ public class PicCompareController {
 		String svUrl = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_URL);
 		if (StringUtil.isBlank(svUrl)) {
 			// 环境变量配置调用人像比对 地址
+			log.error("缓存中未配置人像比对服务的调用地址");
 			svUrl = env.getProperty("piccheck.url");
 		}
 		log.info("*********************"+svUrl);
@@ -952,9 +950,8 @@ public class PicCompareController {
 			Map<String, Object> compareResult, EdcCoOutDTO out) {
 		try {
 			String Msg = saveCompareInfo(appSysID, appUserID, requestSource, busiType, transactionId, compareResult, out);
-			log.info("##########msg=" + Msg);
+			log.info("生成的业务日志信息成功，流水号：" + transactionId);
 			KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_PIC_COMPARE_INFO);
-			MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.PIC_COMPARE, Msg);
 		} catch (Exception e) {
 			log.error("发送日志异常", e);
 		}

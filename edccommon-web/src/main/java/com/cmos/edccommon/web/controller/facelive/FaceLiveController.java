@@ -94,8 +94,7 @@ public class FaceLiveController {
 	}	
 	/**
 	 * 静默调用服务
-	 * @param sourceMap
-	 * @param param
+	 * @param inParam
 	 * @return
 	 * @throws GeneralException 
 	 */
@@ -122,6 +121,7 @@ public class FaceLiveController {
 		String sendUrl = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_URL);
 		if(StringUtil.isBlank(sendUrl)){
 			//环境变量配置活体检测服务器地址
+			log.error("缓存中未配置静默活体服务的调用地址，流水号：" + swftno);
 			sendUrl = env.getProperty("facelive.url");	
 		}
 		Map<String, String> paraMap = new HashMap<String, String>();
@@ -136,7 +136,7 @@ public class FaceLiveController {
 			}
 		} catch (Exception e) {
 			picRStrBase64 = null;
-			log.error("人像照片解密异常", e);
+			log.error("人像照片解密异常，流水号：" + swftno, e);
 		}	
 		
 		Map<String, String> logMap = new HashMap<String, String>();
@@ -150,7 +150,7 @@ public class FaceLiveController {
 			try {
 				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);
 			} catch (Exception e) {
-				log.error("人像比对服务下载人像图片异常", e);
+				log.error("人像比对服务下载人像图片异常，流水号：" + swftno, e);
 			}
 			return out;
 		}
@@ -159,7 +159,7 @@ public class FaceLiveController {
 		paraMap.put("image", picRStrBase64);
 		paraMap.put("face_fields", ",faceliveness");
 		String jsonString = JsonUtil.convertObject2Json(paraMap);
-		log.info("    ##########  静默服务调用  URL：" + sendUrl);
+		log.info("    ##########  静默服务调用 ，流水号：" + swftno + ", URL：" + sendUrl);
 		log.info("    ##########  静默服务调用  reqjson大小：" + jsonString.length());
 		String rtnJson = HttpUtil.sendHttpPostEntity(sendUrl, jsonString);
 		
@@ -230,8 +230,8 @@ public class FaceLiveController {
 	private void sendMQ(String appSysID, String appUserID, String requestSource, String busiType, String transactionId,
 			Map<String, String> logMap) throws MsgException, JsonFormatException{
 		String Msg = saveFaceLiveInfo(appSysID, appUserID, requestSource, busiType, transactionId, logMap);
+		log.info("生成的业务日志信息成功，流水号：" + transactionId);
 		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_FACE_LIVE_INFO);
-//		MsgProducerClient.getRocketMQProducer().send(MqConstants.MQ_TOPIC.FACE_LIVE, Msg);
 	}
 	
 	/**
