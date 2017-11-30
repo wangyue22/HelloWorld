@@ -119,6 +119,7 @@ public class BusinessFlowController {
         } catch (GeneralException e) {
             edcCoOutDTO.setReturnCode(ReturnInfoEnums.FLOW_PROCESS_FAILED.getCode());
             edcCoOutDTO.setReturnMessage(ReturnInfoEnums.FLOW_PROCESS_FAILED.getMessage());
+			logger.error("流控发生异常", e);
             return edcCoOutDTO;
         }catch (Throwable e1) {
             logger.error("BusinessFlowController error:",e1);
