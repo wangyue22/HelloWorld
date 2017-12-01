@@ -175,12 +175,14 @@
     <if test="cacheDataTypeCd!=null and cacheDataTypeCd!=''">
       and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
     </if>
+      and VALID_FLAG = '1'
   </select>
   <select id="getKeyByCacheKey" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List" />
         from t_op_rsa_key
         where CACHE_KEY_VAL= #{cacheKeyVal,jdbcType=VARCHAR}
+        and VALID_FLAG = '1'
    </select>
   <select id="getRsaKey" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.crkey.RsaKeyDO">
   	select CRKEY_ID, REQST_SRC_CODE, REQST_SRC_NM, PBKEY, PRTKEY, BIZ_TYPE_CD, 
