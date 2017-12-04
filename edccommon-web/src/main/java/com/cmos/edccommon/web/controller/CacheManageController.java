@@ -54,11 +54,11 @@ public class CacheManageController{
      * 1、实现缓存的增删改查方法
      * 2、实现所有模块db的增删改查方法，如果本业务系统没有对应的模块请返回默认错误
      */
-//    @Autowired
-//    private RedisCacheDataUtil redisCacheDataUtil;
-//
-//    @Autowired
-//    private JVMCacheDataUtil jvmCacheDataUtil;
+    //    @Autowired
+    //    private RedisCacheDataUtil redisCacheDataUtil;
+    //
+    //    @Autowired
+    //    private JVMCacheDataUtil jvmCacheDataUtil;
 
     @Autowired
     private BasicUtil basicUtil;
@@ -261,7 +261,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("新增开关失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -288,7 +288,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("更新开关失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -319,7 +319,7 @@ public class CacheManageController{
                 dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("查询开关失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -349,7 +349,7 @@ public class CacheManageController{
                 dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("查询rnfs配置失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -376,7 +376,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("更新rnfs配置失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -414,7 +414,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("新增rnfs配置失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -444,7 +444,7 @@ public class CacheManageController{
                 dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("查询实名账户失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -472,7 +472,7 @@ public class CacheManageController{
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             log.info("出参dto:" + dto.toJSONString());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("更新实名账户失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -509,7 +509,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("新增实名账户失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -539,7 +539,7 @@ public class CacheManageController{
                 dto.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
             }
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("查询rsa密钥失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -566,7 +566,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("更新rsa密钥失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }
@@ -603,7 +603,7 @@ public class CacheManageController{
             dto.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         } catch (Exception e) {
-            log.error("error", e);
+            log.error("新增rsa密钥失败", e);
             dto.setReturnCode(ReturnInfoEnums.PROCESS_ERROR.getCode());
             dto.setReturnMessage(ReturnInfoEnums.PROCESS_ERROR.getMessage());
         }

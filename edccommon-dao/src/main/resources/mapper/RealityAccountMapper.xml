@@ -61,6 +61,7 @@
     MODF_USER_ID, MODIFY_TIME, MODIFY_APP_SYS_ID, CACHE_DATA_TYPE_CD, PUSH_ALERT_FLAG,CACHE_KEY_VAL
     from t_op_reality_account
     where REAL_ACCT_ID = #{realAcctId,jdbcType=BIGINT}
+    and VALID_FLAG = '1'
   </select>
   <select id="getRealityAccountByType" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
@@ -73,12 +74,14 @@
     <if test="cacheDataTypeCd!=null and cacheDataTypeCd!=''">
       and CACHE_DATA_TYPE_CD = #{cacheDataTypeCd,jdbcType=VARCHAR}
     </if>
+    and VALID_FLAG = '1'
   </select>
 	<select id="getRealityAccountBycacheKey" resultMap="BaseResultMap" parameterType="java.lang.String">
 		select
 		<include refid="Base_Column_List" />
 		from t_op_reality_account
 		where CACHE_KEY_VAL =#{cacheKeyVal,jdbcType=VARCHAR}
+		and VALID_FLAG = '1'
 	</select>
   <select id="getRealityAccount" resultMap="BaseResultMap" parameterType="com.cmos.edccommon.beans.realityAccount.RealityAccountDO">
   	select REAL_ACCT_ID, REQST_SRC_CODE, REQST_SRC_NM, USER_NM, PW, AES_KEY, DES_KEY, 
