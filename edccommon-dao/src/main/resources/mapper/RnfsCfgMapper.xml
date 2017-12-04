@@ -38,28 +38,34 @@
     <if test="cacheTypeCd!=null and cacheTypeCd!=''">
       and CACHE_TYPE_CD = #{cacheTypeCd}
     </if>
+    and VALID_FLAG = '1'
   </select>
   <select id="getRnfsGrpNm" resultMap="BaseResultMap" parameterType="java.lang.String">
     select distinct RNFS_GRP_NM
     from t_op_rnfs_cfg
+    where 
+   	VALID_FLAG = '1'
   </select>
   <select id="getRnfsGrpNmByrnfsGrpNm" resultMap="BaseResultMap" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List" />
     from t_op_rnfs_cfg
     where RNFS_GRP_NM = #{rnfsGrpNm,jdbcType=VARCHAR}
+    and VALID_FLAG = '1'
   </select>
    <select id="getRnfsGrpNmByAlsCacheKeyVal" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List" />
         from t_op_rnfs_cfg
         where ALS_CACHE_KEY_VAL = #{alsCacheKeyVal,jdbcType=VARCHAR}
+        and VALID_FLAG = '1'
    </select>
     <select id="getRnfsGrpNmByGrpCacheKeyVal" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List" />
         from t_op_rnfs_cfg
         where GRP_CACHE_KEY_VAL = #{grpCacheKeyVal,jdbcType=VARCHAR}
+        and VALID_FLAG = '1'
     </select>
  <delete id="deleteRnfsCfg" parameterType="com.cmos.edccommon.beans.rnfsCfg.RnfsCfgDO" >
     update t_op_rnfs_cfg

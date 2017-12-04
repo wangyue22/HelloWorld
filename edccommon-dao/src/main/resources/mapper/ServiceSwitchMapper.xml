@@ -31,6 +31,7 @@
     <if test="cacheTypeCd != null and cacheTypeCd != ''" >
       and CACHE_TYPE_CD = #{cacheTypeCd,jdbcType=VARCHAR}
     </if>
+    and VALID_FLAG = '1'
   </select>
   <select id="getServiceSwitchByKey" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
@@ -40,6 +41,7 @@
     <if test="swtchKey != null and swtchKey != ''" >
       and SWTCH_KEY = #{swtchKey,jdbcType=VARCHAR}
     </if>
+    and VALID_FLAG = '1'
   </select>
   <insert id="insertSelective" parameterType="com.cmos.edccommon.beans.serviceSwitch.ServiceSwitchDO" >
     insert into t_op_service_switch
