@@ -142,7 +142,7 @@ public class GztFileDownloadUtil {
      * @return
      */
     private byte[] downloadGztFileByOnest(String bucketName, String path){
-        InputStream result;
+        InputStream result = null;
         byte[] resultByte = null;
         try {
             result = ONestUtil.download(bucketName, path);
@@ -151,6 +151,14 @@ public class GztFileDownloadUtil {
             }
         } catch (Exception e) {
             logger.error("OnestGztFileDownloadFailed:fileType=GZT",e);
+        }finally{
+            if(result!=null){
+                try {
+                    result.close();
+                } catch (IOException e) {
+                    logger.error("downloadGztFileByOnest close inputstream error",e);
+                }
+            }
         }
         return resultByte;
     }
