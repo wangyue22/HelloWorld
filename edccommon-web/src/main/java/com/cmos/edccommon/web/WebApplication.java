@@ -15,10 +15,10 @@ import com.cmos.common.spring.ApplicationStarter;
  * Created by alen on 17-2-16.
  */
 @SpringBootApplication
-@EnableAspectJAutoProxy
 @EnableAutoConfiguration
 @EnableGeneralException
 @EnableLog4xComponent
+@EnableAspectJAutoProxy
 @ComponentScan(basePackages = {"com.cmos.edccommon","com.cmos.cache"})
 @Import(DefaultWebMvcConfig.class)
 public class WebApplication {
