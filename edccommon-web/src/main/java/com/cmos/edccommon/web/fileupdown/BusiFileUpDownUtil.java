@@ -396,7 +396,7 @@ public class BusiFileUpDownUtil {
     }
 
     private byte[] downloadBusiByOnest(String bucketName, String path, String fileType) {
-        InputStream result;
+        InputStream result=null;
         byte[] resultByte = null;
         try {
             result = ONestUtil.download(bucketName, path);
@@ -405,6 +405,14 @@ public class BusiFileUpDownUtil {
             }
         } catch (Exception e) {
             logger.error("OnestBusiFileDownloadFailed:fileType=" + fileType, e);
+        }finally{
+            if(result!=null){
+                try {
+                    result.close();
+                } catch (IOException e) {
+                    logger.error("downloadBusiByOnest close inputstream error",e);
+                }
+            }
         }
         return resultByte;
     }
