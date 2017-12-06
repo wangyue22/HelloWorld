@@ -228,7 +228,6 @@ public class HttpUtil {
                 if (httppost.getStatusCode() == HttpStatus.SC_OK) {
                     str = httppost.getResponseBodyAsString();
                 } else {
-                    log.error("reqLinkfacefailedCode");
                     throw new GeneralException("9999", "Unexpected failure: " + httppost.getStatusLine().toString());
                 }
             } finally {
