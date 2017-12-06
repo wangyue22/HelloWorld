@@ -30,7 +30,9 @@ public class KafkaUtil {
             // 发送日志信息到vertica
             Map<String, Object> logMap = JSON.parseObject(logJson, Map.class);
             logger.info("send message to vertica start, TOPIC IS :" + topic + "jsonStr IS :" + logJson);
+            Long startTime = System.currentTimeMillis();
             logger.commonLog(topic, logMap);
+            logger.info("========发送vertical时长========" + (System.currentTimeMillis() - startTime) + "ms");
             logger.info("send message to vertica end, TOPIC IS :" + topic);
         } catch (Exception e) {
             logger.error("Send message to vertica TOPIC error", e);
