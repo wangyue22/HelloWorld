@@ -187,7 +187,7 @@ public class FaceLiveController {
 		logMap.put("backtoMsgCntt", rtnJson);
 		
 		log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
-		if (rtnJson != null) {
+		if (StringUtil.isNotBlank(rtnJson)) {
 			Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);
 			if (rtnMap != null && rtnMap.containsKey("result_num")) {
 				resultNum = String.valueOf(rtnMap.get("result_num"));
