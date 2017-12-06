@@ -65,7 +65,8 @@ public class FaceLiveController {
 
 	private final static String IDNTIF_SUC = "0";// 识别结果 0为成功，1为失败；
 	private final static String IDNTIF_FAILE = "1";// 识别结果 0为成功，1为失败；
-	private final static String FACELIVE_DEFAULT_SCORE = "0.984"; //静默活体默认比对分值
+	private final static String FACELIVE_DEFAULT_SCORE = "0.9848"; //静默活体默认比对分值
+	private final static int FACELIVE_DEFAULT_TIME_OUT = 20; //静默活体默认超时时间
 	/**
 	 * 静默活体
 	 * @param inParam
@@ -124,7 +125,7 @@ public class FaceLiveController {
 			log.error("缓存中未配置静默活体服务的调用地址，流水号：" + swftno);
 			sendUrl = env.getProperty("facelive.url");	
 		}
-		Map<String, String> paraMap = new HashMap<String, String>();
+		HashMap<String, String> paraMap = new HashMap<String, String>();
 
 		// 1 获取人像照片
 		try {
@@ -154,20 +155,39 @@ public class FaceLiveController {
 			}
 			return out;
 		}
+		log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length()+"，流水号：" + swftno);
 		
 		// 2 调用静默活体检测服务 并比对分值
 		paraMap.put("image", picRStrBase64);
 		paraMap.put("face_fields", ",faceliveness");
-		String jsonString = JsonUtil.convertObject2Json(paraMap);
-		log.info("    ##########  静默服务调用 ，流水号：" + swftno + ", URL：" + sendUrl);
-		log.info("    ##########  静默服务调用  reqjson大小：" + jsonString.length());
-		String rtnJson = HttpUtil.sendHttpPostEntity(sendUrl, jsonString);
-		
+		log.info("    ##########  静默服务调用 ， URL：" + sendUrl);
+
+		String rtnJson = null;
+		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_TIMEOUT);
+		try {
+			if (StringUtil.isBlank(timeOutConf)) {
+				rtnJson = HttpUtil.sendHttpNameValuePair(sendUrl, paraMap, FACELIVE_DEFAULT_TIME_OUT);
+				log.info("    ##########  静默服务调用，超时时间为空，使用默认超时时间：" + FACELIVE_DEFAULT_TIME_OUT);
+			} else {
+				String[] timeOutCfg = timeOutConf.split(",");
+				if (timeOutCfg.length == 1) {
+					int connectTime = Integer.parseInt(timeOutCfg[0]);
+					rtnJson = HttpUtil.sendHttpNameValuePair(sendUrl, paraMap, connectTime);
+				} else if (timeOutCfg.length == 2) {
+					int connectTime = Integer.parseInt(timeOutCfg[0]);
+					int readTime = Integer.parseInt(timeOutCfg[1]);
+					rtnJson = HttpUtil.sendHttpNameValuePair(sendUrl, paraMap, connectTime, readTime);
+				}
+			}
+		} catch (Exception e) {
+			log.error("reqFaceLiveFailedCode 静默活体调用服务异常", e);
+		}
+
 		//调用成功，将调用响应报文存表
 		logMap.put("backtoMsgCntt", rtnJson);
 		
 		log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
-		if (rtnJson != null) {
+		if (StringUtil.isNotBlank(rtnJson)) {
 			Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);
 			if (rtnMap != null && rtnMap.containsKey("result_num")) {
 				resultNum = String.valueOf(rtnMap.get("result_num"));
@@ -185,13 +205,14 @@ public class FaceLiveController {
 					// 获取默认静默活体检测分值
 					if (StringUtil.isEmpty(faceliveScore)) {
 						faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
-
+						log.info("静默活体检测使用入参分值为空，使用配置分值为：" + faceliveScore);
 						if (StringUtil.isEmpty(faceliveScore)) {
+							log.info("静默活体检测使用默认分值，原配置分值为：" + faceliveScore + ",默认分值为" + FACELIVE_DEFAULT_SCORE);
 							faceliveScore = FACELIVE_DEFAULT_SCORE;
 						}
 					}
 					if (faceScore < Float.parseFloat(faceliveScore)) {
-						log.info("真人检测不通过：阈值="+faceliveScore+"，实际比分="+faceScore);
+						log.info("真人检测不通过：流水号：" + swftno + ",阈值=" + faceliveScore + "，实际比分=" + faceScore);
 						idntifResult = IDNTIF_FAILE;// 识别结果 0为成功，1为失败；
 					} else {
 						idntifResult = IDNTIF_SUC;// 识别结果 0为成功，1为失败；
@@ -218,6 +239,8 @@ public class FaceLiveController {
 			} catch (Exception e) {
 				log.error("静默活体发送消息队列异常", e);
 			}
+		} else {
+			log.error("reqFaceLiveFailedCode 静默活体调用服务返回为空");
 		}
 		return out; 
 	}

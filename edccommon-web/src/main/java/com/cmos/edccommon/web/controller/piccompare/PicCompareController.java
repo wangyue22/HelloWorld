@@ -82,6 +82,9 @@ public class PicCompareController {
 	/**人像比对结果为不是同一人*/
 	private static final String VERIFY_STATE_FAILE = "1";
 	
+	/**人像比对默认调用超时时间*/
+	private static final String PIC_CHECK_FETCH_DEFAULT_TIMEOUT = "20";
+	
 	/**
 	 * 人像比对判定接口（三张图片）
 	 * 如果国政通获取图片为空（2017年11月更新逻辑，若国政通图片为空，需返回特殊返回码2998）
@@ -730,16 +733,18 @@ public class PicCompareController {
 		log.info("*********************"+svUrl);
 		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_FETCH_TIMEOUT);
 		if (StringUtil.isEmpty(timeOutConf)) {
-			timeOutConf = "20";
+			log.info("*********************人像比对服务调用，超时时间为空，使用默认超时时间：" + PIC_CHECK_FETCH_DEFAULT_TIMEOUT);
+			timeOutConf = PIC_CHECK_FETCH_DEFAULT_TIMEOUT;
 		}
 		int timeOut = Integer.parseInt(timeOutConf);
 		try {
-			rt =  HttpUtil.sendHttpPostEntityNolog(svUrl, reqJson,timeOut);
+			rt = HttpUtil.sendHttpPostEntityNolog(svUrl, reqJson, timeOut);
 			if (StringUtil.isEmpty(rt)) {
+				log.error("reqLinkfacefailedCode人像比对接口返回为空！");
 				rt = "{\"resultType\":\"-2\",\"resultMsg\":\"接口异常\",\"returnInfo\":{}}";
 			}
 		} catch (Exception e) {
-			log.info("*********************人像比对接口异常", e);
+			log.error("reqLinkfacefailedCode人像比对接口异常", e);
 			rt = "{\"resultType\":\"-3\",\"resultMsg\":\"接口异常\",\"returnInfo\":{}}";
 		}
 		return rt;
