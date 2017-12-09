@@ -41,6 +41,7 @@ public class BusinessFlowController {
     @Around("pointcut()")
     public Object process(ProceedingJoinPoint joinPoint) throws GeneralException {
         EdcCoOutDTO edcCoOutDTO = new EdcCoOutDTO();
+        long startTime = System.currentTimeMillis();
         boolean isServiceTotalDecr = false;
         boolean isServiceSystemTotalDecr = false;
         Object r = null;
@@ -134,6 +135,9 @@ public class BusinessFlowController {
             if (isServiceSystemTotalDecr) {
                 cacheService.decr(currServiceSystemTotalKey);
             }
+            long endTime = System.currentTimeMillis();
+            logger.info("=============流控调用时长为：" + (endTime - startTime)
+					+ " ms=================");
         }
         return r;
 

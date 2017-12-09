@@ -75,6 +75,7 @@ public class FaceLiveController {
 	@AopChecker
 	@RequestMapping(value = "/facelive", method = RequestMethod.POST)
 	public EdcCoOutDTO getFaceLive(@RequestBody FaceLiveInDTO inParam) {
+    	long startTime = System.currentTimeMillis();
 		EdcCoOutDTO outParam = new EdcCoOutDTO();
 		if (inParam != null) {
 			log.info("****************************" + inParam.getPicRPath());
@@ -91,6 +92,8 @@ public class FaceLiveController {
 			outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
 			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
 		}
+        long endTime = System.currentTimeMillis();
+		log.info("=============facelive调用时长为：" + (endTime - startTime) + " ms=================");
 		return outParam;
 	}	
 	/**
@@ -148,11 +151,7 @@ public class FaceLiveController {
 			// 获取图片为空，直接存表返回
 			logMap .put("rspCode", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getCode());
 			logMap.put("rspInfoCntt", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
-			try {
-				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);
-			} catch (Exception e) {
-				log.error("人像比对服务下载人像图片异常，流水号：" + swftno, e);
-			}
+			sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);	
 			return out;
 		}
 		log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length()+"，流水号：" + swftno);
@@ -164,27 +163,45 @@ public class FaceLiveController {
 
 		String rtnJson = null;
 		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_TIMEOUT);
+		long requestTime = 0;
+		long startRequestTime = System.currentTimeMillis();
 		try {
 			if (StringUtil.isBlank(timeOutConf)) {
+				
 				rtnJson = HttpUtil.sendHttpNameValuePair(sendUrl, paraMap, FACELIVE_DEFAULT_TIME_OUT);
+		        long endRequestTime = System.currentTimeMillis();
+		        requestTime = endRequestTime - startRequestTime;
+				log.info("=============facelive调用时长为：" + requestTime + " ms=================");
 				log.info("    ##########  静默服务调用，超时时间为空，使用默认超时时间：" + FACELIVE_DEFAULT_TIME_OUT);
 			} else {
 				String[] timeOutCfg = timeOutConf.split(",");
 				if (timeOutCfg.length == 1) {
+					
 					int connectTime = Integer.parseInt(timeOutCfg[0]);
 					rtnJson = HttpUtil.sendHttpNameValuePair(sendUrl, paraMap, connectTime);
+					long endRequestTime = System.currentTimeMillis();
+					requestTime = endRequestTime - startRequestTime;
+					log.info("=============facelive调用时长为：" + requestTime + " ms=================");
 				} else if (timeOutCfg.length == 2) {
 					int connectTime = Integer.parseInt(timeOutCfg[0]);
 					int readTime = Integer.parseInt(timeOutCfg[1]);
+					
 					rtnJson = HttpUtil.sendHttpNameValuePair(sendUrl, paraMap, connectTime, readTime);
+					long endRequestTime = System.currentTimeMillis();
+					requestTime = endRequestTime - startRequestTime;
+					log.info("=============facelive调用时长为：" + requestTime + " ms=================");
 				}
 			}
 		} catch (Exception e) {
 			log.error("reqFaceLiveFailedCode 静默活体调用服务异常", e);
+			long endRequestTime = System.currentTimeMillis();
+			requestTime = endRequestTime - startRequestTime;
+			log.info("=============facelive调用时长为：" + requestTime + " ms=================");
 		}
 
 		//调用成功，将调用响应报文存表
 		logMap.put("backtoMsgCntt", rtnJson);
+		logMap.put("requestTime", "" + requestTime);
 		
 		log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
 		if (StringUtil.isNotBlank(rtnJson)) {
@@ -247,18 +264,37 @@ public class FaceLiveController {
 	
 	/**
 	 * 发送消息队列
-	 * @throws MsgException
-	 * @throws JsonFormatException 
+	 * @param appSysID
+	 * @param appUserID
+	 * @param requestSource
+	 * @param busiType
+	 * @param transactionId
+	 * @param logMap
 	 */
 	private void sendMQ(String appSysID, String appUserID, String requestSource, String busiType, String transactionId,
-			Map<String, String> logMap) throws MsgException, JsonFormatException{
-		String Msg = saveFaceLiveInfo(appSysID, appUserID, requestSource, busiType, transactionId, logMap);
-		log.info("生成的业务日志信息成功，流水号：" + transactionId);
-		KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_FACE_LIVE_INFO);
+			Map<String, String> logMap){
+		long startTime = System.currentTimeMillis();
+		try {
+			String Msg = saveFaceLiveInfo(appSysID, appUserID, requestSource, busiType, transactionId, logMap);
+			log.info("生成的业务日志信息成功，流水号：" + transactionId);
+			KafkaUtil.transToVertica(Msg, KafkaConsts.TOPIC.CO_FACE_LIVE_INFO);
+		} catch (Exception e) {
+			log.error("发送日志异常", e);
+		}
+		long endTime = System.currentTimeMillis();
+		log.info("=============保存日志时长为：" + (endTime - startTime) + " ms=================");
 	}
 	
 	/**
 	 * 将保存信息转化为消息
+	 * @param appSysID
+	 * @param appUserID
+	 * @param requestSource
+	 * @param busiType
+	 * @param transactionId
+	 * @param logMap
+	 * @return
+	 * @throws JsonFormatException
 	 */
 	private String saveFaceLiveInfo(String appSysID, String appUserID, String requestSource, String busiType,
 			String transactionId, Map<String, String> logMap) throws JsonFormatException {
@@ -297,9 +333,9 @@ public class FaceLiveController {
 		String idntifFaceCnt = logMap.get("faceQty");
 		String backtoMsgCntt = logMap.get("backtoMsgCntt");
 		String idntifScore = logMap.get("faceScore");
+		String requestTime = logMap.get("requestTime");
 		
-		
-		infoBean.setBacktoMsgCntt(backtoMsgCntt);//返回报文内容
+		infoBean.setBacktoMsgCntt(backtoMsgCntt + "," + requestTime);// 返回报文内容
 		infoBean.setRspCode(rspCode);//返回码
 		infoBean.setRspInfoCntt(rspInfoCntt);//返回信息
 		infoBean.setIdntifFaceCnt(idntifFaceCnt);//识别人脸数
@@ -316,12 +352,15 @@ public class FaceLiveController {
 	 */
 	private String downloadPic(String picPath) {
 		String picStr = null;
+		long startDownTime = System.currentTimeMillis();
 		try {
 			picStr = busiFileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
 			log.error("静默活体服务下载图片异常", e);
 		} 
+		long endDownTime = System.currentTimeMillis();
+		log.info("=============下载图片时长为：" + (endDownTime - startDownTime) + " ms=================");
 		return picStr;
 	}
 }

@@ -38,6 +38,7 @@ public class HlrInfoController {
 	 */
 	@RequestMapping(value = "/getProvCodeByPhoneNum", method = RequestMethod.POST)
 	public HlrInfoDTO getProvCodeByPhoneNum(@RequestParam String phoneNum) {
+		long startTime = System.currentTimeMillis();
 		HlrInfoDTO hlrInfoDTO = new HlrInfoDTO();
 		try {
 			log.info("getProvCodeByPhoneNum方法入参为:" + phoneNum);
@@ -76,6 +77,8 @@ public class HlrInfoController {
 			hlrInfoDTO.setReturnMessage("调用手机号获取省份通用能力发生异常");
 			log.info("调用手机号获取省份通用能力发生异常", e);
 		}
+        long endTime = System.currentTimeMillis();
+		log.info("=============getProvCodeByPhoneNum调用时长为：" + (endTime - startTime) + " ms=================");
 		return hlrInfoDTO;
 	}
 
@@ -87,6 +90,7 @@ public class HlrInfoController {
 	 */
 	@RequestMapping(value = "/getHlrTypeByPhoneNum", method = RequestMethod.POST)
 	public HlrInfoDTO getHlrTypeByPhoneNum(@RequestParam String phoneNum) {
+		long startTime = System.currentTimeMillis();
 		log.info("getHlrTypeByPhoneNum方法入参为:" + phoneNum);
 		String hlrType = null;
 		HlrInfoDTO hlrInfoDTO = new HlrInfoDTO();
@@ -119,6 +123,8 @@ public class HlrInfoController {
 			log.info("调用手机号获取所属运营商通用能力发生异常", e);
 		}
 		hlrInfoDTO.getBean().put("hlrType", hlrType);
+        long endTime = System.currentTimeMillis();
+		log.info("=============getHlrTypeByPhoneNum调用时长为：" + (endTime - startTime) + " ms=================");
 		return hlrInfoDTO;
 	}
 }

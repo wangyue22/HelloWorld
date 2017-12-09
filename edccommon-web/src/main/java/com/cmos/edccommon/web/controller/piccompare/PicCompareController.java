@@ -99,6 +99,7 @@ public class PicCompareController {
 	@RequestMapping(value = "/picdoublecompare", method = RequestMethod.POST)
 	public EdcCoOutDTO picdoublecompare(@RequestBody PicDoubleCompareInDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
+    	long startTime = System.currentTimeMillis();
 		try {
 			log.info("****************************" + inParam);
 			String appSysID = inParam.getAppSysID();// 来源系统
@@ -126,8 +127,8 @@ public class PicCompareController {
 				needBothComp = true;
 			}
 			Map<String, String> rtnMap = new HashMap<String, String>();
-			out.setReturnCode(ReturnInfoEnums.PICCOMPARE_FAILED.getCode());
-			out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
 			out.setBean(rtnMap);
 			// 1 获取人像照片
 			String picRStr = downloadPic(picRPath);
@@ -135,6 +136,9 @@ public class PicCompareController {
 				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getCode());
 				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getMessage());
 				log.error("人像照片下载异常");
+				 long endTime = System.currentTimeMillis();
+				log.info("=============" + "流水号：" + swftno + "，picdoublecompare调用时长为：" + (endTime - startTime)
+						+ " ms=================");
 				return out;
 			}
 			try {
@@ -277,6 +281,10 @@ public class PicCompareController {
 			log.error("人像双照比对调用异常", e);
 			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
 			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+		}finally{
+			long endTime = System.currentTimeMillis();
+			log.info("=============picdoublecompare调用时长为：" + (endTime - startTime)
+					+ " ms=================");
 		}
 		return out;
 	}
@@ -292,6 +300,7 @@ public class PicCompareController {
 	@RequestMapping(value = "/picCheck", method = RequestMethod.POST)
 	public EdcCoOutDTO picCheck(@RequestBody PicCompareInDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
+    	long startTime = System.currentTimeMillis();
 		try {
 			log.info("****************************" + inParam);
 			String appSysID = inParam.getAppSysID();// 来源系统
@@ -389,8 +398,12 @@ public class PicCompareController {
 			}
 		} catch (Exception e) {
 			log.error("人像比对调用异常", e);
-			out.setReturnCode(ReturnInfoEnums.PICCOMPARE_FAILED.getCode());
-			out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+		}finally{
+			long endTime = System.currentTimeMillis();
+			log.info("=============picCheck调用时长为：" + (endTime - startTime)
+					+ " ms=================");
 		}
 		return out;
 	}
@@ -405,6 +418,7 @@ public class PicCompareController {
 	@RequestMapping(value = "/picCompare", method = RequestMethod.POST)
 	public EdcCoOutDTO picCompare(@RequestBody PicCompareInDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
+    	long startTime = System.currentTimeMillis();
 		try {
 			log.info("****************************" + inParam);
 			String appSysID = inParam.getAppSysID();// 来源系统
@@ -496,7 +510,7 @@ public class PicCompareController {
 					if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {					
 						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 					}else{
-						out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
 					}
 					out.setBean(compareMap);
 				}
@@ -516,8 +530,11 @@ public class PicCompareController {
 			log.error("人像比对调用异常", e);
 			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
 			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+		}finally{
+			long endTime = System.currentTimeMillis();
+			log.info("=============picCompare调用时长为：" + (endTime - startTime)
+					+ " ms=================");
 		}
-
 		return out;
 	}
 	
@@ -532,6 +549,7 @@ public class PicCompareController {
 	@RequestMapping(value = "/picCompareBase64", method = RequestMethod.POST)
 	public EdcCoOutDTO picCompareBase64(@RequestBody PicCompareBase64InDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
+    	long startTime = System.currentTimeMillis();
 		try {
 			log.info("****************************" + inParam);
 			String appSysID = inParam.getAppSysID();// 来源系统
@@ -566,7 +584,7 @@ public class PicCompareController {
 				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 				if (compareMap != null) {
 					String verifyState = compareMap.get("verifyState");
-					if (StringUtil.isNotEmpty(verifyState)) {
+					if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {
 						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 					} else {
 						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
@@ -587,6 +605,10 @@ public class PicCompareController {
 			log.error("人像比对调用异常", e);
 			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
 			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+		}finally{
+			long endTime = System.currentTimeMillis();
+			log.info("=============picCompareBase64调用时长为：" + (endTime - startTime)
+					+ " ms=================");
 		}
 
 		return out;
@@ -599,12 +621,15 @@ public class PicCompareController {
 	 */
 	private String downloadPic(String picPath) {
 		String picStr = null;
+		long startDownTime = System.currentTimeMillis();
 		try {
 			picStr = busiFileUpDownUtil.downloadBusiFileStr(picPath);
 		} catch (Exception e) {
 			picStr = null;
 			log.error("人像比对服务下载图片异常", e);
 		}
+		long endDownTime = System.currentTimeMillis();
+		log.info("=============下载图片时长为：" + (endDownTime - startDownTime) + " ms=================");
 		return picStr;
 	}
 	
@@ -616,6 +641,7 @@ public class PicCompareController {
      */
 	private String downloadGZTPic(String picPath, String sourceCode, String sourceSys, String swftNo) {
         String picGZTBase64Str = null;
+		long startDownTime = System.currentTimeMillis();
         try {
             picGZTBase64Str = gztFileDownloadUtil.downloadGztPicBase64Str(picPath, sourceCode, sourceSys,
                 swftNo);
@@ -623,6 +649,8 @@ public class PicCompareController {
             picGZTBase64Str = null;
             log.error("人像比对服务下载国政通图片异常", e);
         }
+		long endDownTime = System.currentTimeMillis();
+		log.info("=============下载国政通图片时长为：" + (endDownTime - startDownTime) + " ms=================");
         return picGZTBase64Str;
     }
 	
@@ -737,6 +765,8 @@ public class PicCompareController {
 			timeOutConf = PIC_CHECK_FETCH_DEFAULT_TIMEOUT;
 		}
 		int timeOut = Integer.parseInt(timeOutConf);
+		long requestTime = 0;
+		long startRequestTime = System.currentTimeMillis();
 		try {
 			rt = HttpUtil.sendHttpPostEntityNolog(svUrl, reqJson, timeOut);
 			if (StringUtil.isEmpty(rt)) {
@@ -747,6 +777,9 @@ public class PicCompareController {
 			log.error("reqLinkfacefailedCode人像比对接口异常", e);
 			rt = "{\"resultType\":\"-3\",\"resultMsg\":\"接口异常\",\"returnInfo\":{}}";
 		}
+		long endRequestTime = System.currentTimeMillis();
+		requestTime = endRequestTime - startRequestTime;
+		log.info("=============sendPicCheck调用时长为：" + requestTime + " ms=================");
 		return rt;
 
 	}
@@ -953,6 +986,7 @@ public class PicCompareController {
 	 */
 	private void sendMQ(String appSysID, String appUserID, String requestSource, String busiType, String transactionId,
 			Map<String, Object> compareResult, EdcCoOutDTO out) {
+		long startTime = System.currentTimeMillis();
 		try {
 			String Msg = saveCompareInfo(appSysID, appUserID, requestSource, busiType, transactionId, compareResult, out);
 			log.info("生成的业务日志信息成功，流水号：" + transactionId);
@@ -960,6 +994,8 @@ public class PicCompareController {
 		} catch (Exception e) {
 			log.error("发送日志异常", e);
 		}
+		long endTime = System.currentTimeMillis();
+		log.info("=============保存日志时长为：" + (endTime - startTime) + " ms=================");
 	}
 	
 	

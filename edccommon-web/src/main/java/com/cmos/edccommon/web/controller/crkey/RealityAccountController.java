@@ -37,6 +37,7 @@ public class RealityAccountController {
 	@ApiOperation(value = "根据请求源编码和请求源名称获取密钥")
     @RequestMapping(value = "/getRealityAccount", method = RequestMethod.POST)
     public EdcCoOutDTO getBySourceCode(@RequestParam String reqstSrcCode) {
+    	long startTime = System.currentTimeMillis();
         EdcCoOutDTO outParam = new EdcCoOutDTO();
     	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
         outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
@@ -57,6 +58,8 @@ public class RealityAccountController {
             outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         }
+        long endTime = System.currentTimeMillis();
+		log.info("=============getRealityAccount调用时长为：" + (endTime - startTime) + " ms=================");
         return outParam;
     }
 }
