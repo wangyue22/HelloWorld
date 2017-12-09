@@ -4,12 +4,14 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.hlrinfo.HlrInfoDTO;
+import com.cmos.edccommon.beans.hlrinfo.HlrInfoInDTO;
 import com.cmos.edccommon.iservice.hlrinfo.IHlrInfoSV;
 import com.cmos.edccommon.utils.StringUtil;
 
 import io.swagger.annotations.Api;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,18 +39,22 @@ public class HlrInfoController {
 	 * @return:HlrInfoDTO
 	 */
 	@RequestMapping(value = "/getProvCodeByPhoneNum", method = RequestMethod.POST)
-	public HlrInfoDTO getProvCodeByPhoneNum(@RequestParam String phoneNum) {
+	public HlrInfoDTO getProvCodeByPhoneNum(@RequestBody HlrInfoInDTO inParam) {
 		long startTime = System.currentTimeMillis();
 		HlrInfoDTO hlrInfoDTO = new HlrInfoDTO();
+		
+		if(inParam==null||StringUtil.isBlank(inParam.getPhoneNum())){
+			hlrInfoDTO.setReturnCode("2999");
+			hlrInfoDTO.setReturnMessage("调用手机号获取对应的省端编码入参为空");
+			log.info("调用手机号获取对应的省端编码入参为空");
+			return hlrInfoDTO;
+		}		
+		String provCode = null;
+		String phoneNum = inParam.getPhoneNum();
+		String swftno = inParam.getSwftno();
+		log.info("getProvCodeByPhoneNum方法入参为:" + phoneNum + ",流水号：" + swftno);
+		
 		try {
-			log.info("getProvCodeByPhoneNum方法入参为:" + phoneNum);
-			String provCode = null;
-			if(StringUtil.isBlank(phoneNum)){
-				hlrInfoDTO.setReturnCode("2999");
-				hlrInfoDTO.setReturnMessage("调用手机号获取对应的省端编码入参为空");
-				log.info("调用手机号获取对应的省端编码入参为空");
-				return hlrInfoDTO;
-			}
 			try {
 				String phoneNumCut = phoneNum;
 				if (phoneNum.length() == 13) {
@@ -78,7 +84,7 @@ public class HlrInfoController {
 			log.info("调用手机号获取省份通用能力发生异常", e);
 		}
         long endTime = System.currentTimeMillis();
-		log.info("=============getProvCodeByPhoneNum调用时长为：" + (endTime - startTime) + " ms=================");
+        log.info("=============getProvCodeByPhoneNum,流水号：" + swftno + "调用时长为：" + (endTime - startTime) + " ms=================");
 		return hlrInfoDTO;
 	}
 
@@ -89,17 +95,21 @@ public class HlrInfoController {
 	 * @return:
 	 */
 	@RequestMapping(value = "/getHlrTypeByPhoneNum", method = RequestMethod.POST)
-	public HlrInfoDTO getHlrTypeByPhoneNum(@RequestParam String phoneNum) {
+	public HlrInfoDTO getHlrTypeByPhoneNum(@RequestBody HlrInfoInDTO inParam) {
 		long startTime = System.currentTimeMillis();
-		log.info("getHlrTypeByPhoneNum方法入参为:" + phoneNum);
+
 		String hlrType = null;
 		HlrInfoDTO hlrInfoDTO = new HlrInfoDTO();
-		if(StringUtil.isBlank(phoneNum)){
+		if(inParam==null||StringUtil.isBlank(inParam.getPhoneNum())){
 			hlrInfoDTO.setReturnCode("2999");
 			hlrInfoDTO.setReturnMessage("调用手机号获取运营商入参为空");
 			log.info("调用手机号获取运营商入参为空");
 			return hlrInfoDTO;
 		}
+		String phoneNum = inParam.getPhoneNum();
+		String swftno = inParam.getSwftno();
+		log.info("getProvCodeByPhoneNum方法入参为:" + phoneNum + ",流水号：" + swftno);
+		
 		try {
 			String phoneNumCut = phoneNum;
 			if (phoneNum.length() == 13) {
@@ -124,7 +134,7 @@ public class HlrInfoController {
 		}
 		hlrInfoDTO.getBean().put("hlrType", hlrType);
         long endTime = System.currentTimeMillis();
-		log.info("=============getHlrTypeByPhoneNum调用时长为：" + (endTime - startTime) + " ms=================");
+		log.info("=============getHlrTypeByPhoneNum,流水号：" + swftno + "调用时长为：" + (endTime - startTime) + " ms=================");
 		return hlrInfoDTO;
 	}
 }
