@@ -765,7 +765,6 @@ public class PicCompareController {
 			timeOutConf = PIC_CHECK_FETCH_DEFAULT_TIMEOUT;
 		}
 		int timeOut = Integer.parseInt(timeOutConf);
-		long requestTime = 0;
 		long startRequestTime = System.currentTimeMillis();
 		try {
 			rt = HttpUtil.sendHttpPostEntityNolog(svUrl, reqJson, timeOut);
@@ -778,8 +777,7 @@ public class PicCompareController {
 			rt = "{\"resultType\":\"-3\",\"resultMsg\":\"接口异常\",\"returnInfo\":{}}";
 		}
 		long endRequestTime = System.currentTimeMillis();
-		requestTime = endRequestTime - startRequestTime;
-		log.info("=============sendPicCheck调用时长为：" + requestTime + " ms=================");
+		log.info("=============sendPicCheck调用时长为：" + ( endRequestTime - startRequestTime ) + " ms=================");
 		return rt;
 
 	}

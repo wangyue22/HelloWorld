@@ -201,7 +201,7 @@ public class FaceLiveController {
 
 		//调用成功，将调用响应报文存表
 		logMap.put("backtoMsgCntt", rtnJson);
-		logMap.put("requestTime", "" + requestTime);
+		logMap.put("requestTime", Long.toString(requestTime));
 		
 		log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
 		if (StringUtil.isNotBlank(rtnJson)) {
