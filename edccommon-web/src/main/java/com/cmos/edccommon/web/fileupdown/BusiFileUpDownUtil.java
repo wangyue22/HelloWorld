@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.services.s3.model.Permission;
 import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
@@ -183,8 +184,7 @@ public class BusiFileUpDownUtil {
             String fileType = fileTypeStr.split("_")[1];
             try {
                 return downloadBusiByOnest(env.getProperty("onest.busifile.bucketname" + "." + fileType),
-                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "")
-                        .trim(),
+                    remotePathAndName.replaceAll(FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/", "").trim(),
                     fileType);
             } catch (Exception e) {
                 throw new GeneralException("9999", e);
@@ -374,11 +374,13 @@ public class BusiFileUpDownUtil {
     }
 
     private String uploadBusiByOnest(String bucketName, String path, byte[] inputByte, String fileType) {
+        long start = System.currentTimeMillis();
         String uploadUrl;
         InputStream in = null;
         try {
             in = new ByteArrayInputStream(inputByte);
             ONestUtil.upload(bucketName, path, in);
+            ONestUtil.setObjectAcl2User(bucketName, path, env.getProperty("onest.gztfile.userId"), Permission.Read);
             uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/" + path;
             return uploadUrl;
         } catch (Exception e) {
@@ -392,10 +394,12 @@ public class BusiFileUpDownUtil {
                 logger.error("close inputstream error:", e2);
             }
         }
+        logger.info("uploadGztFileByOnest used time="+(System.currentTimeMillis()-start));
         return null;
     }
 
     private byte[] downloadBusiByOnest(String bucketName, String path, String fileType) {
+        long start = System.currentTimeMillis();
         InputStream result=null;
         byte[] resultByte = null;
         try {
@@ -414,6 +418,7 @@ public class BusiFileUpDownUtil {
                 }
             }
         }
+        logger.info("downloadBusiByOnest used time="+(System.currentTimeMillis()-start));
         return resultByte;
     }
 
@@ -466,28 +471,18 @@ public class BusiFileUpDownUtil {
             throw new GeneralException("2999", "根据下载路径未找到相应下载节点ip，remotePathAndName=" + newFileFullPath);
         }
         try {
-            // String isNginx = BaseDataCodeActionNew.getCodeValue("RNFS_DOWN_LOAD", "NGINX");
-            // String urlStr;
-            // if ("true".equalsIgnoreCase(isNginx)) {
-            // urlStr = "http://" + ipPort + newFileFullPath;
-            // logger.info(String.format("nginx下载url=%s,filePath=%s", urlStr, newFileFullPath));
-            // return HttpMultiPartUtil.upDownPost(urlStr, null, null);
-            // }
-            // String urlParam = BaseDataCodeActionNew.getCodeValue("RNFS_URL_PARAM", "RNFS_URL_PARAM");
-            String urlStr;
             String urlParam = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_USERNAME_PWD);
             if (StringUtil.isBlank(urlParam)) {
                 throw new GeneralException("2999", "RNFS_URL_PARAM配置数据为空！");
             }
             Map<String, String> textMap = new HashMap<String, String>();
             textMap.put("filePath", newFileFullPath);
-            urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, urlParam);
+            String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, urlParam);
             if (timeOut != null && timeOut.trim().length() > 0) {
                 HttpMultiPartUtil.setConnection_timeout(timeOut);
                 HttpMultiPartUtil.setSo_timeout(timeOut);
                 logger.info("download timeOut=" + timeOut);
             } else {
-                // String _timeOut = BaseDataCodeActionNew.getCodeValue("RNFS_TIMEOUT", "HTTP_TIMEOUT");
                 String _timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_TIME_OUT);
                 if (_timeOut != null && _timeOut.trim().length() > 0) {
                     HttpMultiPartUtil.setConnection_timeout(_timeOut);

@@ -142,6 +142,7 @@ public class GztFileDownloadUtil {
      * @return
      */
     private byte[] downloadGztFileByOnest(String bucketName, String path){
+        long start = System.currentTimeMillis();
         InputStream result = null;
         byte[] resultByte = null;
         try {
@@ -160,6 +161,7 @@ public class GztFileDownloadUtil {
                 }
             }
         }
+        logger.info("uploadGztFileByOnest used time="+(System.currentTimeMillis()-start));
         return resultByte;
     }
 
@@ -172,6 +174,7 @@ public class GztFileDownloadUtil {
      */
     @SuppressWarnings("rawtypes")
     private byte[] downGztFileByRnfs(String path , String serverName) throws GeneralException {
+        long start = System.currentTimeMillis();
         // 根据serverName 找到缓存中的rnfs文件服务器配置信息 ,key 为 rnfs文件服务器别名
         Map serverInfoMap = cacheUtil.getJVMMap(CacheConsts.UPDOWN_JVM.FTP_CFG_PREFIX+serverName);
 
@@ -186,16 +189,13 @@ public class GztFileDownloadUtil {
             throw new GeneralException("2999", "根据下载路径未找到相应下载节点ip，remotePathAndName=" + remotePath);
         }
         try {
-            //            String isNginx = cacheUtil.getJVMString("ACMS_SWITCH:GZT_FILE_RNFS_TIME_OUT");
-            String urlStr;
-            //            if ("true".equalsIgnoreCase(isNginx)) {
-            //                urlStr = "http://" + ipPort + newFileFullPath;
-            // logger.info(String.format("nginx下载url=%s,filePath=%s", urlStr, newFileFullPath));
-            //                return HttpMultiPartUtil.upDownPost(urlStr, null, null);
-            //            }
+            String urlParam = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.RNFS_USERNAME_PWD);
+            if (StringUtil.isBlank(urlParam)) {
+                throw new GeneralException("2999", "RNFS_URL_PARAM配置数据为空！");
+            }
             Map<String, String> textMap = new HashMap<String, String>();
             textMap.put("filePath", remotePath);
-            urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, FileUpDownConstants.RNFS_URL_PARAM);
+            String urlStr = String.format(FileUpDownConstants.RNFS_URL, ipPort, FileUpDownConstants.DOWNLOAD, urlParam);
             String timeOut = cacheUtil.getJVMString(CacheConsts.UPDOWN_JVM.GZT_FILE_RNFS_TIME_OUT);
             if (timeOut != null && timeOut.trim().length() > 0) {
                 HttpMultiPartUtil.setConnection_timeout(timeOut);
@@ -206,7 +206,7 @@ public class GztFileDownloadUtil {
                 HttpMultiPartUtil.setSo_timeout(FileUpDownConstants.RNFS_TIME_OUT);
                 logger.info("download timeOut=" + FileUpDownConstants.RNFS_TIME_OUT);
             }
-            logger.info(String.format("下载url=%s,filePath=%s", urlStr, remotePath));
+            logger.info(String.format("下载url=%s,filePath=%s,used time=%s", urlStr, remotePath,(System.currentTimeMillis()-start)));
             return HttpMultiPartUtil.upDownPost(urlStr, textMap, null);
         } catch (Exception e) {
             throw new GeneralException("2999", e.getMessage() + "downByRnfs error，remotePathAndName=" + remotePath, e);

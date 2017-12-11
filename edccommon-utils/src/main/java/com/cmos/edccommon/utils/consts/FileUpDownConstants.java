@@ -51,10 +51,6 @@ public class FileUpDownConstants {
      */
     public static final String DOWNLOAD="download";
 
-    /**
-     * rnfs地址参数
-     */
-    public static final String RNFS_URL_PARAM = "username=smrz&password=1qaz!QAZ";
 
     /**
      * rnfs地址
