@@ -16,7 +16,7 @@ public enum   ReturnInfoEnums {
 	PICCOMPARE_PICR_DEC_FAILED("2999","人像照片解密异常"),
 	PICCOMPARE_PICT_DOWN_FAILED("2999","标准照片下载异常"),
 	PICCOMPARE_PICT_DEC_FAILED("2999","标准照片解密异常"),
-	PICCOMPARE_FAILED("0000","人像比对不通过"),
+	PICCOMPARE_FAILED("0000","处理成功，但人像比分不通过"),
     FLOW_PROCESS_FAILED("2997", "系统繁忙，请稍后重试"),
 	FACELIVE_PICR_DOWN_FAILED("2999","人像照片下载异常"),;
 

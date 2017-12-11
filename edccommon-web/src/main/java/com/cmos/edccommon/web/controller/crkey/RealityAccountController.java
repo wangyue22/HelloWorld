@@ -6,15 +6,15 @@ import io.swagger.annotations.ApiOperation;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
-//import com.cmos.edccommon.iservice.crkey.IRealityAccountSV;
+import com.cmos.edccommon.beans.realityAccount.RealityAccInDTO;
 import com.cmos.edccommon.utils.StringUtil;
 import com.cmos.edccommon.utils.consts.KeyInfoConstants;
 import com.cmos.edccommon.utils.enums.ReturnInfoEnums;
@@ -36,17 +36,20 @@ public class RealityAccountController {
     @SuppressWarnings("unchecked")
 	@ApiOperation(value = "根据请求源编码和请求源名称获取密钥")
     @RequestMapping(value = "/getRealityAccount", method = RequestMethod.POST)
-    public EdcCoOutDTO getBySourceCode(@RequestParam String reqstSrcCode) {
+    public EdcCoOutDTO getBySourceCode(@RequestBody RealityAccInDTO inParam) {
+    	long startTime = System.currentTimeMillis();
         EdcCoOutDTO outParam = new EdcCoOutDTO();
     	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
         outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
         
-        log.info("RealityAccountController reqstSrcCode= " + reqstSrcCode);
-        if (StringUtil.isEmpty(reqstSrcCode)) {
+        if (inParam==null||StringUtil.isEmpty(inParam.getReqstSrcCode())) {
 			outParam.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
 			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
             return outParam;
         }
+        String reqstSrcCode = inParam.getReqstSrcCode();
+		String swftno = inParam.getSwftno();
+		log.info("RealityAccountController reqstSrcCode= " + reqstSrcCode + ",流水号：" + swftno);
         String cacheKey = KeyInfoConstants.CACHEKEY.CO_REALACC_PREFIX + reqstSrcCode;
         Map<String, String> bean = cacheFatctoryUtil.getJVMMap(cacheKey);
         log.info("RealityAccountController cacheKey= " + cacheKey);
@@ -57,6 +60,8 @@ public class RealityAccountController {
             outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
             outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
         }
-        return outParam;
+        long endTime = System.currentTimeMillis();
+		log.info("=============getRealityAccount，获取账户信息 ，流水号为：" + swftno + "，调用时长为：" + (endTime - startTime) + " ms=================");
+		return outParam;
     }
 }

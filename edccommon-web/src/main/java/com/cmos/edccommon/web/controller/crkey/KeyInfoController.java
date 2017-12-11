@@ -47,6 +47,7 @@ public class KeyInfoController {
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getRsaKey", method = RequestMethod.POST)
     public EdcCoOutDTO getRsaKey(@RequestBody KeyInfoDTO inParam){
+    	long startTime = System.currentTimeMillis();
         EdcCoOutDTO outParam = new EdcCoOutDTO();
     	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
         outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
@@ -71,6 +72,8 @@ public class KeyInfoController {
 			outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 		}
+        long endTime = System.currentTimeMillis();
+		log.info("=============getRsaKey调用时长为：" + (endTime - startTime) + " ms=================");
         return outParam;
     }
     /**
@@ -81,6 +84,7 @@ public class KeyInfoController {
     @SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getDesKey", method = RequestMethod.POST)
     public EdcCoOutDTO getDesKey(@RequestParam String reqstSrcCode){
+    	long startTime = System.currentTimeMillis();
         EdcCoOutDTO outParam = new EdcCoOutDTO();
     	outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
         outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
@@ -103,6 +107,8 @@ public class KeyInfoController {
                 outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
             }
         }
+        long endTime = System.currentTimeMillis();
+		log.info("=============getDesKey调用时长为：" + (endTime - startTime) + " ms=================");
         return outParam;
     }
     
@@ -113,6 +119,7 @@ public class KeyInfoController {
      */
 	@RequestMapping(value = "/getSpecialDesKey", method = RequestMethod.POST)
 	public EdcCoOutDTO getSpecialDesKey(@RequestParam String reqstSrcCode) {
+    	long startTime = System.currentTimeMillis();
 		EdcCoOutDTO outParam = new EdcCoOutDTO();
 		outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
 		outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
@@ -131,6 +138,8 @@ public class KeyInfoController {
 			outParam.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 		}
+        long endTime = System.currentTimeMillis();
+		log.info("=============getSpecialDesKey调用时长为：" + (endTime - startTime) + " ms=================");
 		return outParam;
 	}
 }
