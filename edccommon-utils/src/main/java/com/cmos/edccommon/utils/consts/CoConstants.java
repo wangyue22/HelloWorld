@@ -47,5 +47,15 @@ public final class CoConstants {
 		/** 静默活体 */
 		String FACE_LIVE = "T_CO_FACE_LIVE_INFO";
 	}
+	
+	/**
+	 * 返回码约定值
+	 */
+	public interface RESULT_TYPE {
+		/**调用外部服务发生了异常*/
+		String EXCEPTION_CODE = "-98"; 
+		/**调用外部服务服务的初始值，未调用外部服务，则在数据库存放该值*/
+		String INIT_CODE = "-99";		
+	}
 
 }

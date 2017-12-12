@@ -165,11 +165,13 @@ public class PicCompareController {
 			} else {
 				// 2.2 调用人像比对服务 比对芯片图片,如果国政通图片不为空 先比对国政通,
 				// 国政通比对失败或者比对不一致时,使用nfc芯片图片进行比对
-				String compareResult = sendPicCheck(picRBase64Str, picGZTBase64Str, picRType,
+				Map<String, String> compareResult = sendPicCheck(picRBase64Str, picGZTBase64Str, picRType,
 						CoConstants.PIC_TYPE.PIC_GZT);// 0为同一人 1：不为同一人
 				// 2.3 国政通头像比对分值判定
-				if (StringUtil.isNotEmpty(compareResult)) {
-					Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult,
+				if (compareResult!=null) {
+					String compareStr =  compareResult.get("resJson");
+
+					Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr,
 							Map.class);
 					Map<String, String> compareMap = getCompareResult(logMap, picGztAvtrScore);
 					String verifyState = compareMap.get("verifyState");
@@ -245,10 +247,11 @@ public class PicCompareController {
 					return out;
 				}
 				// 3.2 调用人像比对服务 比对芯片头像
-				String compareResult = sendPicCheck(picRBase64Str, picStoinBase64Str, picRType,
+				Map<String, String> compareResult = sendPicCheck(picRBase64Str, picStoinBase64Str, picRType,
 						CoConstants.PIC_TYPE.PIC_STOIN);
-				if (StringUtil.isNotEmpty(compareResult)) {
-					Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult,
+				if (compareResult != null) {
+					String compareStr =  compareResult.get("resJson");
+					Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr,
 							Map.class);
 					Map<String, String> compareMap = getCompareResult(logMap, picPicStoinScore);
 					String verifyState = compareMap.get("verifyState");
@@ -378,15 +381,16 @@ public class PicCompareController {
 			}
 
 			// 3 调用人像比对服务
-			String compareResult = sendPicCheck(picRBase64Str, picTBase64Str, picRType, picTType);
-			rtnMap.put("compareResult", compareResult);
+			Map<String, String> compareResult = sendPicCheck(picRBase64Str, picTBase64Str, picRType, picTType);
+			String resJson = compareResult.get("resJson");
+			rtnMap.put("compareResult", resJson);
 			out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 			out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
 			out.setBean(rtnMap);
 
 			// 4 调用消息队列，保存调用日志记录到数据库
 			try {
-				Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult,
+				Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(resJson,
 						Map.class);
 				logMap.put("picRPath", picRPath);
 				logMap.put("picTPath", picTPath);
@@ -407,6 +411,7 @@ public class PicCompareController {
 		}
 		return out;
 	}
+	
 	/**
 	 * 人像比对判定接口（两张图片的图片路径）
 	 * @param inParam
@@ -419,25 +424,38 @@ public class PicCompareController {
 	public EdcCoOutDTO picCompare(@RequestBody PicCompareInDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
     	long startTime = System.currentTimeMillis();
-		try {
-			log.info("****************************" + inParam);
-			String appSysID = inParam.getAppSysID();// 来源系统
-			String appUserID = inParam.getAppUserID();//来源用户
-			String swftno = inParam.getSwftno();
-			String reqstSrcCode = inParam.getReqstSrcCode();
-			String bizTypeCode = inParam.getBizTypeCode();
+    	String requestTime = null;
+    	if(inParam==null||inParam.getAppSysID()==null){
+    		out.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+			log.error("人像比对入参校验不通过");
+			return out;
+		}
+		String appSysID = inParam.getAppSysID();// 来源系统
+		String appUserID = inParam.getAppUserID();// 来源用户
+		String swftno = inParam.getSwftno();
+		String reqstSrcCode = inParam.getReqstSrcCode();
+		String bizTypeCode = inParam.getBizTypeCode();
 
-			String picRPath = inParam.getPhotoPath();
-			String picTPath = inParam.getPicTPath();
-			String picRType = inParam.getPhotoType();
-			String picTType = inParam.getPicTType();
-			String confidenceScore = inParam.getConfidenceScore();
-			
-			String crkey = inParam.getCrkey();//人像图片加密秘钥
-			String picRStr;
-			String picTStr;
-			String picRBase64Str = null;
-			String picTBase64Str = null;
+		String picRPath = inParam.getPhotoPath();
+		String picTPath = inParam.getPicTPath();
+		String picRType = inParam.getPhotoType();
+		String picTType = inParam.getPicTType();
+		String confidenceScore = inParam.getConfidenceScore();
+
+		String crkey = inParam.getCrkey();// 人像图片加密秘钥
+		String picRStr;
+		String picTStr;
+		String picRBase64Str = null;
+		String picTBase64Str = null;
+		Map<String, Object> logMap = new HashMap<String, Object>();
+		try {
+			log.info("****************************picCompare人像比对判定接口开始，流水号：" + swftno);
+			logMap.put("picRPath", picRPath);
+			logMap.put("picTPath", picTPath);
+			logMap.put("picRType", picRType);
+			logMap.put("picTType", picTType);
+			logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
 			// 1 获取人像照片
 			picRStr = downloadPic(picRPath);
 			if (StringUtil.isEmpty(picRStr)) {
@@ -498,12 +516,16 @@ public class PicCompareController {
 				log.error("标准照片下载异常，流水号：" + swftno, e1);
 				return out;
 			}
+			
 			// 3 调用人像比对服务
-			String compareResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
-			out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+			Map<String, String> compareResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
+
 			// 4 人像比对分值判定
-			if (StringUtil.isNotEmpty(compareResult)) {
-				Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult, Map.class);
+			if (compareResult != null) {
+				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+				String compareStr =  compareResult.get("resJson");
+				requestTime =  compareResult.get("resTime");
+				logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
 				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 				if (compareMap != null) {
 					String verifyState = compareMap.get("verifyState");
@@ -514,17 +536,7 @@ public class PicCompareController {
 					}
 					out.setBean(compareMap);
 				}
-				// 5调用消息队列，保存调用日志记录到数据库
-				try {
-					// 发送消息队列的内容
-					logMap.put("picRPath", picRPath);
-					logMap.put("picTPath", picTPath);
-					logMap.put("picRType", picRType);
-					logMap.put("picTType", picTType);
-					sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
-				} catch (Exception e) {
-					log.error("保存业务日志信息出错，流水号：" + swftno, e );
-				}
+			
 			}
 		} catch (Exception e) {
 			log.error("人像比对调用异常", e);
@@ -532,8 +544,18 @@ public class PicCompareController {
 			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
 		}finally{
 			long endTime = System.currentTimeMillis();
-			log.info("=============picCompare调用时长为：" + (endTime - startTime)
+			long totalTime = endTime - startTime;
+			log.info("=============picCompare人像比对判定（图片路径）调用时长为：" + totalTime
 					+ " ms=================");
+			logMap.put("totalTime", totalTime);
+			logMap.put("requestTime", requestTime);
+			// 5调用消息队列，保存调用日志记录到数据库
+			try {
+				// 发送消息队列的内容
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
+			} catch (Exception e) {
+				log.error("保存业务日志信息出错，流水号：" + swftno, e );
+			}
 		}
 		return out;
 	}
@@ -550,22 +572,28 @@ public class PicCompareController {
 	public EdcCoOutDTO picCompareBase64(@RequestBody PicCompareBase64InDTO inParam) {
 		EdcCoOutDTO out = new EdcCoOutDTO();
     	long startTime = System.currentTimeMillis();
+    	String requestTime = null;
+    	if(inParam==null||inParam.getAppSysID()==null){
+    		out.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+			log.error("人像比对入参校验不通过");
+			return out;
+		}
+
+		String appSysID = inParam.getAppSysID();// 来源系统
+		String appUserID = inParam.getAppUserID();// 来源用户
+		String swftno = inParam.getSwftno();
+		String reqstSrcCode = inParam.getReqstSrcCode();
+		String bizTypeCode = inParam.getBizTypeCode();
+
+		String picRBase64Str = inParam.getPhotoStrBase64();
+		String picTBase64Str = inParam.getPicTStrBase64();
+		String picRType = inParam.getPhotoType();
+		String picTType = inParam.getPicTType();
+		String confidenceScore = inParam.getConfidenceScore();
+		Map<String, Object> logMap = new HashMap<String, Object>();
+		Map<String, String> rtnMap = new HashMap<String, String>();
 		try {
-			log.info("****************************" + inParam);
-			String appSysID = inParam.getAppSysID();// 来源系统
-			String appUserID = inParam.getAppUserID();//来源用户
-			String swftno = inParam.getSwftno();
-			String reqstSrcCode = inParam.getReqstSrcCode();
-			String bizTypeCode = inParam.getBizTypeCode();
-
-			String picRBase64Str = inParam.getPhotoStrBase64();
-			String picTBase64Str = inParam.getPicTStrBase64();
-			String picRType = inParam.getPhotoType();
-			String picTType = inParam.getPicTType();
-			String confidenceScore = inParam.getConfidenceScore();
-
-			Map<String, String> rtnMap = new HashMap<String, String>();
-
 			// 1 校验人像照片，国政通头像or芯片头像 是否为空
 			if (StringUtil.isBlank(picRBase64Str) || StringUtil.isBlank(picTBase64Str)) {
 				out.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
@@ -574,13 +602,16 @@ public class PicCompareController {
 			}
 
 			// 2 调用人像比对服务
-			String compareResult = sendPicCheck(picRBase64Str, picTBase64Str, picRType, picTType);
+			Map<String, String> compareResult = sendPicCheck(picRBase64Str, picTBase64Str, picRType, picTType);
+			
 			out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 			// 3 人像比对分值判定
-			rtnMap.put("compareResult", compareResult);
-			if (StringUtil.isNotEmpty(compareResult)) {
-				Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareResult,
-						Map.class);
+
+			if (compareResult != null) {
+				String resJson = compareResult.get("resJson");
+				requestTime =  compareResult.get("resTime");
+				rtnMap.put("compareResult", resJson);
+				logMap = (Map<String, Object>) JsonUtil.convertJson2Object(resJson, Map.class);
 				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
 				if (compareMap != null) {
 					String verifyState = compareMap.get("verifyState");
@@ -591,15 +622,6 @@ public class PicCompareController {
 					}
 					out.setBean(compareMap);
 				}
-				// 5调用消息队列，保存调用日志记录到数据库
-				try {
-					// 发送消息队列的内容
-					logMap.put("picRType", picRType);
-					logMap.put("picTType", picTType);
-					sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
-				} catch (Exception e) {
-					log.error("MQ保存消费信息出错", e);
-				}
 			}
 		} catch (Exception e) {
 			log.error("人像比对调用异常", e);
@@ -607,8 +629,21 @@ public class PicCompareController {
 			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
 		}finally{
 			long endTime = System.currentTimeMillis();
-			log.info("=============picCompareBase64调用时长为：" + (endTime - startTime)
+			long totalTime = endTime - startTime;
+			log.info("=============picCompareBase64人像比对判定（图片字符串）调用时长为：" + totalTime
 					+ " ms=================");
+			// 5调用消息队列，保存调用日志记录到数据库
+			try {
+				// 发送消息队列的内容
+				logMap.put("totalTime", totalTime);
+				logMap.put("requestTime", requestTime);
+				logMap.put("picRType", picRType);
+				logMap.put("picTType", picTType);
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
+			} catch (Exception e) {
+				log.error("MQ保存消费信息出错", e);
+			}
+
 		}
 
 		return out;
@@ -664,13 +699,8 @@ public class PicCompareController {
 	 * @param picTType  第二个参数是国政通照片还是芯片照片   g:国政通 x:芯片
 	 * @return
 	 */
-	private String sendPicCheck(String base64StrR, String base64StrT, String picRType, String picTType) {
-		String result = null;
-		try {
-			result = sendPicCheck(base64StrR, base64StrT, "false", picRType, picTType);
-		} catch (GeneralException e) {
-			log.error("调用人像照片质检接口异常 ",e);
-		}
+	private Map<String, String> sendPicCheck(String base64StrR, String base64StrT, String picRType, String picTType) {
+		Map<String, String> result = sendPicCheck(base64StrR, base64StrT, "false", picRType, picTType);
 		return result;
 	}
 	
@@ -686,9 +716,9 @@ public class PicCompareController {
 	 * @param picRType 第一个参数是头像照片还是手持人像照片  t:头像 r:手持人像 
 	 * @param picTType  第二个参数是国政通照片还是芯片照片   g:国政通 x:芯片
 	 * @return
-	 * @throws GeneralException 
 	 */
-	private String sendPicCheck(String base64StrR, String base64StrT, String returnPicRFlag, String picRType, String picTType) throws GeneralException {
+	private Map<String, String> sendPicCheck(String base64StrR, String base64StrT, String returnPicRFlag, String picRType, String picTType){
+		Map<String, String> resultMap = new HashMap<String, String>();
 		String rt;
 		//1封装报文
 		Map<String, Object> reqJsonMap = new HashMap<String, Object>();
@@ -777,8 +807,11 @@ public class PicCompareController {
 			rt = "{\"resultType\":\"-3\",\"resultMsg\":\"接口异常\",\"returnInfo\":{}}";
 		}
 		long endRequestTime = System.currentTimeMillis();
-		log.info("=============sendPicCheck调用时长为：" + ( endRequestTime - startRequestTime ) + " ms=================");
-		return rt;
+		long requestTime = endRequestTime - startRequestTime;
+		log.info("=============sendPicCheck调用时长为：" + requestTime + " ms=================");
+		resultMap.put("resJson", rt);//响应报文
+		resultMap.put("resTime", String.valueOf(requestTime));//响应时间
+		return resultMap;
 
 	}
 	
@@ -942,6 +975,9 @@ public class PicCompareController {
 			infoBean.setPhotoType((String) compareResult.get("picRType"));
 			infoBean.setPicTType((String) compareResult.get("picTType"));
 
+			//infoBean.setPicTType((String) compareResult.get("requestTime"));//调用linkface的时间
+			//infoBean.setPicTType((String) compareResult.get("totalTime"));//人像比对服务处理时间
+			
 			String resultType = (String) compareResult.get("resultType");
 			infoBean.setCmprRslt(resultType);// 0成功 1手持证件照无人像 3 公安部照片无人像 -1调用失败
 			Map<String, String> returnInfo = ((Map<String, String>) compareResult.get("returnInfo"));
