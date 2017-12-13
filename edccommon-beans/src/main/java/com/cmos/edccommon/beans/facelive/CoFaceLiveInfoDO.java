@@ -75,8 +75,80 @@ public class CoFaceLiveInfoDO extends GenericBean {
      * 修改系统
      */
     private String modfAppSysId;
+    /**
+     * 人像图片路径
+     */
+    private String photoPath;
+    /**
+     * 密钥
+     */
+    private String crkey;
+    /**
+     * 静默活体服务调用总时间
+     */
+    private String totalTime;
+    /**
+     * 调用静默活体的请求时间 ms
+     */
+    private String requestTime;
+    /**
+     * 识别结果  0成功1失败  -99未调用静默活体服务 -98调用静默活体异常
+     */
+    private String idntifRslt;
+    /**
+     * 识别设定的分值
+     */
+    private String confScore;
 
-    public Long getDetctnId() {
+    public String getPhotoPath() {
+		return photoPath;
+	}
+
+	public void setPhotoPath(String photoPath) {
+		this.photoPath = photoPath;
+	}
+
+	public String getCrkey() {
+		return crkey;
+	}
+
+	public void setCrkey(String crkey) {
+		this.crkey = crkey;
+	}
+
+	public String getTotalTime() {
+		return totalTime;
+	}
+
+	public void setTotalTime(String totalTime) {
+		this.totalTime = totalTime;
+	}
+
+	public String getRequestTime() {
+		return requestTime;
+	}
+
+	public void setRequestTime(String requestTime) {
+		this.requestTime = requestTime;
+	}
+
+	public String getIdntifRslt() {
+		return idntifRslt;
+	}
+
+	public void setIdntifRslt(String idntifRslt) {
+		this.idntifRslt = idntifRslt;
+	}
+
+	public String getConfScore() {
+		return confScore;
+	}
+
+	public void setConfScore(String confScore) {
+		this.confScore = confScore;
+	}
+
+	public Long getDetctnId() {
         return detctnId;
     }
 

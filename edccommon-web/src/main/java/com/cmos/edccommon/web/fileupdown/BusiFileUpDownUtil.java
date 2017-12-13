@@ -380,7 +380,20 @@ public class BusiFileUpDownUtil {
         try {
             in = new ByteArrayInputStream(inputByte);
             ONestUtil.upload(bucketName, path, in);
-            ONestUtil.setObjectAcl2User(bucketName, path, env.getProperty("onest.gztfile.userId"), Permission.Read);
+            try {
+                ONestUtil.setObjectAcl2User(bucketName, path, env.getProperty("onest.gztfile.userId"), Permission.Read);
+            } catch (Exception e) {
+                //授权失败
+                logger.error("OnestSetObjectAcl2UserFailed", e);
+                try {
+                    //尝试重新授权一次
+                    ONestUtil.setObjectAcl2User(bucketName, path, env.getProperty("onest.gztfile.userId"), Permission.Read);
+                } catch (Exception e1) {
+                    //重试授权失败
+                    logger.error("OnestTryAgainSetObjectAcl2UserFailed", e);
+                    throw e;
+                }
+            }
             uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/" + path;
             return uploadUrl;
         } catch (Exception e) {
