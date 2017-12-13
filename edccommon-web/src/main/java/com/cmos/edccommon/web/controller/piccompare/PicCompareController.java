@@ -540,6 +540,10 @@ public class PicCompareController {
 						}
 						out.setBean(compareMap);
 					}
+				} else {
+					out.setReturnCode(ReturnInfoEnums.PICCOMPARE_FAILED.getCode());
+					out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+					logMap.put("resultType", CoConstants.RESULT_TYPE.EXCEPTION_CODE);
 				}	
 			}
 		} catch (Exception e) {
@@ -596,6 +600,8 @@ public class PicCompareController {
 		String picTType = inParam.getPicTType();
 		String confidenceScore = inParam.getConfidenceScore();
 		Map<String, Object> logMap = new HashMap<String, Object>();
+		logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
+		
 		Map<String, String> rtnMap = new HashMap<String, String>();
 		try {
 			// 1 校验人像照片，国政通头像or芯片头像 是否为空
@@ -608,23 +614,31 @@ public class PicCompareController {
 			// 2 调用人像比对服务
 			Map<String, String> compareResult = sendPicCheck(picRBase64Str, picTBase64Str, picRType, picTType);
 			
-			out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 			// 3 人像比对分值判定
 
 			if (compareResult != null) {
-				String resJson = compareResult.get("resJson");
-				requestTime =  compareResult.get("resTime");
-				rtnMap.put("compareResult", resJson);
-				logMap = (Map<String, Object>) JsonUtil.convertJson2Object(resJson, Map.class);
-				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
-				if (compareMap != null) {
-					String verifyState = compareMap.get("verifyState");
-					if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {
-						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
-					} else {
-						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+				String compareStr = compareResult.get("resJson");
+				requestTime = compareResult.get("resTime");
+				rtnMap.put("compareResult", compareStr);
+				Map<String, Object> compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr,
+						Map.class);
+				if (compareResultMap != null) {
+					logMap.putAll(compareResultMap);
+					Map<String, String> compareMap = getCompareResult(compareResultMap, confidenceScore);
+					if (compareMap != null) {
+						String verifyState = compareMap.get("verifyState");
+						if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {
+							out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
+						} else {
+							out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+						}
+						out.setBean(compareMap);
 					}
-					out.setBean(compareMap);
+				} else {
+					out.setReturnCode(ReturnInfoEnums.PICCOMPARE_FAILED.getCode());
+					out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+					logMap.put("resultType", CoConstants.RESULT_TYPE.EXCEPTION_CODE);
 				}
 			}
 		} catch (Exception e) {
@@ -639,7 +653,7 @@ public class PicCompareController {
 			// 5调用消息队列，保存调用日志记录到数据库
 			try {
 				// 发送消息队列的内容
-				logMap.put("totalTime", totalTime);
+				logMap.put("totalTime", Long.toString(totalTime));
 				logMap.put("requestTime", requestTime);
 				logMap.put("picRType", picRType);
 				logMap.put("picTType", picTType);
