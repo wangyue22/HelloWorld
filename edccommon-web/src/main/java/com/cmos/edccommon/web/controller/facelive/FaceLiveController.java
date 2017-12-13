@@ -22,7 +22,6 @@ import com.cmos.edccommon.web.aop.AopChecker;
 import com.cmos.edccommon.web.cache.BasicUtil;
 import com.cmos.edccommon.web.cache.CacheFatctoryUtil;
 import com.cmos.edccommon.web.fileupdown.BusiFileUpDownUtil;
-import com.cmos.msg.exception.MsgException;
 
 import io.swagger.annotations.Api;
 
