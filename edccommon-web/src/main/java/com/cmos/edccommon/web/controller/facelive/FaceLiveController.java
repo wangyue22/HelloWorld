@@ -75,36 +75,17 @@ public class FaceLiveController {
 	 */
 	@AopChecker
 	@RequestMapping(value = "/facelive", method = RequestMethod.POST)
-	public EdcCoOutDTO getFaceLive(@RequestBody FaceLiveInDTO inParam) {
-    	long startTime = System.currentTimeMillis();
-		EdcCoOutDTO outParam = new EdcCoOutDTO();
-		if (inParam != null) {
+	public EdcCoOutDTO faceLive(@RequestBody FaceLiveInDTO inParam){
+		long startTime = System.currentTimeMillis();
+		EdcCoOutDTO out= new EdcCoOutDTO();
+		if (inParam != null&&StringUtil.isNotBlank(inParam.getAppSysID())) {
 			log.info("****************************" + inParam.getPicRPath());
 		} else {
-			outParam.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
-			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
-			return outParam;
+			out.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+			return out;
 		}
-
-		try {
-			outParam = faceLive(inParam);
-		} catch (Exception e) {
-			log.info("静默活体执行失败", e);
-			outParam.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
-			outParam.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
-		}
-        long endTime = System.currentTimeMillis();
-		log.info("=============facelive调用时长为：" + (endTime - startTime) + " ms=================");
-		return outParam;
-	}	
-	/**
-	 * 静默调用服务
-	 * @param inParam
-	 * @return
-	 * @throws GeneralException 
-	 */
-	public EdcCoOutDTO faceLive(FaceLiveInDTO inParam) throws GeneralException{
-		EdcCoOutDTO out = new EdcCoOutDTO();
+		
 		out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());//默认调用不成功
 		out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());//默认调用不成功		
 		String picRStr;
@@ -117,110 +98,123 @@ public class FaceLiveController {
 		String faceliveScore = inParam.getFaceLiveScore();
 		String appSysID = inParam.getAppSysID();// 来源系统
 		String appUserID = inParam.getAppUserID();//来源用户
-		// 活体检测服务器地址
-		String sendUrl = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_URL);
-		if(StringUtil.isBlank(sendUrl)){
-			//环境变量配置活体检测服务器地址
-			log.error("缓存中未配置静默活体服务的调用地址，流水号：" + swftno);
-			sendUrl = env.getProperty("facelive.url");	
-		}
-		HashMap<String, String> paraMap = new HashMap<String, String>();
-
-		// 1 获取人像照片
-		try {
-			picRStr = downloadPic(picRPath);
-			if (StringUtil.isNotEmpty(picRStr)) {
-				MsDesPlus Ms = new MsDesPlus(crkey);
-				String picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串
-				picRStrBase64 = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
-			}
-		} catch (Exception e) {
-			picRStrBase64 = null;
-			log.error("人像照片解密异常，流水号：" + swftno, e);
-		}	
 		
 		Map<String, String> logMap = new HashMap<String, String>();
-		if (StringUtil.isBlank(picRStrBase64)) {
-			out.setReturnCode(ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getCode());
-			out.setReturnMessage(ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
-			log.error("人像照片为空");
-			// 获取图片为空，直接存表返回
-			logMap.put("idntifResult", CoConstants.RESULT_TYPE.INIT_CODE);
-			logMap .put("rspCode", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getCode());
-			logMap.put("rspInfoCntt", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
-			sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);	
-			return out;
-		}
-		log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length()+"，流水号：" + swftno);
-		
-		// 2 调用静默活体检测服务 并比对分值
-		paraMap.put("image", picRStrBase64);
-		paraMap.put("face_fields", ",faceliveness");
-		log.info("    ##########  静默服务调用 ， URL：" + sendUrl);
-
-		String rtnJson = null;
-		String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_TIMEOUT);
-		long requestTime = 0;
-		long startRequestTime = System.currentTimeMillis();
-		//调用静默活体服务
+		logMap.put("picRPath", picRPath);
+		logMap.put("crkey", crkey);
+		logMap.put("confScore", faceliveScore);
+		logMap.put("idntifResult", CoConstants.RESULT_TYPE.INIT_CODE);
 		try {
-			rtnJson = requestFaceLive(timeOutConf, sendUrl, paraMap);
-			long endRequestTime = System.currentTimeMillis();
-			requestTime = endRequestTime - startRequestTime;
-			log.info("=============facelive调用时长为：" + requestTime + " ms=================");
-		} catch (Exception e) {
-			long endRequestTime = System.currentTimeMillis();
-			requestTime = endRequestTime - startRequestTime;
-			log.info("=============facelive调用时长为：" + requestTime + " ms=================");
-			log.error("reqFaceLiveFailedCode 静默活体调用服务异常", e);	
-		}
-
-		//调用成功，将调用响应报文存表
-		logMap.put("backtoMsgCntt", rtnJson);
-		logMap.put("requestTime", Long.toString(requestTime));
-		log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
-		
-		//静默活体服务返回信息为空，则认为调用服务发生了异常
-		if (StringUtil.isNotBlank(rtnJson)) {
-			Map<String, String> returnMap = null ;
-			try {
-				returnMap = judgeFaceLiveResult(rtnJson, faceliveScore, swftno);
-			} catch (Exception e) {
-				log.error("静默活体分值判定发生异常，流水号为：" + swftno, e);
+			// 活体检测服务器地址
+			String sendUrl = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_URL);
+			if (StringUtil.isBlank(sendUrl)) {
+				// 环境变量配置活体检测服务器地址
+				log.error("缓存中未配置静默活体服务的调用地址，流水号：" + swftno);
+				sendUrl = env.getProperty("facelive.url");
 			}
-			//将调用信息保存在logMap 中
-			if (returnMap != null) {
-				logMap.put("rspCode", ReturnInfoEnums.PROCESS_SUCCESS.getCode());
-				logMap.put("rspInfoCntt", ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
-				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());// 默认调用成功
-				out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());// 默认调用成功
-				out.setBean(returnMap);
-				logMap.putAll(returnMap);
+			HashMap<String, String> paraMap = new HashMap<String, String>();
+
+			// 1 获取人像照片
+			try {
+				picRStr = downloadPic(picRPath);
+				if (StringUtil.isNotEmpty(picRStr)) {
+					MsDesPlus Ms = new MsDesPlus(crkey);
+					String picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串
+					picRStrBase64 = Base64.encode(picRDecStr.getBytes("ISO8859-1"));// 解密后的Base64字符串
+				}
+			} catch (Exception e) {
+				picRStrBase64 = null;
+				log.error("人像照片解密异常，流水号：" + swftno, e);
+			}
+
+			if (StringUtil.isBlank(picRStrBase64)) {
+				out.setReturnCode(ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getCode());
+				out.setReturnMessage(ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
+				log.error("人像照片为空");
+				// 获取图片为空，直接存表返回
+				logMap.put("rspCode", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getCode());
+				logMap.put("rspInfoCntt", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
+				return out;
+			}
+			log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length() + "，流水号：" + swftno);
+
+			// 2 调用静默活体检测服务 并比对分值
+			paraMap.put("image", picRStrBase64);
+			paraMap.put("face_fields", ",faceliveness");
+			log.info("    ##########  静默服务调用 ， URL：" + sendUrl);
+
+			String rtnJson = null;
+			String timeOutConf = cacheFactory.getJVMString(CacheConsts.JVM.WEB_FETCH_FACE_LIVE_TIMEOUT);
+			long requestTime = 0;
+			long startRequestTime = System.currentTimeMillis();
+			// 调用静默活体服务
+			try {
+				rtnJson = requestFaceLive(timeOutConf, sendUrl, paraMap);
+				long endRequestTime = System.currentTimeMillis();
+				requestTime = endRequestTime - startRequestTime;
+				log.info("=============facelive调用时长为：" + requestTime + " ms=================");
+			} catch (Exception e) {
+				long endRequestTime = System.currentTimeMillis();
+				requestTime = endRequestTime - startRequestTime;
+				log.info("=============facelive调用时长为：" + requestTime + " ms=================");
+				log.error("reqFaceLiveFailedCode 静默活体调用服务异常", e);
+			}
+
+			// 调用成功，将调用响应报文存表
+			logMap.put("backtoMsgCntt", rtnJson);
+			logMap.put("requestTime", Long.toString(requestTime));
+			log.info("    ##########  静默服务返回  rtnjson：" + rtnJson);
+
+			// 静默活体服务返回信息为空，则认为调用服务发生了异常
+			if (StringUtil.isNotBlank(rtnJson)) {
+				Map<String, String> returnMap = null;
+				try {
+					returnMap = judgeFaceLiveResult(rtnJson, faceliveScore, swftno);
+				} catch (Exception e) {
+					log.error("静默活体分值判定发生异常，流水号为：" + swftno, e);
+				}
+				// 将调用信息保存在logMap 中
+				if (returnMap != null) {
+					logMap.put("rspCode", ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+					logMap.put("rspInfoCntt", ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
+					out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());// 默认调用成功
+					out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());// 默认调用成功
+					out.setBean(returnMap);
+					logMap.putAll(returnMap);
+				} else {
+					logMap.put("rspCode", ReturnInfoEnums.PROCESS_FAILED.getCode());
+					logMap.put("rspInfoCntt", ReturnInfoEnums.PROCESS_FAILED.getMessage());
+					out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+					out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+				}
 			} else {
+				// 静默活体返回信息为空，保存mq
+				logMap.put("idntifResult", CoConstants.RESULT_TYPE.EXCEPTION_CODE);
 				logMap.put("rspCode", ReturnInfoEnums.PROCESS_FAILED.getCode());
 				logMap.put("rspInfoCntt", ReturnInfoEnums.PROCESS_FAILED.getMessage());
-				out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());// 默认调用成功
-				out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());// 默认调用成功
+				out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+				out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+				log.error("reqFaceLiveFailedCode 静默活体调用服务返回为空");
 			}
-		} else {		
-			//静默活体返回信息为空，保存mq
-			logMap.put("idntifResult", CoConstants.RESULT_TYPE.EXCEPTION_CODE);
-			logMap.put("rspCode", ReturnInfoEnums.PROCESS_FAILED.getCode());
-			logMap.put("rspInfoCntt", ReturnInfoEnums.PROCESS_FAILED.getMessage());
-			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());//默认调用成功
-			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());//默认调用成功	
-			log.error("reqFaceLiveFailedCode 静默活体调用服务返回为空");
-		}
-		
-		// 3 保存调用记录
-		try {
-			sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);
 		} catch (Exception e) {
-			log.error("静默活体发送消息队列异常", e);
+			log.info("静默活体执行失败", e);
+			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+		} finally {
+			long endTime = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			log.info("=============facelive调用时长为：" + totalTime + " ms=================");
+			logMap.put("totalTime", Long.toString(totalTime));
+			// 3 保存调用记录
+			try {
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap);
+			} catch (Exception e) {
+				log.error("静默活体发送消息队列异常", e);
+			}
 		}
-		return out; 
+		return out;
 	}
-	
+
 	/**
 	 * 静默活体判定返回结果分值
 	 * @param rtnJson
@@ -377,14 +371,27 @@ public class FaceLiveController {
 		String idntifFaceCnt = logMap.get("faceQty");
 		String backtoMsgCntt = logMap.get("backtoMsgCntt");
 		String idntifScore = logMap.get("faceScore");
-		String requestTime = logMap.get("requestTime");
 		
-		infoBean.setBacktoMsgCntt(backtoMsgCntt + "," + requestTime);// 返回报文内容
+		String requestTime = logMap.get("requestTime");
+		String totalTime = logMap.get("totalTime");
+		String photoPath = logMap.get("picRPath");
+		String crkey = logMap.get("crkey");
+		String confScore = logMap.get("confScore");
+		String idntifRslt = logMap.get("idntifResult");
+
+		infoBean.setBacktoMsgCntt(backtoMsgCntt);// 返回报文内容
 		infoBean.setRspCode(rspCode);//返回码
 		infoBean.setRspInfoCntt(rspInfoCntt);//返回信息
 		infoBean.setIdntifFaceCnt(idntifFaceCnt);//识别人脸数
 		infoBean.setIdntifScore(idntifScore);//分数
-
+		infoBean.setBacktoMsgCntt(backtoMsgCntt);//静默活体服务返回报文
+		infoBean.setRequestTime(requestTime);
+		infoBean.setTotalTime(totalTime);
+		infoBean.setPhotoPath(photoPath);
+		infoBean.setConfScore(confScore);
+		infoBean.setIdntifRslt(idntifRslt);
+		infoBean.setCrkey(crkey);
+		
 		String resultStr = infoBean.toJSON().toString();
 		return resultStr;
 	}

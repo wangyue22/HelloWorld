@@ -110,8 +110,61 @@ public class CoPicCompareInfoDO extends GenericBean {
      * 修改应用系统ID
      */
     private String modfAppSysId;
+    
+    /**
+     * 人像比对设定的分值
+     */
+    private String confScore;
 
-    public Long getCmprId() {
+    /**
+     * 请求时间
+     */
+    private String requestTime;
+    
+    /**
+     * 人像比对服务调用总时间
+     */
+    private String totalTime;
+
+    /**
+     * 人像图片解密秘钥
+     */
+    private String crkey;
+
+
+    public String getConfScore() {
+		return confScore;
+	}
+
+	public void setConfScore(String confScore) {
+		this.confScore = confScore;
+	}
+
+	public String getRequestTime() {
+		return requestTime;
+	}
+
+	public void setRequestTime(String requestTime) {
+		this.requestTime = requestTime;
+	}
+
+	public String getTotalTime() {
+		return totalTime;
+	}
+
+	public void setTotalTime(String totalTime) {
+		this.totalTime = totalTime;
+	}
+
+	public String getCrkey() {
+		return crkey;
+	}
+
+	public void setCrkey(String crkey) {
+		this.crkey = crkey;
+	}
+
+	public Long getCmprId() {
         return cmprId;
     }
 

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.cmos.common.bean.JsonFormatException;
-import com.cmos.common.exception.GeneralException;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
@@ -455,6 +454,8 @@ public class PicCompareController {
 			logMap.put("picTPath", picTPath);
 			logMap.put("picRType", picRType);
 			logMap.put("picTType", picTType);
+			logMap.put("crkey", crkey);
+			logMap.put("confidenceScore", confidenceScore);
 			logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
 			// 1 获取人像照片
 			picRStr = downloadPic(picRPath);
@@ -518,25 +519,28 @@ public class PicCompareController {
 			}
 			
 			// 3 调用人像比对服务
-			Map<String, String> compareResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
+			Map<String, String> resResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
 
 			// 4 人像比对分值判定
-			if (compareResult != null) {
+			if (resResult != null) {
 				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
-				String compareStr =  compareResult.get("resJson");
-				requestTime =  compareResult.get("resTime");
-				logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
-				Map<String, String> compareMap = getCompareResult(logMap, confidenceScore);
-				if (compareMap != null) {
-					String verifyState = compareMap.get("verifyState");
-					if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {					
-						out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
-					}else{
-						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+				String compareStr =  resResult.get("resJson");
+				requestTime =  resResult.get("resTime");
+				Map<String, Object> compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
+				if (compareResultMap != null) {
+					logMap.putAll(compareResultMap);
+					
+					Map<String, String> compareMap = getCompareResult(compareResultMap, confidenceScore);
+					if (compareMap != null) {
+						String verifyState = compareMap.get("verifyState");
+						if (StringUtil.isNotEmpty(verifyState) && VERIFY_STATE_SUCCESS.equals(verifyState)) {
+							out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
+						} else {
+							out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_FAILED.getMessage());
+						}
+						out.setBean(compareMap);
 					}
-					out.setBean(compareMap);
-				}
-			
+				}	
 			}
 		} catch (Exception e) {
 			log.error("人像比对调用异常", e);
@@ -547,7 +551,7 @@ public class PicCompareController {
 			long totalTime = endTime - startTime;
 			log.info("=============picCompare人像比对判定（图片路径）调用时长为：" + totalTime
 					+ " ms=================");
-			logMap.put("totalTime", totalTime);
+			logMap.put("totalTime", Long.toString(totalTime));
 			logMap.put("requestTime", requestTime);
 			// 5调用消息队列，保存调用日志记录到数据库
 			try {
@@ -974,9 +978,12 @@ public class PicCompareController {
 			infoBean.setPicTPath((String) compareResult.get("picTPath"));
 			infoBean.setPhotoType((String) compareResult.get("picRType"));
 			infoBean.setPicTType((String) compareResult.get("picTType"));
-
-			//infoBean.setPicTType((String) compareResult.get("requestTime"));//调用linkface的时间
-			//infoBean.setPicTType((String) compareResult.get("totalTime"));//人像比对服务处理时间
+			infoBean.setCrkey((String) compareResult.get("crkey"));
+			infoBean.setConfScore((String) compareResult.get("confidenceScore"));
+			
+			infoBean.setRequestTime((String) compareResult.get("requestTime"));//调用linkface的时间
+			infoBean.setTotalTime((String) compareResult.get("totalTime"));//人像比对服务处理时间
+			
 			
 			String resultType = (String) compareResult.get("resultType");
 			infoBean.setCmprRslt(resultType);// 0成功 1手持证件照无人像 3 公安部照片无人像 -1调用失败
