@@ -142,10 +142,18 @@ public class BusinessFlowController {
 
         } finally {
             if (isServiceTotalDecr) {
-                cacheService.decr(currServiceTotalKey);
+                try {
+                    cacheService.decr(currServiceTotalKey);
+                } catch (Exception e) {
+                    logger.error("redis currServiceTotalKey  decr error",e);
+                }
             }
             if (isServiceSystemTotalDecr) {
-                cacheService.decr(currServiceSystemTotalKey);
+                try {
+                    cacheService.decr(currServiceSystemTotalKey);
+                } catch (Exception e) {
+                    logger.error("redis currServiceSystemTotalKey  decr error", e);
+                }
             }
             long endTime = System.currentTimeMillis();
             logger.info("=============流控调用时长为：" + (endTime - startTime)
