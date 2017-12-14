@@ -96,11 +96,12 @@ public class BusinessFlowController {
             currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
             long currServiceSystemTotalCount = 0;
             try {
-            	currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
-			} catch (Exception e) {
-				logger.error("从redis取值currServiceSystemTotalCount   error",e);
-				r = joinPoint.proceed();
-			}  
+                currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
+            } catch (Exception e) {
+                logger.error("从redis取值currServiceSystemTotalCount   error",e);
+                r = joinPoint.proceed();
+                return r;
+            }
             logger.info("当前接口分来源系统"+currServiceSystemTotalKey+"瞬时并发为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
             if (isNeedParamCheck&&currServiceSystemTotalCount > serviceSystemTotalCount) {
@@ -114,11 +115,12 @@ public class BusinessFlowController {
             currServiceTotalKey = serviceTotalKey + "_REALTIME";
             long currServiceTotalCount = 0;
             try {
-            	currServiceTotalCount = cacheService.incr(currServiceTotalKey);
-			} catch (Exception e) {
-				logger.error("从redis取值currServiceTotalCount   error",e);
-				r = joinPoint.proceed();
-			} 
+                currServiceTotalCount = cacheService.incr(currServiceTotalKey);
+            } catch (Exception e) {
+                logger.error("从redis取值currServiceTotalCount   error",e);
+                r = joinPoint.proceed();
+                return r;
+            }
             logger.info("当前接口"+currServiceTotalKey+"瞬时并发为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
             if (isNeedAllCheck&&currServiceTotalCount > serviceTotalCount) {
@@ -132,7 +134,7 @@ public class BusinessFlowController {
         } catch (GeneralException e) {
             edcCoOutDTO.setReturnCode(ReturnInfoEnums.FLOW_PROCESS_FAILED.getCode());
             edcCoOutDTO.setReturnMessage(ReturnInfoEnums.FLOW_PROCESS_FAILED.getMessage());
-			logger.error("流控发生异常", e);
+            logger.error("流控发生异常", e);
             return edcCoOutDTO;
         }catch (Throwable e1) {
             logger.error("BusinessFlowController error:",e1);
@@ -157,7 +159,7 @@ public class BusinessFlowController {
             }
             long endTime = System.currentTimeMillis();
             logger.info("=============流控调用时长为：" + (endTime - startTime)
-					+ " ms=================");
+                + " ms=================");
         }
         return r;
 
