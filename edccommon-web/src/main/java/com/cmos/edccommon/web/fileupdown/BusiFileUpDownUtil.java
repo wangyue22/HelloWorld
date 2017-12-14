@@ -391,7 +391,7 @@ public class BusiFileUpDownUtil {
                 } catch (Exception e1) {
                     //重试授权失败
                     logger.error("OnestTryAgainSetObjectAcl2UserFailed", e1);
-                    throw e;
+                    throw e1;
                 }
             }
             uploadUrl = FileUpDownConstants.ONEST_URL_PREFIX + "_" + fileType + "/" + path;
