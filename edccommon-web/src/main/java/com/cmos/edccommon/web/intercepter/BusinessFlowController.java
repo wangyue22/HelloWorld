@@ -94,7 +94,13 @@ public class BusinessFlowController {
 
             //判断当前并发并发是否超过阀值
             currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
-            long currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
+            long currServiceSystemTotalCount = 0;
+            try {
+            	currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
+			} catch (Exception e) {
+				logger.error("从redis取值currServiceSystemTotalCount   error",e);
+				r = joinPoint.proceed();
+			}  
             logger.info("当前接口分来源系统"+currServiceSystemTotalKey+"瞬时并发为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
             if (isNeedParamCheck&&currServiceSystemTotalCount > serviceSystemTotalCount) {
@@ -106,7 +112,13 @@ public class BusinessFlowController {
             }
             //当前分接口总量
             currServiceTotalKey = serviceTotalKey + "_REALTIME";
-            long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
+            long currServiceTotalCount = 0;
+            try {
+            	currServiceTotalCount = cacheService.incr(currServiceTotalKey);
+			} catch (Exception e) {
+				logger.error("从redis取值currServiceTotalCount   error",e);
+				r = joinPoint.proceed();
+			} 
             logger.info("当前接口"+currServiceTotalKey+"瞬时并发为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
             if (isNeedAllCheck&&currServiceTotalCount > serviceTotalCount) {
