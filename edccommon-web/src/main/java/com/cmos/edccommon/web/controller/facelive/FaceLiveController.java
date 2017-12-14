@@ -203,7 +203,7 @@ public class FaceLiveController {
 		} finally {
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
-			log.info("=============facelive调用时长为：" + totalTime + " ms=================");
+			log.info("=============facelive处理时长为：" + totalTime + " ms=================");
 			logMap.put("totalTime", Long.toString(totalTime));
 			// 3 保存调用记录
 			try {
@@ -211,6 +211,8 @@ public class FaceLiveController {
 			} catch (Exception e) {
 				log.error("静默活体发送消息队列异常", e);
 			}
+			long logEndTime = System.currentTimeMillis();
+			log.info("=============facelive调用时长为：" + (logEndTime - startTime) + " ms=================");
 		}
 		return out;
 	}
