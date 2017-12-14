@@ -135,8 +135,9 @@ public class FaceLiveController {
 				logMap.put("rspInfoCntt", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
 				return out;
 			}
-			log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length() + "，流水号：" + swftno);
-
+			if (picRStrBase64 != null) {
+				log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length() + "，流水号：" + swftno);
+			}
 			// 2 调用静默活体检测服务 并比对分值
 			paraMap.put("image", picRStrBase64);
 			paraMap.put("face_fields", ",faceliveness");
@@ -222,8 +223,9 @@ public class FaceLiveController {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private Map<String, String> judgeFaceLiveResult(String rtnJson, String faceliveScore, String swftno){
+	private Map<String, String> judgeFaceLiveResult(String rtnJson, String faceliveScoreIn, String swftno){
 		String resultNum = null;
+		String faceliveScore = faceliveScoreIn;
 		Map<String, String> returnMap = new HashMap<String, String>();
 		String idntifResult;//识别结果
 		Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);

@@ -390,7 +390,7 @@ public class BusiFileUpDownUtil {
                     ONestUtil.setObjectAcl2User(bucketName, path, env.getProperty("onest.gztfile.userId"), Permission.Read);
                 } catch (Exception e1) {
                     //重试授权失败
-                    logger.error("OnestTryAgainSetObjectAcl2UserFailed", e);
+                    logger.error("OnestTryAgainSetObjectAcl2UserFailed", e1);
                     throw e;
                 }
             }
