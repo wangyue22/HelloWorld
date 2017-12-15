@@ -94,7 +94,14 @@ public class BusinessFlowController {
 
             //判断当前并发并发是否超过阀值
             currServiceSystemTotalKey = serviceSystemTotalKey + "_REALTIME";
-            long currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
+            long currServiceSystemTotalCount = 0;
+            try {
+                currServiceSystemTotalCount = cacheService.incr(currServiceSystemTotalKey);
+            } catch (Exception e) {
+                logger.error("从redis取值currServiceSystemTotalCount   error",e);
+                r = joinPoint.proceed();
+                return r;
+            }
             logger.info("当前接口分来源系统"+currServiceSystemTotalKey+"瞬时并发为:"+currServiceSystemTotalCount);
             isServiceSystemTotalDecr = true;
             if (isNeedParamCheck&&currServiceSystemTotalCount > serviceSystemTotalCount) {
@@ -106,7 +113,14 @@ public class BusinessFlowController {
             }
             //当前分接口总量
             currServiceTotalKey = serviceTotalKey + "_REALTIME";
-            long currServiceTotalCount = cacheService.incr(currServiceTotalKey);
+            long currServiceTotalCount = 0;
+            try {
+                currServiceTotalCount = cacheService.incr(currServiceTotalKey);
+            } catch (Exception e) {
+                logger.error("从redis取值currServiceTotalCount   error",e);
+                r = joinPoint.proceed();
+                return r;
+            }
             logger.info("当前接口"+currServiceTotalKey+"瞬时并发为:"+currServiceTotalCount);
             isServiceTotalDecr = true;
             if (isNeedAllCheck&&currServiceTotalCount > serviceTotalCount) {
@@ -120,7 +134,7 @@ public class BusinessFlowController {
         } catch (GeneralException e) {
             edcCoOutDTO.setReturnCode(ReturnInfoEnums.FLOW_PROCESS_FAILED.getCode());
             edcCoOutDTO.setReturnMessage(ReturnInfoEnums.FLOW_PROCESS_FAILED.getMessage());
-			logger.error("流控发生异常", e);
+            logger.error("流控发生异常", e);
             return edcCoOutDTO;
         }catch (Throwable e1) {
             logger.error("BusinessFlowController error:",e1);
@@ -130,14 +144,22 @@ public class BusinessFlowController {
 
         } finally {
             if (isServiceTotalDecr) {
-                cacheService.decr(currServiceTotalKey);
+                try {
+                    cacheService.decr(currServiceTotalKey);
+                } catch (Exception e) {
+                    logger.error("redis currServiceTotalKey  decr error",e);
+                }
             }
             if (isServiceSystemTotalDecr) {
-                cacheService.decr(currServiceSystemTotalKey);
+                try {
+                    cacheService.decr(currServiceSystemTotalKey);
+                } catch (Exception e) {
+                    logger.error("redis currServiceSystemTotalKey  decr error", e);
+                }
             }
             long endTime = System.currentTimeMillis();
             logger.info("=============流控调用时长为：" + (endTime - startTime)
-					+ " ms=================");
+                + " ms=================");
         }
         return r;
 
