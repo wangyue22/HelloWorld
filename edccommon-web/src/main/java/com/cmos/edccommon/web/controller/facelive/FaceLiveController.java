@@ -169,6 +169,17 @@ public class FaceLiveController {
 			if (StringUtil.isNotBlank(rtnJson)) {
 				Map<String, String> returnMap = null;
 				try {
+					// 获取默认静默活体检测分值
+					if (StringUtil.isEmpty(faceliveScore)) {
+						faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
+						log.info("静默活体检测使用入参分值为空，使用配置分值为：" + faceliveScore);
+						logMap.put("confScore", "JVM:"+faceliveScore);
+						if (StringUtil.isEmpty(faceliveScore)) {
+							log.info("静默活体检测使用默认分值，配置分值为：" + faceliveScore + ",使用程序默认分值为" + FACELIVE_DEFAULT_SCORE);
+							faceliveScore = FACELIVE_DEFAULT_SCORE;
+							logMap.put("confScore", "CODE:"+faceliveScore);
+						}
+					}
 					returnMap = judgeFaceLiveResult(rtnJson, faceliveScore, swftno);
 				} catch (Exception e) {
 					log.error("静默活体分值判定发生异常，流水号为：" + swftno, e);
@@ -225,9 +236,8 @@ public class FaceLiveController {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private Map<String, String> judgeFaceLiveResult(String rtnJson, String faceliveScoreIn, String swftno){
+	private Map<String, String> judgeFaceLiveResult(String rtnJson, String faceliveScore, String swftno){
 		String resultNum = null;
-		String faceliveScore = faceliveScoreIn;
 		Map<String, String> returnMap = new HashMap<String, String>();
 		String idntifResult;//识别结果
 		Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);
@@ -244,15 +254,7 @@ public class FaceLiveController {
 				returnMap.put("faceScore", faceliveness);// 识别出的人脸分值
 
 				float faceScore = Float.parseFloat(faceliveness);
-				// 获取默认静默活体检测分值
-				if (StringUtil.isEmpty(faceliveScore)) {
-					faceliveScore = cacheFactory.getJVMString(CacheConsts.JVM.FACE_LIVE_DEFAULT_SCORE);
-					log.info("静默活体检测使用入参分值为空，使用配置分值为：" + faceliveScore);
-					if (StringUtil.isEmpty(faceliveScore)) {
-						log.info("静默活体检测使用默认分值，原配置分值为：" + faceliveScore + ",默认分值为" + FACELIVE_DEFAULT_SCORE);
-						faceliveScore = FACELIVE_DEFAULT_SCORE;
-					}
-				}
+
 				//进行静默活体分值判定
 				if (faceScore < Float.parseFloat(faceliveScore)) {
 					log.info("真人检测不通过：流水号：" + swftno + ",阈值=" + faceliveScore + "，实际比分=" + faceScore);
