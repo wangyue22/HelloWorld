@@ -301,126 +301,7 @@ public class PicCompareController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/picCheck", method = RequestMethod.POST)
 	public EdcCoOutDTO picCheck(@RequestBody PicCompareInDTO inParam) {
-		EdcCoOutDTO out = new EdcCoOutDTO();
-    	long startTime = System.currentTimeMillis();
-		try {
-			log.info("****************************" + inParam);
-			String appSysID = inParam.getAppSysID();// 来源系统
-			String appUserID = inParam.getAppUserID();//来源用户
-			String swftno = inParam.getSwftno();
-			String reqstSrcCode = inParam.getReqstSrcCode();			
-			String bizTypeCode = inParam.getBizTypeCode();
-			String picRPath = inParam.getPhotoPath();
-			String picTPath = inParam.getPicTPath();
-			String picRType = inParam.getPhotoType();
-			String picTType = inParam.getPicTType();
-			String crkey = inParam.getCrkey();// 人像图片加密秘钥
-			String picRStr;
-			String picTStr;
-			String picRBase64Str = null;
-			String picTBase64Str = null;
-			Map<String, String> rtnMap = new HashMap<String, String>();
-			// 1 获取人像照片
-			picRStr = downloadPic(picRPath);
-
-			if (StringUtil.isEmpty(picRStr)) {
-				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getCode());
-				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getMessage());
-				log.error("人像照片下载异常");
-				return out;
-			}
-
-			try {
-				MsDesPlus Ms = new MsDesPlus(crkey);
-				String picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串
-				if (StringUtil.isNotEmpty(picRDecStr)) {// 图片本身已将转为Base64
-					picRBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
-				}
-				// picRBase64Str = picRDecStr;
-			} catch (Exception e1) {
-				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getCode());
-				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getMessage());
-				log.error("人像照片解密异常", e1);
-				return out;
-			}
-
-			// 2 获取国政通头像or芯片头像
-			try {
-				String picRDecStr;
-				if (CoConstants.PIC_TYPE.PIC_GZT.equalsIgnoreCase(picTType)) {
-					picTStr = downloadGZTPic(picTPath, reqstSrcCode, SOURCE_SYS_EDCCO, swftno);
-					if (StringUtil.isEmpty(picTStr)) {
-						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getCode());
-						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getMessage());
-						log.error("国政通照片下载异常");
-						return out;
-					}
-					picTBase64Str = picRStr;// 国政通图片字符串不用解密
-				} else if (CoConstants.PIC_TYPE.PIC_STOIN.equalsIgnoreCase(picTType)) {
-					picTStr = downloadPic(picTPath);
-					if (StringUtil.isEmpty(picTStr)) {
-						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
-						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
-						log.error("芯片照片下载异常");
-						return out;
-					}
-					MsDesPlus Ms = new MsDesPlus(crkey);
-					picRDecStr = Ms.decrypt(picRStr);// 解密后的图片字符串 NFC 芯片头像需要解密
-					// base64转码
-					if (StringUtil.isNotEmpty(picRDecStr)) {
-						picTBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
-					}
-				}
-
-			} catch (Exception e1) {
-				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DEC_FAILED.getCode());
-				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DEC_FAILED.getMessage());
-				log.error("人像照片解密异常", e1);
-				return out;
-			}
-
-			// 3 调用人像比对服务
-			Map<String, String> compareResult = sendPicCheck(picRBase64Str, picTBase64Str, picRType, picTType);
-			String resJson = compareResult.get("resJson");
-			rtnMap.put("compareResult", resJson);
-			out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
-			out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
-			out.setBean(rtnMap);
-
-			// 4 调用消息队列，保存调用日志记录到数据库
-			try {
-				Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(resJson,
-						Map.class);
-				logMap.put("picRPath", picRPath);
-				logMap.put("picTPath", picTPath);
-				logMap.put("picRType", picRType);
-				logMap.put("picTType", picTType);
-				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
-			} catch (Exception e) {
-				log.error("MQ保存消费信息出错", e);
-			}
-		} catch (Exception e) {
-			log.error("人像比对调用异常", e);
-			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
-			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
-		}finally{
-			long endTime = System.currentTimeMillis();
-			log.info("=============picCheck调用时长为：" + (endTime - startTime)
-					+ " ms=================");
-		}
-		return out;
-	}
-	
-	/**
-	 * 人像比对判定接口（两张图片的图片路径）
-	 * @param inParam
-	 * @return
-	 * @date 2017-10-11 13:00:00
-	 */
-	@AopChecker
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/picCompare", method = RequestMethod.POST)
-	public EdcCoOutDTO picCompare(@RequestBody PicCompareInDTO inParam) {
+		Map<String, String> rtnMap = new HashMap<String, String>();
 		EdcCoOutDTO out = new EdcCoOutDTO();
     	long startTime = System.currentTimeMillis();
     	String requestTime = null;
@@ -448,15 +329,16 @@ public class PicCompareController {
 		String picRBase64Str = null;
 		String picTBase64Str = null;
 		Map<String, Object> logMap = new HashMap<String, Object>();
+		log.info("****************************picCheck人像比对接口开始，流水号：" + swftno);
+		logMap.put("picRPath", picRPath);
+		logMap.put("picTPath", picTPath);
+		logMap.put("picRType", picRType);
+		logMap.put("picTType", picTType);
+		logMap.put("crkey", crkey);
+		logMap.put("confidenceScore", confidenceScore);
+		logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
+		
 		try {
-			log.info("****************************picCompare人像比对判定接口开始，流水号：" + swftno);
-			logMap.put("picRPath", picRPath);
-			logMap.put("picTPath", picTPath);
-			logMap.put("picRType", picRType);
-			logMap.put("picTType", picTType);
-			logMap.put("crkey", crkey);
-			logMap.put("confidenceScore", confidenceScore);
-			logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
 			// 1 获取人像照片
 			picRStr = downloadPic(picRPath);
 			if (StringUtil.isEmpty(picRStr)) {
@@ -520,16 +402,172 @@ public class PicCompareController {
 			
 			// 3 调用人像比对服务
 			Map<String, String> resResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
+			//resResult一定不会为null
+			if (resResult != null) {
+				String compareStr = resResult.get("resJson");
+				requestTime = resResult.get("resTime");
+				rtnMap.put("compareResult", compareStr);
+				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
+				out.setReturnMessage(ReturnInfoEnums.PROCESS_SUCCESS.getMessage());
+				out.setBean(rtnMap);
+				try {
+					Map<String, Object> compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
+					if (compareResultMap != null) {
+						logMap.putAll(compareResultMap);
+					}
+				} catch (Exception e) {
+					log.error("解析响应报文发生异常", e);
+				}
+			}			
+		} catch (Exception e) {
+			log.error("人像比对调用异常", e);
+			out.setReturnCode(ReturnInfoEnums.PROCESS_FAILED.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_FAILED.getMessage());
+		}finally{
+			long endTime = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			log.info("=============picCheck人像比对处理时长为：" + totalTime + " ms=================");
+			logMap.put("totalTime", Long.toString(totalTime));
+			logMap.put("requestTime", requestTime);
+			// 4 调用消息队列，保存调用日志记录到数据库
+			try {
+				// 发送消息队列的内容
+				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
+			} catch (Exception e) {
+				log.error("保存业务日志信息出错，流水号：" + swftno, e );
+			}
+			long logEndTime = System.currentTimeMillis();
+			log.info("=============picCheck人像比对调用时长为：" + (logEndTime - startTime) + " ms=================");
+		}
+		return out;
+	}
 
-			// 4 人像比对分值判定
+	
+	/**
+	 * 人像比对判定接口（两张图片的图片路径）
+	 * @param inParam
+	 * @return
+	 * @date 2017-10-11 13:00:00
+	 */
+	@AopChecker
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/picCompare", method = RequestMethod.POST)
+	public EdcCoOutDTO picCompare(@RequestBody PicCompareInDTO inParam) {
+		EdcCoOutDTO out = new EdcCoOutDTO();
+    	long startTime = System.currentTimeMillis();
+    	String requestTime = null;
+    	if(inParam==null||inParam.getAppSysID()==null){
+    		out.setReturnCode(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getCode());
+			out.setReturnMessage(ReturnInfoEnums.PROCESS_INPARAM_ERROR.getMessage());
+			log.error("人像比对入参校验不通过");
+			return out;
+		}
+		String appSysID = inParam.getAppSysID();// 来源系统
+		String appUserID = inParam.getAppUserID();// 来源用户
+		String swftno = inParam.getSwftno();
+		String reqstSrcCode = inParam.getReqstSrcCode();
+		String bizTypeCode = inParam.getBizTypeCode();
+
+		String picRPath = inParam.getPhotoPath();
+		String picTPath = inParam.getPicTPath();
+		String picRType = inParam.getPhotoType();
+		String picTType = inParam.getPicTType();
+		String confidenceScore = inParam.getConfidenceScore();
+
+		String crkey = inParam.getCrkey();// 人像图片加密秘钥
+		String picRStr;
+		String picTStr;
+		String picRBase64Str = null;
+		String picTBase64Str = null;
+		Map<String, Object> logMap = new HashMap<String, Object>();
+		log.info("****************************picCompare人像比对判定接口开始，流水号：" + swftno);
+		logMap.put("picRPath", picRPath);
+		logMap.put("picTPath", picTPath);
+		logMap.put("picRType", picRType);
+		logMap.put("picTType", picTType);
+		logMap.put("crkey", crkey);
+		logMap.put("confidenceScore", confidenceScore);
+		logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
+		
+		try {
+			// 1 获取人像照片
+			picRStr = downloadPic(picRPath);
+			if (StringUtil.isEmpty(picRStr)) {
+				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getCode());
+				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DOWN_FAILED.getMessage());
+				log.error("人像照片下载异常，流水号：" + swftno);
+				return out;
+			}		
+			try {
+				MsDesPlus Ms = new MsDesPlus(crkey);
+				String picRDecStr = Ms.decrypt(picRStr);//解密后的图片字符串
+				if(StringUtil.isNotEmpty(picRDecStr)){
+					log.info("解密后的人像图片字符串"+picRDecStr.length());
+					picRBase64Str = Base64.encode(picRDecStr.getBytes(CHARSET_NAME));//解密后的Base64字符串
+					log.info("解密后的人像图片Base64字符串"+picRBase64Str.length());
+				}
+			} catch (Exception e1) {
+				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getCode());
+				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICR_DEC_FAILED.getMessage());
+				log.error("人像照片解密异常，流水号：" + swftno, e1);
+				return out;
+			}
+
+			// 2 获取国政通头像or芯片头像
+
+			try {
+				if (CoConstants.PIC_TYPE.PIC_GZT.equalsIgnoreCase(picTType)) {
+					picTStr = downloadGZTPic(picTPath, reqstSrcCode, SOURCE_SYS_EDCCO, swftno);
+					if (StringUtil.isEmpty(picTStr)) {
+						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getCode());
+						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_GZT_DOWN_FAILED.getMessage());
+						log.error("国政通照片下载异常，流水号：" + swftno);
+						return out;
+					}
+					picTBase64Str = picTStr;// 国政通图片字符串不用解密
+					log.info("base64转码后的国政通图片字符串长度为：" + picTBase64Str.length());
+				}else if(CoConstants.PIC_TYPE.PIC_STOIN.equalsIgnoreCase(picTType)){
+					MsDesPlus Ms = new MsDesPlus(crkey);
+					picTStr = downloadPic(picTPath);
+					if (StringUtil.isEmpty(picTStr)) {
+						out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
+						out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
+						log.error("标准照片下载异常，流水号：" + swftno);
+						return out;
+					}
+					String picTDecStr = Ms.decrypt(picTStr);// 解密后的图片字符串   NFC 芯片头像需要解密
+					//base64转码
+					if (StringUtil.isNotEmpty(picTDecStr)) {
+						log.info("解密后的标准图片字符串" + picTDecStr.length());
+						picTBase64Str = Base64.encode(picTDecStr.getBytes(CHARSET_NAME));// 解密后的Base64字符串
+						log.info("解密后的标准图片Base64字符串" + picTBase64Str.length());
+					}
+				}
+				
+			} catch (Exception e1) {
+				out.setReturnCode(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getCode());
+				out.setReturnMessage(ReturnInfoEnums.PICCOMPARE_PICT_DOWN_FAILED.getMessage());
+				log.error("标准照片下载异常，流水号：" + swftno, e1);
+				return out;
+			}
+			
+			// 3 调用人像比对服务
+			Map<String, String> resResult = sendPicCheck(picRBase64Str, picTBase64Str,  picRType,  picTType);
+			// 解析响应报文
 			if (resResult != null) {
 				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 				String compareStr =  resResult.get("resJson");
 				requestTime =  resResult.get("resTime");
-				Map<String, Object> compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
+				Map<String, Object> compareResultMap;
+				try {
+					compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
+				} catch (Exception e) {
+					log.error("解析响应报文发生异常", e);
+					compareResultMap = null;
+				}
 				if (compareResultMap != null) {
 					logMap.putAll(compareResultMap);
-					
+					// 4 人像比对分值判定	
 					Map<String, String> compareMap = getCompareResult(compareResultMap, confidenceScore);
 					if (compareMap != null) {
 						String verifyState = compareMap.get("verifyState");
@@ -553,7 +591,7 @@ public class PicCompareController {
 		}finally{
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
-			log.info("=============picCompare人像比对判定（图片路径）调用时长为：" + totalTime
+			log.info("=============picCompare人像比对判定（图片路径）处理时长为：" + totalTime
 					+ " ms=================");
 			logMap.put("totalTime", Long.toString(totalTime));
 			logMap.put("requestTime", requestTime);
@@ -564,6 +602,8 @@ public class PicCompareController {
 			} catch (Exception e) {
 				log.error("保存业务日志信息出错，流水号：" + swftno, e );
 			}
+			long logEndTime = System.currentTimeMillis();
+			log.info("=============picCompare人像比对判定（图片路径）调用时长为：" + (logEndTime - startTime) + " ms=================");
 		}
 		return out;
 	}
@@ -601,8 +641,9 @@ public class PicCompareController {
 		String confidenceScore = inParam.getConfidenceScore();
 		Map<String, Object> logMap = new HashMap<String, Object>();
 		logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
+		logMap.put("picRType", picRType);
+		logMap.put("picTType", picTType);
 		
-		Map<String, String> rtnMap = new HashMap<String, String>();
 		try {
 			// 1 校验人像照片，国政通头像or芯片头像 是否为空
 			if (StringUtil.isBlank(picRBase64Str) || StringUtil.isBlank(picTBase64Str)) {
@@ -620,9 +661,13 @@ public class PicCompareController {
 				out.setReturnCode(ReturnInfoEnums.PROCESS_SUCCESS.getCode());
 				String compareStr = compareResult.get("resJson");
 				requestTime = compareResult.get("resTime");
-				rtnMap.put("compareResult", compareStr);
-				Map<String, Object> compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr,
-						Map.class);
+				Map<String, Object> compareResultMap;
+				try {
+					compareResultMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr, Map.class);
+				} catch (Exception e) {
+					log.error("解析响应报文发生异常", e);
+					compareResultMap = null;
+				}
 				if (compareResultMap != null) {
 					logMap.putAll(compareResultMap);
 					Map<String, String> compareMap = getCompareResult(compareResultMap, confidenceScore);
@@ -648,16 +693,17 @@ public class PicCompareController {
 		}finally{
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
-			log.info("=============picCompareBase64人像比对判定（图片字符串）调用时长为：" + totalTime
+			log.info("=============picCompareBase64人像比对判定（图片字符串）处理时长为：" + totalTime
 					+ " ms=================");
 			// 5调用消息队列，保存调用日志记录到数据库
 			try {
 				// 发送消息队列的内容
 				logMap.put("totalTime", Long.toString(totalTime));
 				logMap.put("requestTime", requestTime);
-				logMap.put("picRType", picRType);
-				logMap.put("picTType", picTType);
+
 				sendMQ(appSysID, appUserID, reqstSrcCode, bizTypeCode, swftno, logMap, out);
+				long logEndTime = System.currentTimeMillis();
+				log.info("=============picCompareBase64人像比对判定（图片字符串）调用时长为：" + (logEndTime - startTime) + " ms=================");
 			} catch (Exception e) {
 				log.error("MQ保存消费信息出错", e);
 			}
@@ -1052,6 +1098,4 @@ public class PicCompareController {
 		long endTime = System.currentTimeMillis();
 		log.info("=============保存日志时长为：" + (endTime - startTime) + " ms=================");
 	}
-	
-	
 }

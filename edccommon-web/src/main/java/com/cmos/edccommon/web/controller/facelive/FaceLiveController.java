@@ -135,8 +135,9 @@ public class FaceLiveController {
 				logMap.put("rspInfoCntt", ReturnInfoEnums.FACELIVE_PICR_DOWN_FAILED.getMessage());
 				return out;
 			}
-			log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length() + "，流水号：" + swftno);
-
+			if (picRStrBase64 != null) {
+				log.info("    ##########  静默服务调用 获取人像图片大小为：" + picRStrBase64.length() + "，流水号：" + swftno);
+			}
 			// 2 调用静默活体检测服务 并比对分值
 			paraMap.put("image", picRStrBase64);
 			paraMap.put("face_fields", ",faceliveness");
@@ -202,7 +203,7 @@ public class FaceLiveController {
 		} finally {
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
-			log.info("=============facelive调用时长为：" + totalTime + " ms=================");
+			log.info("=============facelive处理时长为：" + totalTime + " ms=================");
 			logMap.put("totalTime", Long.toString(totalTime));
 			// 3 保存调用记录
 			try {
@@ -210,6 +211,8 @@ public class FaceLiveController {
 			} catch (Exception e) {
 				log.error("静默活体发送消息队列异常", e);
 			}
+			long logEndTime = System.currentTimeMillis();
+			log.info("=============facelive调用时长为：" + (logEndTime - startTime) + " ms=================");
 		}
 		return out;
 	}
@@ -222,8 +225,9 @@ public class FaceLiveController {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private Map<String, String> judgeFaceLiveResult(String rtnJson, String faceliveScore, String swftno){
+	private Map<String, String> judgeFaceLiveResult(String rtnJson, String faceliveScoreIn, String swftno){
 		String resultNum = null;
+		String faceliveScore = faceliveScoreIn;
 		Map<String, String> returnMap = new HashMap<String, String>();
 		String idntifResult;//识别结果
 		Map rtnMap = (Map) JsonUtil.convertJson2Object(rtnJson, Map.class);
