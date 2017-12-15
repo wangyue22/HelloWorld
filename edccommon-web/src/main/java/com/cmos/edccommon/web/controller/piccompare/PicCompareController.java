@@ -80,10 +80,11 @@ public class PicCompareController {
 	private static final String VERIFY_STATE_SUCCESS = "0";
 	/**人像比对结果为不是同一人*/
 	private static final String VERIFY_STATE_FAILE = "1";
-	
 	/**人像比对默认调用超时时间*/
 	private static final String PIC_CHECK_FETCH_DEFAULT_TIMEOUT = "20";
 	
+	/**人像比对判断默认分值*/
+	private static final String PIC_CHECK_DEFAULT_SCORE = "60-100";
 	/**
 	 * 人像比对判定接口（三张图片）
 	 * 如果国政通获取图片为空（2017年11月更新逻辑，若国政通图片为空，需返回特殊返回码2998）
@@ -172,6 +173,19 @@ public class PicCompareController {
 
 					Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr,
 							Map.class);
+					
+					// 获取比对分值 
+					log.info("#############入参比对分值   " + picGztAvtrScore);
+					if (StringUtil.isBlank(picGztAvtrScore)) {
+						picGztAvtrScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
+						logMap.put("confScore", "JVM:" + picGztAvtrScore);
+						log.info("#############使用JVM配置的默认比对分值   " + picGztAvtrScore);
+						if (StringUtil.isBlank(picGztAvtrScore)) {
+							log.info("#############JVM配置的默认比对分值为空，使用代码CODE内配置的默认比对分值为   " + PIC_CHECK_DEFAULT_SCORE);
+							picGztAvtrScore = PIC_CHECK_DEFAULT_SCORE;
+							logMap.put("confScore", "CODE:" + picGztAvtrScore);
+						}
+					}
 					Map<String, String> compareMap = getCompareResult(logMap, picGztAvtrScore);
 					String verifyState = compareMap.get("verifyState");
 					if (VERIFY_STATE_SUCCESS.equals(verifyState)) {
@@ -252,6 +266,18 @@ public class PicCompareController {
 					String compareStr =  compareResult.get("resJson");
 					Map<String, Object> logMap = (Map<String, Object>) JsonUtil.convertJson2Object(compareStr,
 							Map.class);
+					// 获取比对分值
+					log.info("#############入参比对分值   " + picPicStoinScore);
+					if (StringUtil.isBlank(picPicStoinScore)) {
+						picPicStoinScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
+						logMap.put("confScore", "JVM:" + picPicStoinScore);
+						log.info("#############使用JVM配置的默认比对分值   " + picPicStoinScore);
+						if (StringUtil.isBlank(picPicStoinScore)) {
+							log.info("#############JVM配置的默认比对分值为空，使用代码CODE内配置的默认比对分值为   " + PIC_CHECK_DEFAULT_SCORE);
+							picPicStoinScore = PIC_CHECK_DEFAULT_SCORE;
+							logMap.put("confScore", "CODE:" + picPicStoinScore);
+						}
+					}
 					Map<String, String> compareMap = getCompareResult(logMap, picPicStoinScore);
 					String verifyState = compareMap.get("verifyState");
 					if (VERIFY_STATE_SUCCESS.equals(verifyState)) {
@@ -567,6 +593,19 @@ public class PicCompareController {
 				}
 				if (compareResultMap != null) {
 					logMap.putAll(compareResultMap);
+					
+					// 获取比对分值 
+					log.info("#############入参比对分值   " + confidenceScore);
+					if (StringUtil.isBlank(confidenceScore)) {
+						confidenceScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
+						logMap.put("confScore", "JVM:"+confidenceScore);
+						log.info("#############使用JVM配置的默认比对分值   " + confidenceScore);
+						if (StringUtil.isBlank(confidenceScore)) {
+							log.info("#############JVM配置的默认比对分值为空，使用代码CODE内配置的默认比对分值为   " + PIC_CHECK_DEFAULT_SCORE);
+							confidenceScore = PIC_CHECK_DEFAULT_SCORE;
+							logMap.put("confScore", "CODE:"+confidenceScore);
+						}
+					}
 					// 4 人像比对分值判定	
 					Map<String, String> compareMap = getCompareResult(compareResultMap, confidenceScore);
 					if (compareMap != null) {
@@ -643,6 +682,7 @@ public class PicCompareController {
 		logMap.put("resultType", CoConstants.RESULT_TYPE.INIT_CODE);
 		logMap.put("picRType", picRType);
 		logMap.put("picTType", picTType);
+		logMap.put("confidenceScore", confidenceScore);
 		
 		try {
 			// 1 校验人像照片，国政通头像or芯片头像 是否为空
@@ -670,6 +710,19 @@ public class PicCompareController {
 				}
 				if (compareResultMap != null) {
 					logMap.putAll(compareResultMap);
+					
+					// 获取比对分值 
+					log.info("#############入参比对分值   " + confidenceScore);
+					if (StringUtil.isBlank(confidenceScore)) {
+						confidenceScore = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
+						logMap.put("confScore", "JVM:"+confidenceScore);
+						log.info("#############使用JVM配置的默认比对分值   " + confidenceScore);
+						if (StringUtil.isBlank(confidenceScore)) {
+							log.info("#############JVM配置的默认比对分值为空，使用代码CODE内配置的默认比对分值为   " + PIC_CHECK_DEFAULT_SCORE);
+							confidenceScore = PIC_CHECK_DEFAULT_SCORE;
+							logMap.put("confScore", "CODE:"+confidenceScore);
+						}
+					}
 					Map<String, String> compareMap = getCompareResult(compareResultMap, confidenceScore);
 					if (compareMap != null) {
 						String verifyState = compareMap.get("verifyState");
@@ -905,11 +958,6 @@ public class PicCompareController {
 			if ("0".equals(resultType)) {
 				// 显示对比分数
 				String score = returnInfo.get("similarity");
-				log.info("#############" + rangeStr);
-				if (StringUtil.isBlank(rangeStr)) {
-					rangeStr = cacheFactory.getJVMString(CacheConsts.JVM.PIC_CHECK_DEFAULT_VALUE);
-					log.info("#############使用默认############" + rangeStr);
-				}
 				verifyState = checkInRange(rangeStr, score, VERIFY_STATE_SUCCESS, VERIFY_STATE_FAILE);// 是否是同一人// 0是 1否
 				returnMap.put("similarityScore", score);
 				returnMap.put("verifyState", verifyState);
