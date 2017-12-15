@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cmos.core.logger.Logger;
 import com.cmos.core.logger.LoggerFactory;
 import com.cmos.edccommon.beans.common.EdcCoOutDTO;
@@ -63,7 +62,7 @@ public class RealityAccountController {
         }
         long endTime = System.currentTimeMillis();
 		log.info("=============getRealityAccount，获取账户信息 ，流水号为：" + swftno + "，调用时长为：" + (endTime - startTime) + " ms=================");
-		log.info("=============getRealityAccount，获取账户信息 ，响应结果为："+ JSONObject.toJSONString(outParam));
+//		log.info("=============getRealityAccount，获取账户信息 ，响应结果为："+ JSONObject.toJSONString(outParam));
 		return outParam;
     }
 }
